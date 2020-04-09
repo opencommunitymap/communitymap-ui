@@ -1,22 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { ObjectItem, Coords } from './types';
+import { SplashScreen } from './components/SplashScreen';
 import { Maps } from './components/Maps';
+import { ChatItem } from './components/Chat';
+import { ControlBar } from './components/ControlBar';
 
-const SplashScreen = () => {
-  return (
-    <div className="splash">
-      <header className="splash-header">
-        <img src={logo} className="splash-logo" alt="logo" />
-      </header>
-    </div>
-  );
-};
+const tempAuthor = '123';
 
 const Home = () => {
+  const [objects, setObjects] = useState<ObjectItem[]>([]);
+
+  const [mapParams, setMapParams] = useState<{
+    center: Coords;
+    minLat: number;
+    maxLat: number;
+    minLng: number;
+    maxLng: number;
+  } | null>(null);
+  useEffect(() => {
+    if (!mapParams) return;
+  });
   return (
     <div className="home">
-      <Maps />
+      <ControlBar
+        onAdd={(item) =>
+          setObjects([
+            ...objects,
+            { ...item, author: tempAuthor, loc: mapParams?.center },
+          ])
+        }
+      />
+      <Maps
+        onChange={(center, minLat, maxLat, minLng, maxLng) =>
+          setMapParams({ center, minLat, maxLat, minLng, maxLng })
+        }
+      >
+        {objects.map((it, idx) => (
+          <ChatItem key={idx + it.title} lat={it.loc.lat} lng={it.loc.lng}>
+            <div>{it.author}</div>
+            <div>{it.title}</div>
+            <div>{it.description}</div>
+          </ChatItem>
+        ))}
+      </Maps>
     </div>
   );
 };

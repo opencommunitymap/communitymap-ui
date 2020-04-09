@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleMapReact from 'google-map-react';
+import GoogleMapReact, { Coords } from 'google-map-react';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 
@@ -19,15 +19,33 @@ const defaultProps = {
   },
 };
 
-export const Maps: React.FC = ({ children }) => {
+interface MapsProps {
+  onChange: (
+    center: Coords,
+    minLat: number,
+    maxLat: number,
+    minLng: number,
+    maxLng: number
+  ) => void;
+}
+
+export const Maps: React.FC<MapsProps> = ({ children, onChange }) => {
   return (
     <>
       <div id="center-pin">
         <PinImg />
       </div>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: GOOGLE_API_KEY }}
         {...defaultProps}
+        bootstrapURLKeys={{ key: GOOGLE_API_KEY }}
+        onChange={(props) => {
+          const {
+            center,
+            bounds: { sw, ne },
+          } = props;
+          console.debug('GoogleMaps onChange', props);
+          onChange(center, sw.lat, ne.lat, sw.lng, ne.lng);
+        }}
       >
         {children}
       </GoogleMapReact>
