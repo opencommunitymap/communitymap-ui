@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Maps } from './components/Maps';
 
 const SplashScreen = () => {
   return (
@@ -13,7 +14,11 @@ const SplashScreen = () => {
 };
 
 const Home = () => {
-  return <div className="home">Hello, community!</div>;
+  return (
+    <div className="home">
+      <Maps />
+    </div>
+  );
 };
 
 function App() {

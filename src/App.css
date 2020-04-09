@@ -7,6 +7,14 @@
   opacity: 0.6;
 }
 
+#center-pin {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+
 .splash {
   text-align: center;
 }
