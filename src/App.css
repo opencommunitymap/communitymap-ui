@@ -39,6 +39,28 @@
   transform: translate(-50%, -50%);
 }
 
+#login-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: rgba(50, 50, 50, 0.5);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#login-container .segment {
+  padding: 1.5em;
+  background-color: white;
+  border-radius: 5px;
+  text-align: center;
+}
+#login-container #firebaseui-auth-container {
+  margin: 3em 1.5em;
+}
+
 #center-pin {
   position: absolute;
   z-index: 1;

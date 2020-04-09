@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'production') firebase.analytics();
 
 const tempAuthor = '123';
 
-const Home = () => {
+const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
   const [objects, setObjects] = useState<ObjectItem[]>([]);
 
   const [mapParams, setMapParams] = useState<{
@@ -33,6 +33,7 @@ const Home = () => {
   return (
     <div className="home">
       <ControlBar
+        authenticated={!!user}
         onAdd={(item) =>
           setObjects([
             ...objects,
@@ -58,14 +59,22 @@ const Home = () => {
 };
 
 function App() {
+  const [user, setUser] = useState<firebase.User | null | undefined>();
+
+  useEffect(() => {
+    firebase.auth().onIdTokenChanged((user) => {
+      console.debug('Loaded user', user);
+      setUser(user);
+    });
+  });
+
   const [splash, setSplash] = useState(true);
   useEffect(() => {
     setTimeout(() => setSplash(false), 2000);
   }, []);
+  if (splash || user === undefined) return <SplashScreen />;
 
-  if (splash) return <SplashScreen />;
-
-  return <Home />;
+  return <Home user={user} />;
 }
 
 export default App;
