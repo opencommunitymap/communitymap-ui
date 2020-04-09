@@ -1,9 +1,15 @@
-export { Coords } from 'google-map-react';
+export interface Location {
+  latitude: number;
+  longitude: number;
+}
 
-export interface ObjectItem {
-  type: 'chat' | 'petition';
-  author: string;
+export interface ObjectItemInput {
   title: string;
   description: string;
-  loc: Coords;
+  type: 'chat' | 'petition';
+}
+export interface ObjectItem extends ObjectItemInput {
+  id: string;
+  author: string;
+  loc: Location;
 }

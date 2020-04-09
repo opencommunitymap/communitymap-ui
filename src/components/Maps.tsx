@@ -21,7 +21,8 @@ const defaultProps = {
 
 interface MapsProps {
   onChange: (
-    center: Coords,
+    centerLat: number,
+    centerLng: number,
     minLat: number,
     maxLat: number,
     minLng: number,
@@ -44,7 +45,7 @@ export const Maps: React.FC<MapsProps> = ({ children, onChange }) => {
             bounds: { sw, ne },
           } = props;
           console.debug('GoogleMaps onChange', props);
-          onChange(center, sw.lat, ne.lat, sw.lng, ne.lng);
+          onChange(center.lat, center.lng, sw.lat, ne.lat, sw.lng, ne.lng);
         }}
       >
         {children}

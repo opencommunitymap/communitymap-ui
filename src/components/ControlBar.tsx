@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { ObjectItem } from '../types';
+import { ObjectItemInput } from '../types';
 import { AddNewChat } from './Chat';
 import { Login } from './Login';
 
 export const ControlBar: React.FC<{
   authenticated: boolean;
-  onAdd: (item: Omit<ObjectItem, 'author' | 'loc'>) => void;
+  onAdd: (item: ObjectItemInput) => void;
 }> = ({ authenticated, onAdd }) => {
-  const [addType, setAddType] = useState<ObjectItem['type'] | null>(null);
+  const [addType, setAddType] = useState<ObjectItemInput['type'] | null>(null);
 
   return (
     <div id="control-bar">
