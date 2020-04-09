@@ -5,6 +5,15 @@ import { SplashScreen } from './components/SplashScreen';
 import { Maps } from './components/Maps';
 import { ChatItem } from './components/Chat';
 import { ControlBar } from './components/ControlBar';
+import * as firebase from 'firebase/app';
+import 'firebase/analytics';
+import 'firebase/auth';
+import 'firebase/firestore';
+import { firebaseConfig } from './firebaseConfig';
+
+firebase.initializeApp(firebaseConfig);
+
+if (process.env.NODE_ENV === 'production') firebase.analytics();
 
 const tempAuthor = '123';
 
