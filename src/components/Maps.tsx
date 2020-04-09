@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleMapReact, { Coords } from 'google-map-react';
+import GoogleMapReact from 'google-map-react';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 

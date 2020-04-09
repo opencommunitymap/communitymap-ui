@@ -29,7 +29,7 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
 
   useEffect(() => {
     if (!mapParams) return;
-    const { centerLat, centerLng, minLat, maxLat, minLng, maxLng } = mapParams;
+    const { minLat, maxLat, minLng, maxLng } = mapParams;
     console.debug('Load by', mapParams);
 
     // todo use geofirestore-js as it doesn't filter by longitude right now
