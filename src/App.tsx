@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { ObjectItem, ObjectItemInput } from './types';
 import { SplashScreen } from './components/SplashScreen';
-import { Maps } from './components/Maps';
+import { Maps, MapItem } from './components/Maps';
 import { ChatItem } from './components/Chat';
 import { ControlBar } from './components/ControlBar';
 import * as firebase from 'firebase/app';
@@ -79,16 +79,10 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
           setMapParams({ centerLat, centerLng, minLat, maxLat, minLng, maxLng })
         }
       >
-        {objects.map((it, idx) => (
-          <ChatItem
-            key={idx + it.title}
-            lat={it.loc.latitude}
-            lng={it.loc.longitude}
-          >
-            <div>{it.author}</div>
-            <div>{it.title}</div>
-            <div>{it.description}</div>
-          </ChatItem>
+        {objects.map((it) => (
+          <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
+            <ChatItem item={it} />
+          </MapItem>
         ))}
       </Maps>
     </div>

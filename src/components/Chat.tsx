@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { ObjectItemInput } from '../types';
+import { ObjectItemInput, ObjectItem } from '../types';
 
-export const ChatItem: React.FC<{ lat: number; lng: number }> = ({
-  children,
-}) => <div className="chat-item">{children}</div>;
+export const ChatItem: React.FC<{ item: ObjectItem }> = ({ item }) => {
+  const { author, title, description } = item;
+  return (
+    <div className="chat-item">
+      <div>{author}</div>
+      <br />
+      <strong>{title}</strong>
+      {description !== title && <div>{description}</div>}
+    </div>
+  );
+};
 
 export const AddNewChat: React.FC<{
   onPost: (data: ObjectItemInput) => void;

@@ -7,6 +7,10 @@ const PinImg = () => (
   <img style={{ display: 'block' }} alt="here" src="/pin.png" />
 );
 
+export const MapItem: React.FC<{ lat: number; lng: number }> = ({
+  children,
+}) => <>{children}</>;
+
 const defaultProps = {
   defaultCenter: { lat: 42.69, lng: 23.32 },
   defaultZoom: 18,
