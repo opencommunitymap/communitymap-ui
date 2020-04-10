@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { ObjectItemInput } from '../types';
 
 export const ChatItem: React.FC<{ lat: number; lng: number }> = ({
   children,
 }) => <div className="chat-item">{children}</div>;
 
-export const AddNewChat: React.FC<{ onPost: (data: any) => void }> = ({
-  onPost,
-}) => {
+export const AddNewChat: React.FC<{
+  onPost: (data: ObjectItemInput) => void;
+}> = ({ onPost }) => {
   const [state, setState] = useState({} as any);
   const onChange = (e: any) => {
     const { name, value } = e.target;
@@ -19,7 +20,13 @@ export const AddNewChat: React.FC<{ onPost: (data: any) => void }> = ({
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
-          onPost(state);
+          const { topic, message } = state;
+
+          onPost({
+            type: 'chat',
+            title: topic || message,
+            description: message,
+          });
         }}
       >
         <div>

@@ -49,10 +49,10 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
   }, [mapParams]);
 
   const postObject = useCallback(
-    (item: ObjectItemInput) => {
+    async (item: ObjectItemInput) => {
       if (!user || !mapParams) {
         alert('Temporary cannot post objects. Try again');
-        return;
+        throw new Error('Cannot post object');
       }
       const { centerLat, centerLng } = mapParams;
 

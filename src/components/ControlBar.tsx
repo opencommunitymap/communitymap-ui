@@ -5,7 +5,7 @@ import { Login } from './Login';
 
 export const ControlBar: React.FC<{
   authenticated: boolean;
-  onAdd: (item: ObjectItemInput) => void;
+  onAdd: (item: ObjectItemInput) => Promise<any>;
 }> = ({ authenticated, onAdd }) => {
   const [addType, setAddType] = useState<ObjectItemInput['type'] | null>(null);
 
@@ -16,13 +16,8 @@ export const ControlBar: React.FC<{
         <>
           {addType === 'chat' && (
             <AddNewChat
-              onPost={({ topic, message }) => {
-                onAdd({
-                  title: topic || null,
-                  description: message,
-                  type: addType,
-                });
-                setAddType(null);
+              onPost={(item) => {
+                onAdd(item).then(() => setAddType(null));
               }}
             />
           )}
