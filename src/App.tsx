@@ -71,6 +71,43 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
     [mapParams, user]
   );
 
+  const voteUp = useCallback(
+    async (item: ObjectItem) => {
+      if (!user) {
+        alert('You need to register or sign in');
+        throw new Error('Cannot vote');
+      }
+
+      const timenow = new Date().toISOString();
+      return firebase
+        .firestore()
+        .collection('objects')
+        .doc(item.id)
+        .collection('votes')
+        .doc(user.uid)
+        .set({ value: 1, created: timenow });
+    },
+    [user]
+  );
+
+  const leaveComment = useCallback(
+    async (item: ObjectItem, comment: string) => {
+      if (!user) {
+        alert('You need to register or sign in');
+        throw new Error('Cannot vote');
+      }
+
+      const timenow = new Date().toISOString();
+      return firebase
+        .firestore()
+        .collection('objects')
+        .doc(item.id)
+        .collection('comments')
+        .add({ author: user.uid, comment, created: timenow });
+    },
+    [user]
+  );
+
   return (
     <div className="home">
       <ControlBar authenticated={!!user} onAdd={(item) => postObject(item)} />
@@ -81,7 +118,12 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
       >
         {objects.map((it) => (
           <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-            <ChatItem item={it} />
+            <ChatItem
+              item={it}
+              authenticated={!!user}
+              onComment={async (comment) => leaveComment(it, comment)}
+              onVote={async () => voteUp(it)}
+            />
           </MapItem>
         ))}
       </Maps>

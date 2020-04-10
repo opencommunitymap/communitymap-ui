@@ -1,14 +1,56 @@
 import React, { useState } from 'react';
 import { ObjectItemInput, ObjectItem } from '../types';
+import { reportError } from '../utils';
 
-export const ChatItem: React.FC<{ item: ObjectItem }> = ({ item }) => {
+export const ChatItem: React.FC<{
+  item: ObjectItem;
+  authenticated: boolean;
+  onVote?: () => Promise<any>;
+  onComment?: (comment: string) => Promise<any>;
+}> = ({ item, authenticated, onVote, onComment }) => {
   const { author, title, description } = item;
+
+  const [comment, setComment] = useState<string | null>(null);
+
   return (
     <div className="chat-item">
       <div>{author}</div>
       <br />
       <strong>{title}</strong>
       {description !== title && <div>{description}</div>}
+      <div>
+        {!!onVote && (
+          <button onClick={() => onVote().catch(reportError)}>Vote up!</button>
+        )}
+        {!!onComment && (
+          <>
+            {comment === null && (
+              <button onClick={() => setComment('')}>Comment</button>
+            )}
+            {comment !== null &&
+              (authenticated ? (
+                <>
+                  <input
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <button
+                    onClick={() =>
+                      !!comment &&
+                      onComment(comment)
+                        .then(() => setComment(null))
+                        .catch(reportError)
+                    }
+                  >
+                    Post
+                  </button>
+                </>
+              ) : (
+                <div>You need to register or sign in</div>
+              ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };
