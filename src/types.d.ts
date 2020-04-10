@@ -3,6 +3,20 @@ export interface Location {
   longitude: number;
 }
 
+export interface ObjectComment {
+  object_id: string;
+  author: string;
+  comment: string;
+  created: string;
+}
+
+export interface ObjectVote {
+  object_id: string;
+  author: string;
+  value: number;
+  created: string;
+}
+
 export interface ObjectItemInput {
   title: string;
   description: string;

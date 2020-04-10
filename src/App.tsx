@@ -1,6 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import './App.css';
-import { ObjectItem, ObjectItemInput } from './types';
+import {
+  ObjectItem,
+  ObjectItemInput,
+  ObjectComment,
+  ObjectVote,
+} from './types';
 import { SplashScreen } from './components/SplashScreen';
 import { Maps, MapItem } from './components/Maps';
 import { ChatItem } from './components/Chat';
@@ -15,17 +20,8 @@ firebase.initializeApp(firebaseConfig);
 
 if (process.env.NODE_ENV === 'production') firebase.analytics();
 
-const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
+const useLoadObjects = (mapParams: any | null, user: firebase.User | null) => {
   const [objects, setObjects] = useState<ObjectItem[]>([]);
-
-  const [mapParams, setMapParams] = useState<{
-    centerLat: number;
-    centerLng: number;
-    minLat: number;
-    maxLat: number;
-    minLng: number;
-    maxLng: number;
-  } | null>(null);
 
   useEffect(() => {
     if (!mapParams) return;
@@ -47,6 +43,83 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
       });
     return unsub;
   }, [mapParams]);
+
+  const [commentsObj, setCommentsObj] = useState<{
+    [k: string]: ObjectComment[];
+  } | null>(null);
+  const [votesObj, setVotesObj] = useState<{
+    [k: string]: { count: number; userVoted: boolean };
+  } | null>(null);
+
+  useEffect(() => {
+    if (!mapParams) return;
+
+    const objectIds = objects.map((o) => o.id);
+    console.debug('Load comments for', objectIds);
+    if (!objectIds.length) return;
+
+    const unsubComments = firebase
+      .firestore()
+      .collection('comments')
+      .where('object_id', 'in', objectIds)
+      .onSnapshot((snap) => {
+        const objs: { [k: string]: ObjectComment[] } = {};
+        snap.forEach((doc) => {
+          const comment = doc.data() as ObjectComment;
+          const objComms = objs[comment.object_id] || [];
+          objComms.push(comment);
+          objs[comment.object_id] = objComms;
+        });
+        console.debug('Loaded comments', objs);
+        setCommentsObj(objs);
+      });
+
+    const unsubVotes = firebase
+      .firestore()
+      .collection('votes')
+      .where('object_id', 'in', objectIds)
+      .onSnapshot((snap) => {
+        const objs: { [k: string]: { count: number; userVoted: boolean } } = {};
+        snap.forEach((doc) => {
+          const vote = doc.data() as ObjectVote;
+          const objectVotingInfo = objs[vote.object_id] || {
+            count: 0,
+            userVoted: false,
+          };
+          objectVotingInfo.count += vote.value;
+          if (user?.uid === vote.author) {
+            objectVotingInfo.userVoted = true;
+          }
+          objs[vote.object_id] = objectVotingInfo;
+        });
+        console.debug('Loaded votes', objs);
+        setVotesObj(objs);
+      });
+    return () => {
+      unsubComments();
+      unsubVotes();
+    };
+  }, [mapParams, objects, user]);
+
+  const data = useMemo(() => ({ objects, commentsObj, votesObj }), [
+    objects,
+    commentsObj,
+    votesObj,
+  ]);
+  return data;
+};
+
+const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
+  const [mapParams, setMapParams] = useState<{
+    centerLat: number;
+    centerLng: number;
+    minLat: number;
+    maxLat: number;
+    minLng: number;
+    maxLng: number;
+  } | null>(null);
+
+  const { objects, commentsObj, votesObj } = useLoadObjects(mapParams, user);
 
   const postObject = useCallback(
     async (item: ObjectItemInput) => {
@@ -79,13 +152,12 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
       }
 
       const timenow = new Date().toISOString();
-      return firebase
-        .firestore()
-        .collection('objects')
-        .doc(item.id)
-        .collection('votes')
-        .doc(user.uid)
-        .set({ value: 1, created: timenow });
+      return firebase.firestore().collection('votes').add({
+        object_id: item.id,
+        author: user.uid,
+        value: 1,
+        created: timenow,
+      });
     },
     [user]
   );
@@ -98,12 +170,12 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
       }
 
       const timenow = new Date().toISOString();
-      return firebase
-        .firestore()
-        .collection('objects')
-        .doc(item.id)
-        .collection('comments')
-        .add({ author: user.uid, comment, created: timenow });
+      return firebase.firestore().collection('comments').add({
+        object_id: item.id,
+        author: user.uid,
+        comment,
+        created: timenow,
+      });
     },
     [user]
   );
@@ -116,16 +188,21 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
           setMapParams({ centerLat, centerLng, minLat, maxLat, minLng, maxLng })
         }
       >
-        {objects.map((it) => (
-          <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-            <ChatItem
-              item={it}
-              authenticated={!!user}
-              onComment={async (comment) => leaveComment(it, comment)}
-              onVote={async () => voteUp(it)}
-            />
-          </MapItem>
-        ))}
+        {commentsObj &&
+          votesObj &&
+          objects.map((it) => (
+            <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
+              <ChatItem
+                item={it}
+                authenticated={!!user}
+                userVoted={votesObj[it.id]?.userVoted}
+                votes={votesObj[it.id]?.count}
+                comments={commentsObj[it.id]}
+                onComment={async (comment) => leaveComment(it, comment)}
+                onVote={async () => voteUp(it)}
+              />
+            </MapItem>
+          ))}
       </Maps>
     </div>
   );
