@@ -7,7 +7,8 @@ import 'firebaseui/dist/firebaseui.css';
 export const Login = () => {
   useEffect(() => {
     var uiConfig = {
-      // signInSuccessUrl: '<url-to-redirect-to-on-success>',
+      signInFlow: 'popup',
+      signInSuccessUrl: window.location.origin,
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
