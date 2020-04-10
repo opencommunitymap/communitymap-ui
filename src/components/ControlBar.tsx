@@ -4,6 +4,7 @@ import { AddNewChat } from './Chat';
 import { Login } from './Login';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
+import { reportError } from '../utils';
 
 export const ControlBar: React.FC<{
   authenticated: boolean;
@@ -25,11 +26,18 @@ export const ControlBar: React.FC<{
       {authenticated && (
         <>
           {addType === 'chat' && (
-            <AddNewChat
-              onPost={(item) => {
-                onAdd(item).then(() => setAddType(null));
-              }}
-            />
+            <div className="add-stuff-container">
+              <button className="close-icon" onClick={() => setAddType(null)}>
+                X
+              </button>
+              <AddNewChat
+                onPost={(item) => {
+                  onAdd(item)
+                    .then(() => setAddType(null))
+                    .catch(reportError);
+                }}
+              />
+            </div>
           )}
         </>
       )}

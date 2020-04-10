@@ -93,11 +93,11 @@ function App() {
   const [user, setUser] = useState<firebase.User | null | undefined>();
 
   useEffect(() => {
-    firebase.auth().onIdTokenChanged((user) => {
+    return firebase.auth().onIdTokenChanged((user) => {
       console.debug('Loaded user', user);
       setUser(user);
     });
-  });
+  }, []);
 
   const [splash, setSplash] = useState(true);
   useEffect(() => {

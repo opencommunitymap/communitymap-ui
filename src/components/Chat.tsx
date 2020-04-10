@@ -23,7 +23,7 @@ export const AddNewChat: React.FC<{
     setState({ ...state, [name]: value });
   };
   return (
-    <div className="add-new-item add-new-chat">
+    <div className="add-new-chat">
       <form
         onSubmit={(e) => {
           e.preventDefault();
