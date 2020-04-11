@@ -67,7 +67,7 @@ export const ControlBar: React.FC<{
         'chat',
         'request',
         'offer',
-        'donation',
+        // 'donation',
       ] as ObjectItemInput['type'][]).map((type) => (
         <Button
           key={type}

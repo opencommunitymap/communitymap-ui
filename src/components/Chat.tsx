@@ -32,9 +32,9 @@ const CommentsList: React.FC<{ comments: ObjectComment[] }> = ({
 export const type2icon = (type: ObjectItemInput['type']) => {
   switch (type) {
     case 'request':
-      return 'exclamation';
-    case 'offer':
       return 'hand paper';
+    case 'offer':
+      return 'heart';
     case 'donation':
       return 'heart';
     case 'chat':
