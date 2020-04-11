@@ -159,7 +159,7 @@ export const ChatItem: React.FC<{
 
   return expanded ? (
     <Modal open closeIcon size="tiny" onClose={() => setExpanded(false)}>
-      <Modal.Content>{content}</Modal.Content>
+      <Modal.Content scrolling>{content}</Modal.Content>
     </Modal>
   ) : (
     content
