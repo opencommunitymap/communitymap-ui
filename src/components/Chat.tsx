@@ -29,6 +29,29 @@ const CommentsList: React.FC<{ comments: ObjectComment[] }> = ({
   );
 };
 
+export const type2icon = (type: ObjectItemInput['type']) => {
+  switch (type) {
+    case 'request':
+      return 'exclamation';
+    case 'donation':
+      return 'heart';
+    case 'chat':
+    default:
+      return 'chat';
+  }
+};
+export const type2title = (type: ObjectItemInput['type']) => {
+  switch (type) {
+    case 'request':
+      return 'Help';
+    case 'donation':
+      return 'Donation';
+    case 'chat':
+    default:
+      return 'Chat';
+  }
+};
+
 export const ChatItem: React.FC<{
   item: ObjectItem;
   authenticated: boolean;
@@ -46,7 +69,7 @@ export const ChatItem: React.FC<{
   onVote,
   onComment,
 }) => {
-  const { author, title, description, created } = item;
+  const { type, author, title, description, created } = item;
 
   const [comment, setComment] = useState<string | null>(null);
 
@@ -59,10 +82,14 @@ export const ChatItem: React.FC<{
     return comments.sort((l, r) => (l.created < r.created ? -1 : 1));
   }, [comments]);
 
+  const icon: any = type2icon(type);
+
   const content = (
     <div className="chat-item" onClick={() => setExpanded(true)}>
-      <Icon name="chat" />
-      <div className="title">{title}</div>
+      <div className="title">
+        <Icon name={icon} />
+        {title}
+      </div>
       {expanded && (
         <div className="author-created">
           {formatAuthor(author)} on {new Date(created).toLocaleString()}
@@ -139,9 +166,10 @@ export const ChatItem: React.FC<{
   );
 };
 
-export const AddNewChat: React.FC<{
+export const AddNewChatObject: React.FC<{
+  type: ObjectItemInput['type'];
   onPost: (data: ObjectItemInput) => void;
-}> = ({ onPost }) => {
+}> = ({ type, onPost }) => {
   const [state, setState] = useState({} as any);
   const onChange = (e: any) => {
     const { name, value } = e.target;
@@ -150,6 +178,9 @@ export const AddNewChat: React.FC<{
   };
   return (
     <div className="add-new-chat">
+      <h4>
+        <Icon name={type2icon(type)} /> {type2title(type)}
+      </h4>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
@@ -157,7 +188,7 @@ export const AddNewChat: React.FC<{
           const { topic, message } = state;
 
           onPost({
-            type: 'chat',
+            type,
             title: topic || message,
             description: message,
           });
@@ -169,7 +200,12 @@ export const AddNewChat: React.FC<{
           name="topic"
           onChange={onChange}
         />
-        <Form.TextArea label="Message" name="message" onChange={onChange} />
+        <Form.TextArea
+          autoFocus
+          label="Message"
+          name="message"
+          onChange={onChange}
+        />
 
         <Form.Button primary>Post</Form.Button>
       </Form>

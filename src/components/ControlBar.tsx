@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Segment, Icon, Modal } from 'semantic-ui-react';
 import { ObjectItemInput } from '../types';
-import { AddNewChat } from './Chat';
+import { AddNewChatObject, type2icon, type2title } from './Chat';
 import { Login } from './Login';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
@@ -46,10 +46,11 @@ export const ControlBar: React.FC<{
       {showLogin && <Login />}
       {authenticated && (
         <>
-          {addType === 'chat' && (
+          {!!addType && (
             <Modal open size="tiny" closeIcon onClose={() => setAddType(null)}>
               <Modal.Content>
-                <AddNewChat
+                <AddNewChatObject
+                  type={addType}
                   onPost={(item) => {
                     onAdd(item)
                       .then(() => setAddType(null))
@@ -61,13 +62,19 @@ export const ControlBar: React.FC<{
           )}
         </>
       )}
-      <Button
-        icon="add"
-        basic
-        primary
-        content="New chat"
-        onClick={() => setAddType('chat')}
-      ></Button>
+      <h5>I want to post</h5>
+      {(['chat', 'request', 'donation'] as ObjectItemInput['type'][]).map(
+        (type) => (
+          <Button
+            key={type}
+            icon={type2icon(type)}
+            // basic
+            primary
+            content={type2title(type)}
+            onClick={() => setAddType(type)}
+          />
+        )
+      )}
     </Segment>
   );
 };
@@ -88,7 +95,8 @@ export const NavigationBar: React.FC<{
       (err) => {
         console.log('Error getting location', err);
         alert('Cannot get location');
-      }
+      },
+      { enableHighAccuracy: true }
     );
   };
   return (
