@@ -63,18 +63,21 @@ export const ControlBar: React.FC<{
         </>
       )}
       <h5>I want to post</h5>
-      {(['chat', 'request', 'donation'] as ObjectItemInput['type'][]).map(
-        (type) => (
-          <Button
-            key={type}
-            icon={type2icon(type)}
-            // basic
-            primary
-            content={type2title(type)}
-            onClick={() => setAddType(type)}
-          />
-        )
-      )}
+      {([
+        'chat',
+        'request',
+        'offer',
+        'donation',
+      ] as ObjectItemInput['type'][]).map((type) => (
+        <Button
+          key={type}
+          icon={type2icon(type)}
+          // basic
+          primary
+          content={type2title(type)}
+          onClick={() => setAddType(type)}
+        />
+      ))}
     </Segment>
   );
 };

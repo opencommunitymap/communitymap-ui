@@ -33,6 +33,8 @@ export const type2icon = (type: ObjectItemInput['type']) => {
   switch (type) {
     case 'request':
       return 'exclamation';
+    case 'offer':
+      return 'hand paper';
     case 'donation':
       return 'heart';
     case 'chat':
@@ -43,9 +45,11 @@ export const type2icon = (type: ObjectItemInput['type']) => {
 export const type2title = (type: ObjectItemInput['type']) => {
   switch (type) {
     case 'request':
-      return 'Help';
+      return 'Ask Help';
+    case 'offer':
+      return 'Offer Help';
     case 'donation':
-      return 'Donation';
+      return 'Donate';
     case 'chat':
     default:
       return 'Chat';

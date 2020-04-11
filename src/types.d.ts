@@ -21,7 +21,7 @@ export interface ObjectVote {
 export interface ObjectItemInput {
   title: string;
   description: string;
-  type: 'chat' | 'request' | 'donation';
+  type: 'chat' | 'request' | 'offer' | 'donation';
 }
 export interface ObjectItem extends ObjectItemInput {
   id: string;
