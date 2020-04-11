@@ -28,7 +28,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  min-width: 175px;
+  min-width: 190px;
   min-height: 40px;
   opacity: 0.85;
   user-select: none;
@@ -60,25 +60,37 @@
   transition: background 0.1s ease;
 }
 
+.chat-item {
+  cursor: pointer;
+}
 .chat-item .title {
   display: inline-block;
   font-weight: 600;
+  font-size: 1.2em;
 }
 .chat-item .like-widget {
   display: inline-flex;
   align-items: center;
 }
+.chat-item .author-created {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin: 0.5em 0;
+}
 .chat-item .actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1em;
+  margin-top: 0.5em;
 }
-.chat-item .like-widget button,
-.chat-item .comment-widget button {
+.chat-item .like-widget button {
   background: none !important;
-  padding: 0px !important;
-  margin: 5px 5px 5px -3px !important;
+  padding: 5px !important;
+  /* margin: 5px 5px 5px -3px !important; */
+}
+.chat-item .comment-widget button {
+  /* background: none !important; */
+  /* padding: 5px !important; */
 }
 .chat-item .like-widget > .votes-count {
   font-size: 1.5em;
@@ -89,17 +101,27 @@
 .chat-item .replies-count {
   font-size: 0.9em;
   font-weight: 400;
-  text-align: right;
+  padding-top: 8px;
+  /* text-align: right; */
+  /* padding: 5px 15px 0 0; */
 }
 .chat-item .leave-comment {
-  margin: 1em 0;
+  padding: 1em 0;
 }
 .chat-item .comments-section {
-  margin: 1em 0;
+  padding: 1em 0;
+}
+.chat-item .comments-section h4 {
+  opacity: 0.7;
 }
 .chat-item .comments-section .list .content .description {
-  margin: 0.35em 0;
-  font-size: 0.9em;
+  margin: 0.5em 0;
+  opacity: 0.8;
+  font-size: 0.8em;
+}
+.chat-item .comments-section .list .content .header {
+  font-weight: 500;
+  padding: 10px 5px;
 }
 
 #auth-bar {

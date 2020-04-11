@@ -70,6 +70,9 @@ export const ChatItem: React.FC<{
       )}
       <br />
       {expanded && description !== title && <div>{description}</div>}
+      {!!commentsCount && (
+        <div className="replies-count">{commentsCount} replies</div>
+      )}
       <div className="actions">
         <div className="like-widget">
           <Button
@@ -87,22 +90,21 @@ export const ChatItem: React.FC<{
 
         <div className="comment-widget">
           {comment === null && (
-            <Button onClick={() => !comment && setComment('')}>Reply</Button>
+            <Button basic onClick={() => !comment && setComment('')}>
+              Reply
+            </Button>
           )}
         </div>
       </div>
-      {!!commentsCount && (
-        <div className="replies-count">{commentsCount} replies</div>
-      )}
       {expanded && !!commentsCount && (
         <div className="comments-section">
           <h4>Replies</h4>
           <CommentsList comments={sortedComments!} />
         </div>
       )}
-      <div className="leave-comment">
-        {(comment !== null || expanded) &&
-          (authenticated ? (
+      {(comment !== null || expanded) &&
+        (authenticated ? (
+          <div className="leave-comment">
             <Form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -119,12 +121,12 @@ export const ChatItem: React.FC<{
                 onChange={(e) => setComment(e.target.value)}
               />
             </Form>
-          ) : (
-            <div style={{ textAlign: 'center' }}>
-              You need to register or sign in to be able to post
-            </div>
-          ))}
-      </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center' }}>
+            You need to register or sign in to be able to post
+          </div>
+        ))}
     </div>
   );
 
