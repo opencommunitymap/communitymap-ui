@@ -57,7 +57,7 @@ const useLoadObjects = (mapParams: any | null, user: firebase.User | null) => {
   useEffect(() => {
     if (!mapParams) return;
 
-    const objectIds = objects.map((o) => o.id);
+    const objectIds = objects.map((o) => o.id).slice(0, 10); // TODO fix!!!
     console.debug('Load comments for', objectIds);
     if (!objectIds.length) return;
 
