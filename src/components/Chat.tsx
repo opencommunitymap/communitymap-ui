@@ -54,20 +54,22 @@ export const type2title = (type: ObjectItemInput['type']) => {
 
 export const ChatItem: React.FC<{
   item: ObjectItem;
-  authenticated: boolean;
+  user: firebase.User | null;
   userVoted: boolean;
   votes: number;
   comments?: ObjectComment[];
   onVote: () => Promise<any>;
   onComment: (comment: string) => Promise<any>;
+  onClose: () => Promise<any>;
 }> = ({
   item,
-  authenticated,
+  user,
   userVoted,
   votes,
   comments,
   onVote,
   onComment,
+  onClose,
 }) => {
   const { type, author, title, description, created } = item;
 
@@ -116,7 +118,18 @@ export const ChatItem: React.FC<{
         </div>
 
         <div className="comment-widget">
-          {comment === null && (
+          {expanded && user?.uid === author && (
+            <Button
+              icon="close"
+              content="Close"
+              basic
+              onClick={() => {
+                if (window.confirm('Are you sure you want to close it?'))
+                  onClose().catch(reportError);
+              }}
+            />
+          )}
+          {comment === null && !expanded && (
             <Button basic onClick={() => !comment && setComment('')}>
               Reply
             </Button>
@@ -130,7 +143,7 @@ export const ChatItem: React.FC<{
         </div>
       )}
       {(comment !== null || expanded) &&
-        (authenticated ? (
+        (!!user ? (
           <div className="leave-comment">
             <Form
               onSubmit={(e) => {

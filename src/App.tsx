@@ -34,6 +34,7 @@ const useLoadObjects = (mapParams: any | null, user: firebase.User | null) => {
     const unsub = firebase
       .firestore()
       .collection('objects')
+      .where('open', '==', true)
       .where('loc', '>', new firebase.firestore.GeoPoint(minLat, minLng))
       .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng))
       .onSnapshot((snap) => {
@@ -141,8 +142,24 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
           author: user!.uid,
           created: timenow,
           updated: timenow,
+          open: true,
           loc: new firebase.firestore.GeoPoint(centerLat, centerLng),
         });
+    },
+    [mapParams, user]
+  );
+
+  const close = useCallback(
+    async (item: ObjectItem) => {
+      if (!user) {
+        alert('Temporary cannot close objects. Try again');
+        throw new Error('Cannot close object');
+      }
+      const timenow = new Date().toISOString();
+      return firebase.firestore().collection('objects').doc(item.id!).update({
+        open: false,
+        updated: timenow,
+      });
     },
     [mapParams, user]
   );
@@ -211,12 +228,13 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
               <Segment raised className="map-item left pointing label">
                 <ChatItem
                   item={it}
-                  authenticated={!!user}
+                  user={user}
                   userVoted={votesObj[it.id]?.userVoted}
                   votes={votesObj[it.id]?.count}
                   comments={commentsObj[it.id]}
                   onComment={async (comment) => leaveComment(it, comment)}
                   onVote={async () => voteUp(it)}
+                  onClose={async () => close(it)}
                 />
               </Segment>
             </MapItem>
