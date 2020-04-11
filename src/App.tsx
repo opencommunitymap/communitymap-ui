@@ -10,7 +10,7 @@ import {
 import { SplashScreen } from './components/SplashScreen';
 import { Maps, MapItem } from './components/Maps';
 import { ChatItem } from './components/Chat';
-import { ControlBar, AuthBar } from './components/ControlBar';
+import { ControlBar, AuthBar, NavigationBar } from './components/ControlBar';
 import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
@@ -187,7 +187,19 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
     <div className="home">
       <ControlBar authenticated={!!user} onAdd={(item) => postObject(item)} />
       <AuthBar user={user} />
+      <NavigationBar
+        onChangePosition={(lat, lng) => {
+          console.log('located', lat, lng);
+          setMapParams({
+            ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
+            centerLat: lat,
+            centerLng: lng,
+          });
+        }}
+      />
       <Maps
+        centerLat={mapParams?.centerLat}
+        centerLng={mapParams?.centerLng}
         onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
           setMapParams({ centerLat, centerLng, minLat, maxLat, minLng, maxLng })
         }

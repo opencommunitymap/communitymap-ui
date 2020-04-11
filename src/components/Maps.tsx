@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import GoogleMapReact from 'google-map-react';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
@@ -24,6 +24,8 @@ const defaultProps = {
 };
 
 interface MapsProps {
+  centerLat?: number;
+  centerLng?: number;
   onChange: (
     centerLat: number,
     centerLng: number,
@@ -34,7 +36,16 @@ interface MapsProps {
   ) => void;
 }
 
-export const Maps: React.FC<MapsProps> = ({ children, onChange }) => {
+export const Maps: React.FC<MapsProps> = ({
+  children,
+  centerLat,
+  centerLng,
+  onChange,
+}) => {
+  const center = useMemo(() => {
+    if (!centerLat || !centerLng) return undefined;
+    return { lat: centerLat, lng: centerLng };
+  }, [centerLat, centerLng]);
   return (
     <>
       <div id="center-pin">
@@ -43,6 +54,7 @@ export const Maps: React.FC<MapsProps> = ({ children, onChange }) => {
       <GoogleMapReact
         {...defaultProps}
         bootstrapURLKeys={{ key: GOOGLE_API_KEY }}
+        center={center}
         onChange={(props) => {
           const {
             center,

@@ -11,6 +11,13 @@
   padding: 1.5em;
 }
 
+#navigation-bar {
+  position: fixed;
+  bottom: 120px;
+  right: 8px;
+  z-index: 2;
+}
+
 /* .add-stuff-container {
   background: white;
   padding: 1em;
