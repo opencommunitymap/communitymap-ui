@@ -97,7 +97,7 @@ export const ChatItem: React.FC<{
       {expanded && !!commentsCount && (
         <div className="comments-section">
           <h4>Replies</h4>
-          <CommentsList comments={comments!} />
+          <CommentsList comments={sortedComments!} />
         </div>
       )}
       <div className="leave-comment">
