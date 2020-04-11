@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button, Icon, Modal, Form, List } from 'semantic-ui-react';
 import { ObjectItemInput, ObjectItem, ObjectComment } from '../types';
 import { reportError } from '../utils';
@@ -53,6 +53,11 @@ export const ChatItem: React.FC<{
   const [expanded, setExpanded] = useState(false);
 
   const commentsCount = comments?.length || 0;
+
+  const sortedComments = useMemo(() => {
+    if (!comments) return comments;
+    return comments.sort((l, r) => (l.created < r.created ? -1 : 1));
+  }, [comments]);
 
   const content = (
     <div className="chat-item" onClick={() => setExpanded(true)}>
@@ -110,22 +115,14 @@ export const ChatItem: React.FC<{
               <Form.Input
                 value={comment || ''}
                 placeholder="Your comment here"
-                action={
-                  <Button
-                    icon="send"
-                    // onClick={() =>
-                    //   !!comment &&
-                    //   onComment(comment)
-                    //     .then(() => setComment(null))
-                    //     .catch(reportError)
-                    // }
-                  />
-                }
+                action={<Button icon="send" />}
                 onChange={(e) => setComment(e.target.value)}
               />
             </Form>
           ) : (
-            <div>You need to register or sign in</div>
+            <div style={{ textAlign: 'center' }}>
+              You need to register or sign in to be able to post
+            </div>
           ))}
       </div>
     </div>
