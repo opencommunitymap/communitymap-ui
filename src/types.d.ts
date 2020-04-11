@@ -4,6 +4,7 @@ export interface Location {
 }
 
 export interface ObjectComment {
+  id: string;
   object_id: string;
   author: string;
   comment: string;
@@ -26,4 +27,5 @@ export interface ObjectItem extends ObjectItemInput {
   id: string;
   author: string;
   loc: Location;
+  created: string;
 }

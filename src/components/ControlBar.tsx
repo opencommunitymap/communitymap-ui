@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Button, Segment, Icon, Modal } from 'semantic-ui-react';
 import { ObjectItemInput } from '../types';
 import { AddNewChat } from './Chat';
 import { Login } from './Login';
@@ -6,47 +7,67 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { reportError } from '../utils';
 
+export const AuthBar: React.FC<{ user: firebase.User | null }> = ({ user }) => {
+  const [login, setLogin] = useState(false);
+  useEffect(() => {
+    if (user && login) {
+      setLogin(false);
+    }
+  }, [user, login]);
+
+  const signOut = () => firebase.auth().signOut();
+
+  return (
+    <div id="auth-bar">
+      {login && <Login title="" />}
+      {user ? (
+        <Button id="sign-out-button" basic icon size="large" onClick={signOut}>
+          <Icon name="sign out" />
+        </Button>
+      ) : (
+        <Button primary size="large" onClick={() => setLogin(true)}>
+          Sign in
+        </Button>
+      )}
+    </div>
+  );
+};
+
 export const ControlBar: React.FC<{
   authenticated: boolean;
   onAdd: (item: ObjectItemInput) => Promise<any>;
 }> = ({ authenticated, onAdd }) => {
   const [addType, setAddType] = useState<ObjectItemInput['type'] | null>(null);
-  const [login, setLogin] = useState(false);
 
-  const showLogin = login || (!authenticated && !!addType);
-
-  const signOut = () => {
-    firebase.auth().signOut();
-    setLogin(false); // just in case
-  };
+  const showLogin = !authenticated && !!addType;
 
   return (
-    <div id="control-bar">
+    <Segment id="control-bar">
       {showLogin && <Login />}
       {authenticated && (
         <>
           {addType === 'chat' && (
-            <div className="add-stuff-container">
-              <button className="close-icon" onClick={() => setAddType(null)}>
-                X
-              </button>
-              <AddNewChat
-                onPost={(item) => {
-                  onAdd(item)
-                    .then(() => setAddType(null))
-                    .catch(reportError);
-                }}
-              />
-            </div>
+            <Modal open size="tiny" closeIcon onClose={() => setAddType(null)}>
+              <Modal.Content>
+                <AddNewChat
+                  onPost={(item) => {
+                    onAdd(item)
+                      .then(() => setAddType(null))
+                      .catch(reportError);
+                  }}
+                />
+              </Modal.Content>
+            </Modal>
           )}
         </>
       )}
-      <button onClick={() => setAddType('chat')}>New chat</button>
-      {authenticated ? (
-        <button onClick={signOut}>Sign out</button>
-      ) : (
-        <button onClick={() => setLogin(true)}>Register or sign in</button>
-      )}
-    </div>
+      <Button
+        icon="add"
+        basic
+        primary
+        content="New chat"
+        onClick={() => setAddType('chat')}
+      ></Button>
+    </Segment>
   );
 };

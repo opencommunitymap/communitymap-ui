@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 import {
   ObjectItem,
@@ -9,12 +10,13 @@ import {
 import { SplashScreen } from './components/SplashScreen';
 import { Maps, MapItem } from './components/Maps';
 import { ChatItem } from './components/Chat';
-import { ControlBar } from './components/ControlBar';
+import { ControlBar, AuthBar } from './components/ControlBar';
 import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { firebaseConfig } from './firebaseConfig';
+import { Segment } from 'semantic-ui-react';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -66,6 +68,7 @@ const useLoadObjects = (mapParams: any | null, user: firebase.User | null) => {
         const objs: { [k: string]: ObjectComment[] } = {};
         snap.forEach((doc) => {
           const comment = doc.data() as ObjectComment;
+          comment.id = doc.id;
           const objComms = objs[comment.object_id] || [];
           objComms.push(comment);
           objs[comment.object_id] = objComms;
@@ -183,6 +186,7 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
   return (
     <div className="home">
       <ControlBar authenticated={!!user} onAdd={(item) => postObject(item)} />
+      <AuthBar user={user} />
       <Maps
         onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
           setMapParams({ centerLat, centerLng, minLat, maxLat, minLng, maxLng })
@@ -192,15 +196,17 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
           votesObj &&
           objects.map((it) => (
             <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-              <ChatItem
-                item={it}
-                authenticated={!!user}
-                userVoted={votesObj[it.id]?.userVoted}
-                votes={votesObj[it.id]?.count}
-                comments={commentsObj[it.id]}
-                onComment={async (comment) => leaveComment(it, comment)}
-                onVote={async () => voteUp(it)}
-              />
+              <Segment raised className="map-item left pointing label">
+                <ChatItem
+                  item={it}
+                  authenticated={!!user}
+                  userVoted={votesObj[it.id]?.userVoted}
+                  votes={votesObj[it.id]?.count}
+                  comments={commentsObj[it.id]}
+                  onComment={async (comment) => leaveComment(it, comment)}
+                  onVote={async () => voteUp(it)}
+                />
+              </Segment>
             </MapItem>
           ))}
       </Maps>

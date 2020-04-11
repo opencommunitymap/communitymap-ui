@@ -4,7 +4,9 @@ import 'firebase/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 
-export const Login = () => {
+export const Login: React.FC<{ title?: string }> = ({
+  title = 'You need to sign in to continue',
+}) => {
   useEffect(() => {
     var uiConfig = {
       signInFlow: 'popup',
@@ -35,7 +37,7 @@ export const Login = () => {
   return (
     <div id="login-container">
       <div className="segment">
-        <h4>You need to sign in to continue</h4>
+        {!!title && <h4>{title}</h4>}
         <div id="firebaseui-auth-container"></div>
       </div>
     </div>
