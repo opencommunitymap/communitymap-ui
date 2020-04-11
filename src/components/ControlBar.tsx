@@ -82,17 +82,21 @@ export const ControlBar: React.FC<{
 export const NavigationBar: React.FC<{
   onChangePosition: (lat: number, lng: number) => void;
 }> = ({ onChangePosition }) => {
+  const [loading, setLoading] = useState(false);
   const locate = () => {
     const geo = window.navigator.geolocation;
     if (!geo) {
       alert("Your browser doesn't support geolocation");
       return;
     }
+    setLoading(true);
     geo.getCurrentPosition(
       (pos) => {
+        setLoading(false);
         onChangePosition(pos.coords.latitude, pos.coords.longitude);
       },
       (err) => {
+        setLoading(false);
         console.log('Error getting location', err);
         alert('Cannot get location');
       },
@@ -101,7 +105,12 @@ export const NavigationBar: React.FC<{
   };
   return (
     <div id="navigation-bar">
-      <Button primary icon="location arrow" onClick={locate}></Button>
+      <Button
+        loading={loading}
+        primary
+        icon="location arrow"
+        onClick={locate}
+      ></Button>
     </div>
   );
 };
