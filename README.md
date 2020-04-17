@@ -5,19 +5,20 @@ This project is home for number of location-based local community services - mod
 Few of the services are built-in and more are to be pluggable.
 
 Existing and planned services
-* Public local chat (70% done)
-* Call for help (70% done)
-* Donation or service offer (70% done)
-* Direct messages
-* Local news
-* Communication with local places, online services
-* SDK/API for 3rd party integration
-* Job offers
-* Local projects - crowsourcing, organization
-* Crowdfunding for local businesses
-* Business demand map
-* Surveys, petitions
-* Games
+
+- Public local chat (70% done)
+- Call for help (70% done)
+- Donation or service offer (70% done)
+- Direct messages
+- Local news
+- Communication with local places, online services
+- SDK/API for 3rd party integration
+- Job offers
+- Local projects - crowdsourcing, organization
+- Crowdfunding for local businesses
+- Business demand map
+- Surveys, petitions
+- Games
 
 Objects are pinned to certain locations or areas. Users can react and comment.
 
