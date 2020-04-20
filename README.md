@@ -34,9 +34,19 @@ git clone git@github.com:dmitry-yudakov/community-map.git
 cd community-map/
 
 yarn install
+
+yarn start
 ```
 
-Create _.env_ file and fill in your Google Maps Key
+You will use pre-configured _Community Map Dev_ firebase project.
+
+### Google Maps for Development purposes only
+
+The maps with show 'For development purposes only' watermark all over the map.
+
+To fix that create _.env_ file and fill in your Google Maps Key.
+
+## Configure with different
 
 ```
 cp .env.sample .env
