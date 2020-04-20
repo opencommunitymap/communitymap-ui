@@ -17,6 +17,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { firebaseConfig } from './firebaseConfig';
 import { Segment } from 'semantic-ui-react';
+import dayjs from 'dayjs';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -30,17 +31,21 @@ const useLoadObjects = (mapParams: any | null, user: firebase.User | null) => {
     const { minLat, maxLat, minLng, maxLng } = mapParams;
     console.debug('Load by', mapParams);
 
+    const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
     const unsub = firebase
       .firestore()
       .collection('objects')
-      .where('open', '==', true)
+      // .where('valid_until', '>=', now)
       .where('loc', '>', new firebase.firestore.GeoPoint(minLat, minLng))
       .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng))
       .onSnapshot((snap) => {
-        const objs = snap.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() } as ObjectItem)
-        );
+        const objs = snap.docs
+          .filter((doc) => {
+            const valid_until = doc.data()?.valid_until;
+            return !!valid_until && valid_until >= now;
+          })
+          .map((doc) => ({ id: doc.id, ...doc.data() } as ObjectItem));
         console.debug('Loaded objects', objs);
         setObjects(objs);
       });
@@ -142,7 +147,6 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
           author: user!.uid,
           created: timenow,
           updated: timenow,
-          open: true,
           loc: new firebase.firestore.GeoPoint(centerLat, centerLng),
         });
     },
@@ -157,7 +161,7 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
       }
       const timenow = new Date().toISOString();
       return firebase.firestore().collection('objects').doc(item.id!).update({
-        open: false,
+        valid_until: dayjs().toISOString(),
         updated: timenow,
       });
     },

@@ -22,6 +22,7 @@ export interface ObjectItemInput {
   title: string;
   description: string;
   type: 'chat' | 'request' | 'offer' | 'donation';
+  valid_until: string;
 }
 export interface ObjectItem extends ObjectItemInput {
   id: string;

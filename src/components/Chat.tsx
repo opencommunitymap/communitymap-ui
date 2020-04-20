@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Button, Icon, Modal, Form, List } from 'semantic-ui-react';
 import { ObjectItemInput, ObjectItem, ObjectComment } from '../types';
 import { reportError } from '../utils';
+import dayjs from 'dayjs';
 
 const formatAuthor = (author: string) => {
   return author.substr(0, 8);
@@ -183,11 +184,33 @@ export const ChatItem: React.FC<{
   );
 };
 
+const minutes2text = (minutes: number) => {
+  if (minutes < 60) return `${minutes} minutes`;
+  if (minutes < 24 * 60) return `${minutes / 60} hours`;
+  return `${minutes / (24 * 60)} days`;
+};
+
+const validUntilOptions = [
+  5,
+  15,
+  30,
+  60,
+  3 * 60,
+  12 * 60,
+  24 * 60,
+  2 * 24 * 60,
+  7 * 24 * 60,
+].map((minutes) => ({
+  value: minutes,
+  key: minutes,
+  text: minutes2text(minutes),
+}));
+
 export const AddNewChatObject: React.FC<{
   type: ObjectItemInput['type'];
   onPost: (data: ObjectItemInput) => void;
 }> = ({ type, onPost }) => {
-  const [state, setState] = useState({} as any);
+  const [state, setState] = useState({ valid_until: 12 * 60 } as any);
   const onChange = (e: any) => {
     const { name, value } = e.target;
     console.debug(e.target.name, e.target.value);
@@ -202,12 +225,13 @@ export const AddNewChatObject: React.FC<{
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
-          const { topic, message } = state;
+          const { topic, message, valid_until } = state;
 
           onPost({
             type,
             title: topic || message,
             description: message,
+            valid_until: dayjs().add(valid_until, 'minute').toISOString(),
           });
         }}
       >
@@ -222,6 +246,15 @@ export const AddNewChatObject: React.FC<{
           label="Message"
           name="message"
           onChange={onChange}
+        />
+        <Form.Dropdown
+          options={validUntilOptions}
+          label="Valid for next"
+          selection
+          defaultValue={state.valid_until}
+          onChange={(e, { value }) =>
+            setState({ ...state, valid_until: value })
+          }
         />
 
         <Form.Button primary>Post</Form.Button>
