@@ -4,6 +4,7 @@ import { ObjectItemInput, ObjectItem, ObjectComment } from '../types';
 import { reportError } from '../utils';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
+import { useUserPublicInfo } from '../DB';
 
 const formatAuthor = (author: string) => {
   return author.substr(0, 8);
@@ -84,6 +85,8 @@ export const ChatItem: React.FC<{
 }) => {
   const { type, author, title, description, created } = item;
 
+  const authorInfo = useUserPublicInfo(author);
+
   const [comment, setComment] = useState<string | null>(null);
 
   const commentsCount = comments?.length || 0;
@@ -103,7 +106,7 @@ export const ChatItem: React.FC<{
       </div>
       {expanded && (
         <div className="author-created">
-          <Link to={`/users/${author}`}>{formatAuthor(author)}</Link> on{' '}
+          <Link to={`/users/${author}`}>{authorInfo?.name}</Link> on{' '}
           {new Date(created).toLocaleString()}
         </div>
       )}
