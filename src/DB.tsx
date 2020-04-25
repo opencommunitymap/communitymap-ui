@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   ObjectItem,
   ObjectComment,
   ObjectVote,
   MapParams,
   ObjectItemInput,
+  UserProfile,
 } from './types';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
@@ -186,6 +187,34 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
   return data;
 };
 
+export const useAsyncStatus = (cb: () => Promise<any>) => {
+  const [status, setStatus] = useState({
+    pending: false,
+    success: false,
+    error: '',
+  });
+  const ref = useRef(cb);
+  ref.current = cb;
+
+  const func = useCallback(
+    (...args: any) => {
+      setStatus({ ...status, pending: true, error: '' });
+      ref
+        .current()
+        .then((res) => {
+          setStatus({ ...status, pending: false, success: true });
+          return res;
+        })
+        .catch((err) => {
+          setStatus({ ...status, pending: false, error: err.toString() });
+        });
+    },
+    [status]
+  );
+
+  return useMemo(() => ({ status, func }), [status, func]);
+};
+
 export const postObject = async (
   user: firebase.User | null,
   mapParams: MapParams | null,
@@ -257,4 +286,45 @@ export const leaveComment = async (
     comment,
     created: timenow,
   });
+};
+
+export const useUserPublicInfo = (userId: string) => {
+  const [object, setObject] = useState<UserProfile | null | undefined>();
+
+  useEffect(() => {
+    console.debug('Load user id', userId);
+
+    const unsub = firebase
+      .firestore()
+      .collection('users-public')
+      .doc(userId)
+      .onSnapshot((doc) => {
+        if (!doc.exists) {
+          setObject(null);
+          console.log('user not found');
+          return;
+        }
+        const objectInfo = { id: doc.id, ...doc.data() } as UserProfile;
+        console.debug('Loaded objects', objectInfo);
+        setObject(objectInfo);
+      });
+    return unsub;
+  }, [userId]);
+
+  return object;
+};
+
+export const saveUserPublicInfo = async (userInfo: UserProfile) => {
+  const { id, ...data } = userInfo;
+
+  const timenow = new Date().toISOString();
+  return firebase
+    .firestore()
+    .collection('users-public')
+    .doc(id)
+    .set({
+      ...data,
+      created: data.created || timenow,
+      updated: timenow,
+    });
 };

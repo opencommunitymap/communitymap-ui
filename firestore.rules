@@ -16,5 +16,10 @@ service cloud.firestore {
       allow create: if request.auth.uid != null && request.auth.uid == request.resource.data.author;
       allow update: if request.auth.uid != null && request.auth.uid == resource.data.author;
     }
+    match /users-public/{userId} {
+      allow read;
+      allow create: if request.auth.uid != null && userId == request.auth.uid;
+      allow update: if request.auth.uid != null && userId == request.auth.uid;
+    }
   }
 }

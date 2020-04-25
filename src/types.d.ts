@@ -39,3 +39,11 @@ export interface MapParams {
   minLng: number;
   maxLng: number;
 }
+
+export interface UserProfile {
+  id: string;
+  created?: string;
+  updated?: string;
+  name: string;
+  // gender: 'male'|'female'|null;
+}

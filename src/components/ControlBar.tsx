@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Segment, Icon, Modal } from 'semantic-ui-react';
+import { Button, Segment, Icon, Modal, Dropdown } from 'semantic-ui-react';
 import { ObjectItemInput } from '../types';
 import { AddNewChatObject, type2icon, type2title } from './Chat';
 import { Login } from './Login';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { reportError } from '../utils';
+import { EditUserProfile } from './Profile';
 
 export const AuthBar: React.FC<{ user: firebase.User | null }> = ({ user }) => {
   const [login, setLogin] = useState(false);
@@ -15,15 +16,44 @@ export const AuthBar: React.FC<{ user: firebase.User | null }> = ({ user }) => {
     }
   }, [user, login]);
 
+  const [showProfile, setShowProfile] = useState(false);
+
   const signOut = () => firebase.auth().signOut();
 
   return (
     <div id="auth-bar">
       {login && <Login title="" />}
+      {showProfile && !!user && (
+        <Modal open closeIcon onClose={() => setShowProfile(false)}>
+          <Modal.Header>Your profile</Modal.Header>
+          <Modal.Content>
+            <EditUserProfile user={user} />
+          </Modal.Content>
+        </Modal>
+      )}
       {user ? (
-        <Button id="sign-out-button" basic icon size="large" onClick={signOut}>
-          <Icon name="sign out" />
-        </Button>
+        <Dropdown
+          trigger={
+            <Button basic icon size="large">
+              <Icon name="user outline" />
+            </Button>
+          }
+          pointing="top right"
+          icon={null}
+        >
+          <Dropdown.Menu>
+            <Dropdown.Item disabled>{user.email}</Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={() => setShowProfile(true)}>
+              <Icon name="user" />
+              Profile
+            </Dropdown.Item>
+            <Dropdown.Item onClick={signOut}>
+              <Icon name="log out" />
+              Log out
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       ) : (
         <Button primary size="large" onClick={() => setLogin(true)}>
           Sign in
