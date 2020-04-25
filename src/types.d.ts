@@ -30,3 +30,12 @@ export interface ObjectItem extends ObjectItemInput {
   loc: Location;
   created: string;
 }
+
+export interface MapParams {
+  centerLat: number;
+  centerLng: number;
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+}
