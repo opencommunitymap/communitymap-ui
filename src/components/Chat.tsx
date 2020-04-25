@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Button, Icon, Modal, Form, List } from 'semantic-ui-react';
+import { Button, Icon, Form, List } from 'semantic-ui-react';
 import { ObjectItemInput, ObjectItem, ObjectComment } from '../types';
 import { reportError } from '../utils';
 import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
 
 const formatAuthor = (author: string) => {
   return author.substr(0, 8);
@@ -19,7 +20,8 @@ const CommentsList: React.FC<{ comments: ObjectComment[] }> = ({
           <List.Item key={id}>
             <List.Content>
               <List.Description>
-                {formatAuthor(author)} on {new Date(created).toLocaleString()}
+                <Link to={`/users/${author}`}>{formatAuthor(author)}</Link> on{' '}
+                {new Date(created).toLocaleString()}
               </List.Description>
               <List.Header>{comment}</List.Header>
             </List.Content>
@@ -63,6 +65,8 @@ export const ChatItem: React.FC<{
   userVoted: boolean;
   votes: number;
   comments?: ObjectComment[];
+  expanded?: boolean;
+  onClick?: () => void;
   onVote: () => Promise<any>;
   onComment: (comment: string) => Promise<any>;
   onClose: () => Promise<any>;
@@ -72,6 +76,8 @@ export const ChatItem: React.FC<{
   userVoted,
   votes,
   comments,
+  expanded,
+  onClick,
   onVote,
   onComment,
   onClose,
@@ -79,8 +85,6 @@ export const ChatItem: React.FC<{
   const { type, author, title, description, created } = item;
 
   const [comment, setComment] = useState<string | null>(null);
-
-  const [expanded, setExpanded] = useState(false);
 
   const commentsCount = comments?.length || 0;
 
@@ -91,15 +95,16 @@ export const ChatItem: React.FC<{
 
   const icon: any = type2icon(type);
 
-  const content = (
-    <div className="chat-item" onClick={() => setExpanded(true)}>
+  return (
+    <div className="chat-item" onClick={onClick}>
       <div className="title">
         <Icon name={icon} />
         {title}
       </div>
       {expanded && (
         <div className="author-created">
-          {formatAuthor(author)} on {new Date(created).toLocaleString()}
+          <Link to={`/users/${author}`}>{formatAuthor(author)}</Link> on{' '}
+          {new Date(created).toLocaleString()}
         </div>
       )}
       <br />
@@ -173,14 +178,6 @@ export const ChatItem: React.FC<{
           </div>
         ))}
     </div>
-  );
-
-  return expanded ? (
-    <Modal open closeIcon size="tiny" onClose={() => setExpanded(false)}>
-      <Modal.Content scrolling>{content}</Modal.Content>
-    </Modal>
-  ) : (
-    content
   );
 };
 

@@ -109,6 +109,83 @@ export const useLoadObjects = (
   return data;
 };
 
+export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
+  const [object, setObject] = useState<ObjectItem | null | undefined>();
+  const [comments, setComments] = useState<ObjectComment[] | null>(null);
+  const [votesInfo, setVotesInfo] = useState<{
+    count: number;
+    userVoted: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    console.debug('Load by id', id);
+
+    const unsub = firebase
+      .firestore()
+      .collection('objects')
+      .doc(id)
+      .onSnapshot((doc) => {
+        if (!doc.exists) {
+          setObject(null);
+          console.log('object not found');
+          return;
+        }
+        const objectInfo = { id: doc.id, ...doc.data() } as ObjectItem;
+        console.debug('Loaded objects', objectInfo);
+        setObject(objectInfo);
+      });
+    return unsub;
+  }, [id]);
+
+  useEffect(() => {
+    console.debug('Load comments for', id);
+
+    const unsubComments = firebase
+      .firestore()
+      .collection('comments')
+      .where('object_id', '==', id)
+      .orderBy('created')
+      .onSnapshot((snap) => {
+        const comms: ObjectComment[] = snap.docs.map((doc) => {
+          return { id: doc.id, ...doc.data() } as ObjectComment;
+        });
+        console.debug('Loaded comments', comms);
+        setComments(comms);
+      });
+
+    const unsubVotes = firebase
+      .firestore()
+      .collection('votes')
+      .where('object_id', '==', id)
+      .onSnapshot((snap) => {
+        const objectVotingInfo = {
+          count: 0,
+          userVoted: false,
+        };
+        snap.forEach((doc) => {
+          const vote = doc.data() as ObjectVote;
+          objectVotingInfo.count += vote.value;
+          if (user?.uid === vote.author) {
+            objectVotingInfo.userVoted = true;
+          }
+        });
+        console.debug('Loaded votes', objectVotingInfo);
+        setVotesInfo(objectVotingInfo);
+      });
+    return () => {
+      unsubComments();
+      unsubVotes();
+    };
+  }, [id, user]);
+
+  const data = useMemo(() => ({ object, comments, votesInfo }), [
+    object,
+    comments,
+    votesInfo,
+  ]);
+  return data;
+};
+
 export const postObject = async (
   user: firebase.User | null,
   mapParams: MapParams | null,
