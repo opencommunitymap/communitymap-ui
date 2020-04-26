@@ -90,7 +90,7 @@ export const ChatItem: React.FC<{
 }) => {
   const { type, author, title, description, created } = item;
 
-  const authorInfo = useUserPublicInfo(author);
+  const authorInfo = useUserPublicInfo(author, true);
 
   const [comment, setComment] = useState<string | null>(null);
 

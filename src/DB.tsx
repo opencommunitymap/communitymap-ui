@@ -288,17 +288,14 @@ export const leaveComment = async (
   });
 };
 
-export const useUserPublicInfo = (userId: string) => {
+export const useUserPublicInfo = (userId: string, subscribe = false) => {
   const [object, setObject] = useState<UserProfile | null | undefined>();
 
   useEffect(() => {
     console.debug('Load user id', userId);
-
-    const unsub = firebase
-      .firestore()
-      .collection('users-public')
-      .doc(userId)
-      .onSnapshot((doc) => {
+    const ref = firebase.firestore().collection('users-public').doc(userId);
+    if (subscribe) {
+      const unsub = ref.onSnapshot((doc) => {
         if (!doc.exists) {
           setObject(null);
           console.log('user not found');
@@ -308,7 +305,14 @@ export const useUserPublicInfo = (userId: string) => {
         console.debug('Loaded objects', objectInfo);
         setObject(objectInfo);
       });
-    return unsub;
+      return unsub;
+    }
+
+    ref.get().then((doc) => {
+      const objectInfo = { id: doc.id, ...doc.data() } as UserProfile;
+      console.debug('Resolved once', objectInfo);
+      setObject(objectInfo);
+    });
   }, [userId]);
 
   return object;

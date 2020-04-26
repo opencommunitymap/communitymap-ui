@@ -5,7 +5,7 @@ import { useUserPublicInfo, useAsyncStatus, saveUserPublicInfo } from '../DB';
 export const EditUserProfile: React.FC<{ user: firebase.User }> = ({
   user,
 }) => {
-  const info = useUserPublicInfo(user.uid);
+  const info = useUserPublicInfo(user.uid, true);
   const [changed, setChanged] = useState<{ name: string } | null>(null);
 
   const { status, func: saveInfo } = useAsyncStatus(async () => {

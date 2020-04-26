@@ -6,7 +6,7 @@ import { Loader } from 'semantic-ui-react';
 export const UserPage = () => {
   const { userId } = useParams();
 
-  const userInfo = useUserPublicInfo(userId || '');
+  const userInfo = useUserPublicInfo(userId || '', true);
   if (userInfo === undefined) return <Loader active />;
   if (userInfo === null)
     return <div>The user has't filled his/her details yet</div>;
