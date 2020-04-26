@@ -8,7 +8,8 @@ export const UserPage = () => {
 
   const userInfo = useUserPublicInfo(userId || '');
   if (userInfo === undefined) return <Loader active />;
-  if (userInfo === null) return <div>User not found :(</div>;
+  if (userInfo === null)
+    return <div>The user has't filled his/her details yet</div>;
 
   return (
     <div style={{ lineHeight: '2em' }}>
