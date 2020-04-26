@@ -10,25 +10,30 @@ const formatAuthor = (author: string) => {
   return author.substr(0, 8);
 };
 
+const CommentView: React.FC<{ comment: ObjectComment }> = ({ comment: c }) => {
+  const { id, author, comment, created } = c;
+  const authorInfo = useUserPublicInfo(author);
+  return (
+    <List.Item>
+      <List.Content>
+        <List.Description>
+          <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '}
+          on {new Date(created).toLocaleString()}
+        </List.Description>
+        <List.Header>{comment}</List.Header>
+      </List.Content>
+    </List.Item>
+  );
+};
+
 const CommentsList: React.FC<{ comments: ObjectComment[] }> = ({
   comments,
 }) => {
   return (
     <List relaxed divided size="big">
-      {comments.map((c) => {
-        const { id, author, comment, created } = c;
-        return (
-          <List.Item key={id}>
-            <List.Content>
-              <List.Description>
-                <Link to={`/users/${author}`}>{formatAuthor(author)}</Link> on{' '}
-                {new Date(created).toLocaleString()}
-              </List.Description>
-              <List.Header>{comment}</List.Header>
-            </List.Content>
-          </List.Item>
-        );
-      })}
+      {comments.map((c) => (
+        <CommentView key={c.id} comment={c} />
+      ))}
     </List>
   );
 };
