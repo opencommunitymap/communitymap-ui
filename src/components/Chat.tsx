@@ -6,12 +6,8 @@ import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { useUserPublicInfo } from '../DB';
 
-const formatAuthor = (author: string) => {
-  return author.substr(0, 8);
-};
-
 const CommentView: React.FC<{ comment: ObjectComment }> = ({ comment: c }) => {
-  const { id, author, comment, created } = c;
+  const { author, comment, created } = c;
   const authorInfo = useUserPublicInfo(author);
   return (
     <List.Item>

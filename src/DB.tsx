@@ -313,7 +313,7 @@ export const useUserPublicInfo = (userId: string, subscribe = false) => {
       console.debug('Resolved once', objectInfo);
       setObject(objectInfo);
     });
-  }, [userId]);
+  }, [userId, subscribe]);
 
   return object;
 };
