@@ -106,8 +106,8 @@ export const ChatItem: React.FC<{
       </div>
       {expanded && (
         <div className="author-created">
-          <Link to={`/users/${author}`}>{authorInfo?.name}</Link> on{' '}
-          {new Date(created).toLocaleString()}
+          <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '}
+          on {new Date(created).toLocaleString()}
         </div>
       )}
       <br />
