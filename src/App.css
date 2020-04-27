@@ -78,15 +78,17 @@
 }
 
 .chat-item {
-  cursor: pointer;
+  cursor: default;
 }
 .chat-item .title {
+  cursor: pointer;
   display: inline-block;
   font-weight: 600;
   font-size: 1.2em;
   overflow: hidden;
   text-overflow: ellipsis;
   height: 2em;
+  width: 100%;
 }
 .chat-item .like-widget {
   display: inline-flex;

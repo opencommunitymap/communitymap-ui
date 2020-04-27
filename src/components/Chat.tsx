@@ -100,8 +100,8 @@ export const ChatItem: React.FC<{
   const icon: any = type2icon(type);
 
   return (
-    <div className="chat-item" onClick={onClick}>
-      <div className="title">
+    <div className="chat-item">
+      <div className="title" onClick={onClick}>
         <Icon name={icon} />
         {title}
       </div>
