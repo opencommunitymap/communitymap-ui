@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
-import { MapParams } from './types';
+import { MapParams, ObjectItem, ObjectComment } from './types';
 import { SplashScreen } from './components/SplashScreen';
 import { Maps, MapItem } from './components/Maps';
 import { ChatItem } from './components/Chat';
@@ -32,6 +32,29 @@ import { Segment, Modal, Loader } from 'semantic-ui-react';
 firebase.initializeApp(firebaseConfig);
 
 if (process.env.NODE_ENV === 'production') firebase.analytics();
+
+const MapObjectRender: React.FC<{
+  user: firebase.User | null;
+  item: ObjectItem;
+  comments?: ObjectComment[];
+  votesInfo: { count: number; userVoted: boolean };
+}> = ({ user, item, votesInfo, comments }) => {
+  const router = useHistory();
+
+  return (
+    <ChatItem
+      item={item}
+      user={user}
+      userVoted={votesInfo?.userVoted}
+      votes={votesInfo?.count}
+      comments={comments}
+      onClick={() => router.push(`/object/${item.id}`)}
+      onComment={async (comment) => leaveComment(user, item, comment)}
+      onVote={async () => voteUp(user, item)}
+      onClose={async () => closeObject(user, item)}
+    />
+  );
+};
 
 const DetailedObjectRender: React.FC<{ user: firebase.User | null }> = ({
   user,
@@ -104,16 +127,11 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
           objects.map((it) => (
             <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
               <Segment raised className="map-item left pointing label">
-                <ChatItem
-                  item={it}
+                <MapObjectRender
                   user={user}
-                  userVoted={votesObj[it.id]?.userVoted}
-                  votes={votesObj[it.id]?.count}
+                  item={it}
+                  votesInfo={votesObj[it.id]}
                   comments={commentsObj[it.id]}
-                  onClick={() => router.push(`/object/${it.id}`)}
-                  onComment={async (comment) => leaveComment(user, it, comment)}
-                  onVote={async () => voteUp(user, it)}
-                  onClose={async () => closeObject(user, it)}
                 />
               </Segment>
             </MapItem>
