@@ -7,6 +7,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { reportError } from '../utils';
 import { EditUserProfile } from './Profile';
+import { AddNewPlaceObject } from './Place';
 
 export const AuthBar: React.FC<{ user: firebase.User | null }> = ({ user }) => {
   const [login, setLogin] = useState(false);
@@ -63,6 +64,18 @@ export const AuthBar: React.FC<{ user: firebase.User | null }> = ({ user }) => {
   );
 };
 
+const AddNewObjectRender: React.FC<{
+  type: ObjectItemInput['type'];
+  onAdd: (item: ObjectItemInput) => Promise<any>;
+}> = ({ type, onAdd }) => {
+  switch (type) {
+    case 'place':
+      return <AddNewPlaceObject type={type} onPost={onAdd} />;
+    default:
+      return <AddNewChatObject type={type} onPost={onAdd} />;
+  }
+};
+
 export const ControlBar: React.FC<{
   authenticated: boolean;
   onAdd: (item: ObjectItemInput) => Promise<any>;
@@ -79,13 +92,13 @@ export const ControlBar: React.FC<{
           {!!addType && (
             <Modal open size="tiny" closeIcon onClose={() => setAddType(null)}>
               <Modal.Content>
-                <AddNewChatObject
+                <AddNewObjectRender
                   type={addType}
-                  onPost={(item) => {
-                    onAdd(item)
+                  onAdd={(it) =>
+                    onAdd(it)
                       .then(() => setAddType(null))
-                      .catch(reportError);
-                  }}
+                      .catch(reportError)
+                  }
                 />
               </Modal.Content>
             </Modal>
@@ -108,6 +121,14 @@ export const ControlBar: React.FC<{
           onClick={() => setAddType(type)}
         />
       ))}
+      <hr />
+      <Button
+        key="place"
+        icon="building"
+        primary
+        content="Place"
+        onClick={() => setAddType('place')}
+      />
     </Segment>
   );
 };

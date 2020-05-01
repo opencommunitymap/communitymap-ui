@@ -1,38 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Button, Icon, Form, List } from 'semantic-ui-react';
+import { Button, Icon, Form } from 'semantic-ui-react';
 import { ObjectItemInput, ObjectItem, ObjectComment } from '../types';
 import { reportError } from '../utils';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { useUserPublicInfo } from '../DB';
-
-const CommentView: React.FC<{ comment: ObjectComment }> = ({ comment: c }) => {
-  const { author, comment, created } = c;
-  const authorInfo = useUserPublicInfo(author);
-  return (
-    <List.Item>
-      <List.Content>
-        <List.Description>
-          <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '}
-          on {new Date(created).toLocaleString()}
-        </List.Description>
-        <List.Header>{comment}</List.Header>
-      </List.Content>
-    </List.Item>
-  );
-};
-
-const CommentsList: React.FC<{ comments: ObjectComment[] }> = ({
-  comments,
-}) => {
-  return (
-    <List relaxed divided size="big">
-      {comments.map((c) => (
-        <CommentView key={c.id} comment={c} />
-      ))}
-    </List>
-  );
-};
+import { CommentsList } from './Comments';
 
 export const type2icon = (type: ObjectItemInput['type']) => {
   switch (type) {
@@ -100,7 +73,7 @@ export const ChatItem: React.FC<{
   const icon: any = type2icon(type);
 
   return (
-    <div className="chat-item">
+    <div className="item chat-item">
       <div className="title" onClick={onClick}>
         <Icon name={icon} />
         {title}
