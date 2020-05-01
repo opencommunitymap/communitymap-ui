@@ -52,7 +52,6 @@ export const EditUserProfile: React.FC<{ user: firebase.User }> = ({
   )
   const BtnSettings = () => <Button circular icon='settings' onClick={() => setToggle(toggled => !toggled )}/>
   
-
   return (
     <Card>
     <Image src='http://dwinery.com/ocm/wp-content/uploads/elementor/thumbs/avatar-ookvknm0adkt2o1cwyctxzbsfccgeo4fo00qr8xhao.png' wrapped ui={false} />
