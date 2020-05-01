@@ -8,8 +8,10 @@ import 'firebase/auth';
 import { reportError } from '../utils';
 import { EditUserProfile } from './Profile';
 import { AddNewPlaceObject } from './Place';
+import { useAuth } from '../Auth';
 
-export const AuthBar: React.FC<{ user: firebase.User | null }> = ({ user }) => {
+export const AuthBar: React.FC = () => {
+  const user = useAuth();
   const [login, setLogin] = useState(false);
   useEffect(() => {
     if (user && login) {

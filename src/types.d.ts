@@ -1,3 +1,5 @@
+export type AuthUser = undefined | null | firebase.User;
+
 export interface Location {
   latitude: number;
   longitude: number;

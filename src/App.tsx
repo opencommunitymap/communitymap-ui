@@ -29,17 +29,18 @@ import 'firebase/firestore';
 import { firebaseConfig } from './firebaseConfig';
 import { Segment, Modal, Loader } from 'semantic-ui-react';
 import { Place } from './components/Place';
+import { useAuth, AuthProvider } from './Auth';
 
 firebase.initializeApp(firebaseConfig);
 
 if (process.env.NODE_ENV === 'production') firebase.analytics();
 
 const MapObjectRender: React.FC<{
-  user: firebase.User | null;
   item: ObjectItem;
   comments?: ObjectComment[];
   votesInfo: { count: number; userVoted: boolean };
-}> = ({ user, item, votesInfo, comments }) => {
+}> = ({ item, votesInfo, comments }) => {
+  const user = useAuth() || null;
   const router = useHistory();
 
   switch (item.type) {
@@ -77,9 +78,8 @@ const MapObjectRender: React.FC<{
   }
 };
 
-const DetailedObjectRender: React.FC<{ user: firebase.User | null }> = ({
-  user,
-}) => {
+const DetailedObjectRender: React.FC = () => {
+  const user = useAuth() || null;
   const { objectId = 'n/a' } = useParams();
 
   const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
@@ -118,7 +118,8 @@ const DetailedObjectRender: React.FC<{ user: firebase.User | null }> = ({
   }
 };
 
-const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
+const Home: React.FC = () => {
+  const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
 
   const { objects, commentsObj, votesObj } = useLoadObjects(mapParams, user);
@@ -131,7 +132,7 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
         authenticated={!!user}
         onAdd={(item) => postObject(user, mapParams, item)}
       />
-      <AuthBar user={user} />
+      <AuthBar />
       <NavigationBar
         onChangePosition={(lat, lng) => {
           console.log('located', lat, lng);
@@ -162,7 +163,6 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
             <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
               <Segment raised className="map-item left pointing label">
                 <MapObjectRender
-                  user={user}
                   item={it}
                   votesInfo={votesObj[it.id]}
                   comments={commentsObj[it.id]}
@@ -175,7 +175,7 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
         <Route path="/object/:objectId">
           <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
             <Modal.Content scrolling>
-              <DetailedObjectRender user={user} />
+              <DetailedObjectRender />
             </Modal.Content>
           </Modal>
         </Route>
@@ -192,14 +192,7 @@ const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
 };
 
 function App() {
-  const [user, setUser] = useState<firebase.User | null | undefined>();
-
-  useEffect(() => {
-    return firebase.auth().onIdTokenChanged((user) => {
-      console.debug('Loaded user', user);
-      setUser(user);
-    });
-  }, []);
+  const user = useAuth();
 
   const [splash, setSplash] = useState(true);
   useEffect(() => {
@@ -207,11 +200,13 @@ function App() {
   }, []);
   if (splash || user === undefined) return <SplashScreen />;
 
-  return <Home user={user} />;
+  return <Home />;
 }
 
 export default () => (
-  <Router>
-    <App />
-  </Router>
+  <AuthProvider>
+    <Router>
+      <App />
+    </Router>
+  </AuthProvider>
 );
