@@ -28,6 +28,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { firebaseConfig } from './firebaseConfig';
 import { Segment, Modal, Loader } from 'semantic-ui-react';
+import { Place } from './components/Place';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -41,19 +42,39 @@ const MapObjectRender: React.FC<{
 }> = ({ user, item, votesInfo, comments }) => {
   const router = useHistory();
 
-  return (
-    <ChatItem
-      item={item}
-      user={user}
-      userVoted={votesInfo?.userVoted}
-      votes={votesInfo?.count}
-      comments={comments}
-      onClick={() => router.push(`/object/${item.id}`)}
-      onComment={async (comment) => leaveComment(user, item, comment)}
-      onVote={async () => voteUp(user, item)}
-      onClose={async () => closeObject(user, item)}
-    />
-  );
+  switch (item.type) {
+    case 'place':
+      return (
+        <Place
+          item={item}
+          user={user}
+          userVoted={votesInfo?.userVoted}
+          votes={votesInfo?.count}
+          comments={comments}
+          onClick={() => router.push(`/object/${item.id}`)}
+          onComment={async (comment) => leaveComment(user, item, comment)}
+          onVote={async () => voteUp(user, item)}
+        />
+      );
+    case 'request':
+    case 'offer':
+    case 'donation':
+    case 'chat':
+    default:
+      return (
+        <ChatItem
+          item={item}
+          user={user}
+          userVoted={votesInfo?.userVoted}
+          votes={votesInfo?.count}
+          comments={comments}
+          onClick={() => router.push(`/object/${item.id}`)}
+          onComment={async (comment) => leaveComment(user, item, comment)}
+          onVote={async () => voteUp(user, item)}
+          onClose={async () => closeObject(user, item)}
+        />
+      );
+  }
 };
 
 const DetailedObjectRender: React.FC<{ user: firebase.User | null }> = ({
@@ -63,11 +84,25 @@ const DetailedObjectRender: React.FC<{ user: firebase.User | null }> = ({
 
   const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
 
-  return (
-    <div>
-      {object === undefined && <Loader active />}
-      {object === null && <div>Object not found :(</div>}
-      {!!object && (
+  if (object === undefined) return <Loader active />;
+  if (object === null) return <div>Object not found :(</div>;
+
+  switch (object.type) {
+    case 'place':
+      return (
+        <Place
+          expanded
+          item={object}
+          user={user}
+          userVoted={votesInfo?.userVoted || false}
+          votes={votesInfo?.count || 0}
+          comments={comments || []}
+          onComment={async (comment) => leaveComment(user, object, comment)}
+          onVote={async () => voteUp(user, object)}
+        />
+      );
+    default:
+      return (
         <ChatItem
           expanded
           item={object}
@@ -79,9 +114,8 @@ const DetailedObjectRender: React.FC<{ user: firebase.User | null }> = ({
           onVote={async () => voteUp(user, object)}
           onClose={async () => closeObject(user, object)}
         />
-      )}
-    </div>
-  );
+      );
+  }
 };
 
 const Home: React.FC<{ user: firebase.User | null }> = ({ user }) => {
