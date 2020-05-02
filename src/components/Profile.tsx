@@ -62,7 +62,7 @@ export const EditUserProfile: React.FC<{ user: firebase.User }> = ({
         {info?.name}
       </Grid.Column>
       <Grid.Column floated='right' width={3}>
-      {BtnSettings()} {toggled} 
+      {BtnSettings()}
       </Grid.Column>
     </Grid>
   </Card.Header>
