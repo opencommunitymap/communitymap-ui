@@ -29,6 +29,10 @@ import 'firebase/firestore';
 import { firebaseConfig } from './firebaseConfig';
 import { Segment, Modal, Loader } from 'semantic-ui-react';
 import { Place } from './components/Place';
+import {
+  DirectMessageModal,
+  DirectMessageDialogs,
+} from './components/DirectMessage';
 import { useAuth, AuthProvider } from './Auth';
 
 firebase.initializeApp(firebaseConfig);
@@ -183,6 +187,17 @@ const Home: React.FC = () => {
           <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
             <Modal.Content scrolling>
               <UserPage />
+            </Modal.Content>
+          </Modal>
+        </Route>
+        <Route path="/direct-messages/:dmKey">
+          <DirectMessageModal onClose={() => router.push('/')} />
+        </Route>
+        <Route path="/my-messages">
+          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
+            <Modal.Header>Messages</Modal.Header>
+            <Modal.Content scrolling>
+              <DirectMessageDialogs />
             </Modal.Content>
           </Modal>
         </Route>

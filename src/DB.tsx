@@ -6,11 +6,14 @@ import {
   MapParams,
   ObjectItemInput,
   UserProfile,
+  DirectMessageInfo,
+  DirectMessageItem,
 } from './types';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import dayjs from 'dayjs';
+import { useAuth } from './Auth';
 
 export const useLoadObjects = (
   mapParams: any | null,
@@ -331,4 +334,109 @@ export const saveUserPublicInfo = async (userInfo: UserProfile) => {
       created: data.created || timenow,
       updated: timenow,
     });
+};
+
+export const useDirectMessage = (id: string) => {
+  const [info, setInfo] = useState<undefined | null | DirectMessageInfo>();
+  const [messages, setMessages] = useState<DirectMessageItem[]>([]);
+
+  const ref = useMemo(
+    () => firebase.firestore().collection('direct-messages').doc(id),
+    [id]
+  );
+  const me = useAuth();
+
+  const postMessage = useCallback(
+    async (message: string) => {
+      if (!me) throw new Error('Not authenticated');
+
+      if (!info) {
+        const members = id.split('-');
+        await ref.set({
+          members,
+          created: new Date().toISOString(),
+        });
+      }
+
+      const timestamp = new Date().toISOString();
+      const msgDoc = await ref.collection('dm-items').add({
+        timestamp,
+        author: me?.uid,
+        content: message,
+      });
+
+      return ref.update({
+        updated: timestamp,
+        lastMsgId: msgDoc.id,
+        [`lastReadBy.${me.uid}`]: msgDoc.id,
+      });
+    },
+    [info, id, ref, me]
+  );
+
+  useEffect(
+    () =>
+      ref.onSnapshot(
+        (doc) => {
+          if (!doc.exists) {
+            setInfo(null);
+            return;
+          }
+          setInfo({ id, ...doc.data() } as DirectMessageInfo);
+        },
+        (err) => console.log('Error loading dm-items', err)
+      ),
+    [ref, id]
+  );
+
+  const [retryCounter, setRetryCounter] = useState(0);
+  useEffect(() => {
+    if (!info) return;
+
+    return ref
+      .collection('dm-items')
+      .orderBy('timestamp')
+      .onSnapshot(
+        (snap) => {
+          const msgs: DirectMessageItem[] = snap.docs.map((doc) => {
+            const { timestamp, author, content } = doc.data();
+            return { id: doc.id, timestamp, author, content };
+          });
+          setMessages(msgs);
+        },
+        (err) => {
+          // It can happen when sending first message, we create the info structure then post message to its subcollection
+          // First attempt (right after info creation) fails
+          if (retryCounter > 1) console.error(err);
+          console.debug('Cannot load dm-items, retry in 1 sec');
+          setTimeout(() => setRetryCounter((count) => count + 1), 1000);
+        }
+      );
+  }, [ref, id, info, retryCounter]);
+
+  return { info, messages, postMessage };
+};
+
+export const useMyDirectMessages = () => {
+  const [dialogs, setDialogs] = useState<DirectMessageInfo[] | null>(null);
+
+  const me = useAuth();
+
+  useEffect(() => {
+    if (!me) return;
+
+    return firebase
+      .firestore()
+      .collection('direct-messages')
+      .where('members', 'array-contains', me.uid)
+      .orderBy('updated', 'desc')
+      .onSnapshot((snap) => {
+        setDialogs(
+          snap.docs.map((doc) => {
+            return { id: doc.id, ...doc.data() } as DirectMessageInfo;
+          })
+        );
+      }, console.error);
+  }, [me]);
+  return { dialogs };
 };

@@ -15,6 +15,20 @@
       ]
     },
     {
+      "collectionGroup": "direct-messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "members",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "updated",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "objects",
       "queryScope": "COLLECTION",
       "fields": [

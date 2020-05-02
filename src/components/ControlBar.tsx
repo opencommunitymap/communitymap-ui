@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Segment, Icon, Modal, Dropdown } from 'semantic-ui-react';
+import {
+  Button,
+  Segment,
+  Icon,
+  Modal,
+  Dropdown,
+  Label,
+} from 'semantic-ui-react';
 import { ObjectItemInput } from '../types';
 import { AddNewChatObject, type2icon, type2title } from './Chat';
 import { Login } from './Login';
@@ -9,9 +16,16 @@ import { reportError } from '../utils';
 import { EditUserProfile } from './Profile';
 import { AddNewPlaceObject } from './Place';
 import { useAuth } from '../Auth';
+import { useMyDirectMessages } from '../DB';
+import { Link } from 'react-router-dom';
 
 export const AuthBar: React.FC = () => {
   const user = useAuth();
+  const { dialogs } = useMyDirectMessages();
+  const unreadDialogs =
+    dialogs?.filter((dlg) => dlg.lastMsgId !== dlg.lastReadBy[user?.uid || ''])
+      .length || 0;
+
   const [login, setLogin] = useState(false);
   useEffect(() => {
     if (user && login) {
@@ -38,7 +52,17 @@ export const AuthBar: React.FC = () => {
         <Dropdown
           trigger={
             <Button basic icon size="large">
-              <Icon name="user outline" />
+              <Icon.Group>
+                <Icon name="user outline" />
+                {unreadDialogs > 0 && (
+                  <Icon
+                    corner="top right"
+                    size="small"
+                    name="mail"
+                    color="red"
+                  />
+                )}
+              </Icon.Group>
             </Button>
           }
           pointing="top right"
@@ -50,6 +74,15 @@ export const AuthBar: React.FC = () => {
             <Dropdown.Item onClick={() => setShowProfile(true)}>
               <Icon name="user" />
               Profile
+            </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/my-messages">
+              <Icon name="mail" />
+              Messages
+              {unreadDialogs > 0 && (
+                <Label className="user-menu-label" color="blue">
+                  {unreadDialogs}
+                </Label>
+              )}
             </Dropdown.Item>
             <Dropdown.Item onClick={signOut}>
               <Icon name="log out" />

@@ -21,5 +21,18 @@ service cloud.firestore {
       allow create: if request.auth.uid != null && userId == request.auth.uid;
       allow update: if request.auth.uid != null && userId == request.auth.uid;
     }
+    match /direct-messages/{chatId} {
+    	allow create: if request.auth.uid != null && request.auth.uid in request.resource.data.members;
+      allow update: if request.auth.uid in resource.data.members;
+    	allow read: if request.auth.uid != null && (resource == null || request.auth.uid in resource.data.members);
+      
+      function canI() {
+      	return request.auth.uid != null && request.auth.uid in get(/databases/$(database)/documents/direct-messages/$(chatId)).data.members;
+      }
+      match /dm-items/{itemId} {
+      	allow read: if resource == null || canI();
+      	allow create: if canI();
+      }
+    }
   }
 }

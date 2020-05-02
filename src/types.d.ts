@@ -49,3 +49,19 @@ export interface UserProfile {
   name: string;
   // gender: 'male'|'female'|null;
 }
+
+export interface DirectMessageInfo {
+  id: string;
+  members: string[];
+  created: string;
+  updated: string;
+  lastMsgId: string;
+  lastReadBy: { [uid: string]: string };
+}
+
+export interface DirectMessageItem {
+  id: string;
+  author: string;
+  timestamp: string;
+  content: string;
+}

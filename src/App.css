@@ -164,6 +164,12 @@
   right: 55px;
   z-index: 2;
 }
+#auth-bar .user-menu-label {
+  position: absolute;
+  top: 6px;
+  right: 0px;
+}
+
 #sign-out-button {
   background-color: white !important;
 }
@@ -231,4 +237,19 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.direct-message .single-message {
+  margin: 10px 0;
+}
+.direct-message .single-message .timestamp {
+  font-style: italic;
+  color: grey;
+  margin: 0 10px;
+}
+.direct-message-dialog .unread {
+  font-weight: 700;
+}
+.direct-message-dialog .read {
+  font-weight: 400;
 }
