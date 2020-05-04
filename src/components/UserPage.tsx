@@ -11,14 +11,18 @@ export const UserPage = () => {
 
   const userInfo = useUserPublicInfo(userId || '', true);
   if (userInfo === undefined) return <Loader active />;
-  if (userInfo === null)
-    return <div>The user has't filled his/her details yet</div>;
 
   return (
     <div style={{ lineHeight: '2em' }}>
-      <h3>Name/Nickname: {userInfo?.name}</h3>
-      <div>Registered on {userInfo.created}</div>
-      <div>Last updated on {userInfo.updated}</div>
+      {userInfo === null ? (
+        <div>The user has't filled his/her details yet</div>
+      ) : (
+        <>
+          <h3>Name/Nickname: {userInfo?.name}</h3>
+          <div>Registered on {userInfo.created}</div>
+          <div>Last updated on {userInfo.updated}</div>
+        </>
+      )}
       <div style={{ marginTop: 30 }}>
         {!!me && !!userId && me.uid !== userId && (
           <Button
