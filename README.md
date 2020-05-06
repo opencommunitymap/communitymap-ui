@@ -4,6 +4,10 @@ This project is home for number of location-based local community services - mod
 
 More details about project ideas and structure can be found in the [Wiki](https://github.com/dmitry-yudakov/community-map/wiki)
 
+## Slack workspace
+
+Feel free to [join our Slack space](https://join.slack.com/t/opencommunitymap/shared_invite/zt-e7hqo2zo-rbeP~IoF0pPkAEsa0B7lcw) and ask questions or share your ideas with us!
+
 ## Development
 
 For local installation
