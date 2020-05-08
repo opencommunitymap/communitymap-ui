@@ -7,6 +7,8 @@
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
+      { "source": "/api/v0/object{,/**}", "function": "object" },
+      { "source": "/hello{,/**}", "function": "helloWorld" },
       {
         "source": "**",
         "destination": "/index.html"
