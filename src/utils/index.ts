@@ -1,6 +1,6 @@
-export const reportError = (err: Error) => {
+export const reportError = (err: Error, silent = false) => {
   console.error(err);
-  alert(err.message);
+  if (!silent) alert(err.message);
 };
 
 export const directMessageId = (me: string, other: string) => {

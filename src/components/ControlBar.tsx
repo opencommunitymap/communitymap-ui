@@ -57,7 +57,7 @@ export const AuthBar: React.FC = () => {
                 {unreadDialogs > 0 && (
                   <Icon
                     corner="top right"
-                    size="small"
+                    className="has-unread-messages"
                     name="mail"
                     color="red"
                   />
