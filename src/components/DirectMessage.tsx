@@ -162,7 +162,7 @@ const DialogInfoItem: React.FC<{ info: DirectMessageInfo; me: AuthUser }> = ({
             )}`}
             className={unread ? 'unread' : 'read'}
           >
-            {peer?.name}
+            {peer?.name || 'Anonymous'}
           </Link>
         </List.Header>
         {dayjs(updated).fromNow()}
