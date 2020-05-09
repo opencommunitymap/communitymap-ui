@@ -336,13 +336,15 @@ export const saveUserPublicInfo = async (userInfo: UserProfile) => {
     });
 };
 
-export const useDirectMessage = (id: string) => {
-  const [info, setInfo] = useState<undefined | null | DirectMessageInfo>();
+export const useDirectMessage = (dialogId: string) => {
+  const [dialogInfo, setDialogInfo] = useState<
+    undefined | null | DirectMessageInfo
+  >();
   const [messages, setMessages] = useState<DirectMessageItem[]>([]);
 
   const ref = useMemo(
-    () => firebase.firestore().collection('direct-messages').doc(id),
-    [id]
+    () => firebase.firestore().collection('direct-messages').doc(dialogId),
+    [dialogId]
   );
   const me = useAuth();
 
@@ -350,8 +352,8 @@ export const useDirectMessage = (id: string) => {
     async (message: string) => {
       if (!me) throw new Error('Not authenticated');
 
-      if (!info) {
-        const members = id.split('-');
+      if (!dialogInfo) {
+        const members = dialogId.split('-');
         await ref.set({
           members,
           created: new Date().toISOString(),
@@ -371,7 +373,7 @@ export const useDirectMessage = (id: string) => {
         [`lastReadBy.${me.uid}`]: msgDoc.id,
       });
     },
-    [info, id, ref, me]
+    [dialogInfo, dialogId, ref, me]
   );
 
   useEffect(
@@ -379,19 +381,19 @@ export const useDirectMessage = (id: string) => {
       ref.onSnapshot(
         (doc) => {
           if (!doc.exists) {
-            setInfo(null);
+            setDialogInfo(null);
             return;
           }
-          setInfo({ id, ...doc.data() } as DirectMessageInfo);
+          setDialogInfo({ id: dialogId, ...doc.data() } as DirectMessageInfo);
         },
         (err) => console.log('Error loading dm-items', err)
       ),
-    [ref, id]
+    [ref, dialogId]
   );
 
   const [retryCounter, setRetryCounter] = useState(0);
   useEffect(() => {
-    if (!info) return;
+    if (!dialogInfo) return;
 
     return ref
       .collection('dm-items')
@@ -412,9 +414,9 @@ export const useDirectMessage = (id: string) => {
           setTimeout(() => setRetryCounter((count) => count + 1), 1000);
         }
       );
-  }, [ref, id, info, retryCounter]);
+  }, [ref, dialogId, dialogInfo, retryCounter]);
 
-  return { info, messages, postMessage };
+  return { info: dialogInfo, messages, postMessage };
 };
 
 export const useMyDirectMessages = () => {
