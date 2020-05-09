@@ -15,7 +15,7 @@ import {
 } from '../types';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { directMessageId } from '../utils';
+import { directMessageId, reportError } from '../utils';
 dayjs.extend(relativeTime);
 
 const SingleMessage: React.FC<{
@@ -39,7 +39,12 @@ const SingleMessage: React.FC<{
 
 const useDirectMessageView = () => {
   const { dmKey = '' } = useParams<{ dmKey: string }>();
-  const { info, messages, postMessage } = useDirectMessage(dmKey);
+  const {
+    info,
+    messages,
+    postMessage,
+    updateLastMessageReadByMe,
+  } = useDirectMessage(dmKey);
   console.debug('DirectMessage', dmKey, { info, messages });
   const me = useAuth();
   const ids = dmKey.split('-');
@@ -51,6 +56,14 @@ const useDirectMessageView = () => {
   useEffect(() => {
     refMessagesBottom.current?.scrollIntoView();
   }, [messages]);
+
+  useEffect(() => {
+    // basically marking conversation till current last message as read
+    // TODO make it smarter by actually tracing the last message seen on screen
+    if (info && me && info.lastMsgId !== info.lastReadBy[me.uid]) {
+      updateLastMessageReadByMe().catch((err) => reportError(err, true));
+    }
+  }, [info]);
 
   const [message, setMessage] = useState('');
 

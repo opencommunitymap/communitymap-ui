@@ -376,6 +376,18 @@ export const useDirectMessage = (dialogId: string) => {
     [dialogInfo, dialogId, ref, me]
   );
 
+  const updateLastMessageReadByMe = useCallback(async () => {
+    if (!me) throw new Error('Not authenticated');
+
+    if (!dialogInfo) {
+      return;
+    }
+
+    return ref.update({
+      [`lastReadBy.${me.uid}`]: dialogInfo.lastMsgId,
+    });
+  }, [dialogInfo, ref, me]);
+
   useEffect(
     () =>
       ref.onSnapshot(
@@ -416,7 +428,7 @@ export const useDirectMessage = (dialogId: string) => {
       );
   }, [ref, dialogId, dialogInfo, retryCounter]);
 
-  return { info: dialogInfo, messages, postMessage };
+  return { info: dialogInfo, messages, postMessage, updateLastMessageReadByMe };
 };
 
 export const useMyDirectMessages = () => {
