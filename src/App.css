@@ -169,6 +169,11 @@
   top: 6px;
   right: 0px;
 }
+#auth-bar .has-unread-messages {
+  font-size: 12px;
+  top: -8px;
+  right: -8px;
+}
 
 #sign-out-button {
   background-color: white !important;
