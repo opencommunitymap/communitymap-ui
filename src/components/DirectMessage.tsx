@@ -63,7 +63,7 @@ const useDirectMessageView = () => {
     if (info && me && info.lastMsgId !== info.lastReadBy[me.uid]) {
       updateLastMessageReadByMe().catch((err) => reportError(err, true));
     }
-  }, [info]);
+  }, [info, me, updateLastMessageReadByMe]);
 
   const [message, setMessage] = useState('');
 
