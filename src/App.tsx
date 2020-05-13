@@ -7,8 +7,15 @@ import {
   useParams,
 } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
+import queryString from 'query-string';
 import './App.css';
-import { MapParams, ObjectItem, ObjectComment } from './types';
+import {
+  MapParams,
+  ObjectItem,
+  ObjectComment,
+  EmbedParams,
+  InitialAppParams,
+} from './types';
 import { SplashScreen } from './components/SplashScreen';
 import { Maps, MapItem } from './components/Maps';
 import { ChatItem } from './components/Chat';
@@ -38,6 +45,20 @@ import { useAuth, AuthProvider } from './Auth';
 firebase.initializeApp(firebaseConfig);
 
 if (process.env.NODE_ENV === 'production') firebase.analytics();
+
+const embedBasename = '/embed';
+const isEmbed = window.location.pathname.indexOf(embedBasename) === 0;
+const initialParams: InitialAppParams | null = window.location.search
+  ? (queryString.parse(window.location.search, {
+      parseNumbers: true,
+      parseBooleans: true,
+    }) as any)
+  : null;
+const embedParams: EmbedParams | null = isEmbed
+  ? {
+      appId: initialParams?.appId as string,
+    }
+  : null;
 
 const MapObjectRender: React.FC<{
   item: ObjectItem;
@@ -126,16 +147,24 @@ const Home: React.FC = () => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
 
-  const { objects, commentsObj, votesObj } = useLoadObjects(mapParams, user);
+  const { objects, commentsObj, votesObj } = useLoadObjects(
+    mapParams,
+    user,
+    initialParams?.filterOrigin
+  );
 
   const router = useHistory();
 
   return (
     <div className="home">
-      <ControlBar
-        authenticated={!!user}
-        onAdd={(item) => postObject(user, mapParams, item)}
-      />
+      {initialParams?.canAdd !== false && (
+        <ControlBar
+          authenticated={!!user}
+          onAdd={(item) =>
+            postObject(user, mapParams, item, embedParams?.appId)
+          }
+        />
+      )}
       <AuthBar />
       <NavigationBar
         onChangePosition={(lat, lng) => {
@@ -148,8 +177,8 @@ const Home: React.FC = () => {
         }}
       />
       <Maps
-        centerLat={mapParams?.centerLat}
-        centerLng={mapParams?.centerLng}
+        centerLat={mapParams?.centerLat || initialParams?.centerLat}
+        centerLng={mapParams?.centerLng || initialParams?.centerLng}
         onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
           setMapParams({
             centerLat,
@@ -213,6 +242,18 @@ function App() {
   useEffect(() => {
     setTimeout(() => setSplash(false), 2000);
   }, []);
+
+  if (isEmbed) {
+    if (!embedParams?.appId)
+      return (
+        <div>
+          Mandatory parameter <strong>appId</strong> is missing. Read
+          https://github.com/opencommunitymap/communitymap-ui#embedding for more
+          information
+        </div>
+      );
+  }
+
   if (splash || user === undefined) return <SplashScreen />;
 
   return <Home />;
@@ -220,7 +261,7 @@ function App() {
 
 export default () => (
   <AuthProvider>
-    <Router>
+    <Router basename={isEmbed ? embedBasename : undefined}>
       <App />
     </Router>
   </AuthProvider>
