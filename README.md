@@ -13,7 +13,7 @@ Feel free to [join our Slack space](https://join.slack.com/t/opencommunitymap/sh
 For local installation
 
 ```
-git clone git@github.com:dmitry-yudakov/community-map.git
+git clone git@github.com:opencommunitymap/communitymap-ui.git
 
 cd community-map/
 
