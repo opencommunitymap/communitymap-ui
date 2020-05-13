@@ -16,6 +16,7 @@
     "firebase": "^7.14.2",
     "firebaseui": "^4.5.0",
     "google-map-react": "^1.1.7",
+    "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",

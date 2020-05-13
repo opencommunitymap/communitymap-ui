@@ -42,6 +42,17 @@ export interface MapParams {
   maxLng: number;
 }
 
+export interface EmbedParams {
+  appId: string;
+}
+
+export interface InitialAppParams extends Partial<EmbedParams> {
+  filterOrigin?: string;
+  canAdd?: boolean;
+  centerLat?: number;
+  centerLng?: number;
+}
+
 export interface UserProfile {
   id: string;
   created?: string;

@@ -17,7 +17,8 @@ import { useAuth } from './Auth';
 
 export const useLoadObjects = (
   mapParams: any | null,
-  user: firebase.User | null
+  user: firebase.User | null,
+  filterOrigin?: string
 ) => {
   const [objects, setObjects] = useState<ObjectItem[]>([]);
 
@@ -28,24 +29,29 @@ export const useLoadObjects = (
 
     const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
-    const unsub = firebase
+    let ref = firebase
       .firestore()
       .collection('objects')
       // .where('valid_until', '>=', now)
       .where('loc', '>', new firebase.firestore.GeoPoint(minLat, minLng))
-      .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng))
-      .onSnapshot((snap) => {
-        const objs = snap.docs
-          .filter((doc) => {
-            const valid_until = doc.data()?.valid_until;
-            return !!valid_until && valid_until >= now;
-          })
-          .map((doc) => ({ id: doc.id, ...doc.data() } as ObjectItem));
-        console.debug('Loaded objects', objs);
-        setObjects(objs);
-      });
+      .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng));
+
+    if (filterOrigin) {
+      ref = ref.where('origin', '==', filterOrigin);
+    }
+
+    const unsub = ref.onSnapshot((snap) => {
+      const objs = snap.docs
+        .filter((doc) => {
+          const valid_until = doc.data()?.valid_until;
+          return !!valid_until && valid_until >= now;
+        })
+        .map((doc) => ({ id: doc.id, ...doc.data() } as ObjectItem));
+      console.debug('Loaded objects', objs);
+      setObjects(objs);
+    });
     return unsub;
-  }, [mapParams]);
+  }, [mapParams, filterOrigin]);
 
   const [commentsObj, setCommentsObj] = useState<{
     [k: string]: ObjectComment[];
@@ -221,7 +227,8 @@ export const useAsyncStatus = (cb: () => Promise<any>) => {
 export const postObject = async (
   user: firebase.User | null,
   mapParams: MapParams | null,
-  item: ObjectItemInput
+  item: ObjectItemInput,
+  origin?: string
 ) => {
   if (!user || !mapParams) {
     alert('Temporary cannot post objects. Try again');
@@ -236,6 +243,7 @@ export const postObject = async (
     .add({
       ...item,
       author: user!.uid,
+      origin: origin || null,
       created: timenow,
       updated: timenow,
       loc: new firebase.firestore.GeoPoint(centerLat, centerLng),
