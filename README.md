@@ -82,6 +82,8 @@ You will also see any lint errors in the console.
 
 You will use pre-configured _Community Map Dev_ firebase project.
 
+Read also about [the DB structure](docs/DB.md)
+
 ### Google Maps for Development purposes only
 
 The maps with show 'For development purposes only' watermark all over the map.
