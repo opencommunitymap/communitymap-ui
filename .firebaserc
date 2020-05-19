@@ -1,6 +1,8 @@
 {
   "projects": {
     "dev": "community-map-dev",
+    "master": "community-map-dev",
+    "production": "community-map-dev",
     "default": "community-map-dev"
   }
 }
