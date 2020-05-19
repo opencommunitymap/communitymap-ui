@@ -29,16 +29,22 @@ jobs:
           yarn install --frozen-lockfile
 
       - name: Expose Application Environment Variables
+        if: github.event.pull_request.head.repo.full_name == github.repository
         env:
           REACT_APP_GOOGLE_API_KEY: ${{ secrets.REACT_APP_GOOGLE_API_KEY }}
           MASTER_REACT_APP_GOOGLE_API_KEY: ${{ secrets.MASTER_REACT_APP_GOOGLE_API_KEY }}
           NEXT_REACT_APP_GOOGLE_API_KEY: ${{ secrets.NEXT_REACT_APP_GOOGLE_API_KEY }}
           PROD_REACT_APP_GOOGLE_API_KEY: ${{ secrets.PROD_REACT_APP_GOOGLE_API_KEY }}
         run: |
+          # Get branch name from last section of ref
           gitBranch=${GITHUB_REF##*/}
+          # Uppercase branch name and replace "-" with "_"
           branchPrefix=$(echo $gitBranch | tr a-z A-Z | tr - _)
-          branchApiKeyName="${branchPrefix}_SERVICE_ACCOUNT"
+          # Create env variable name including branch
+          branchApiKeyName="${branchPrefix}_REACT_APP_GOOGLE_API_KEY"
+          # Evaluate name variable to get variables value
           branchApiKey=$(eval echo \$${branchApiKeyName})
+          # Set value if it exists, otherwise fallback to default
           if [[ ! -z "${branchApiKey}" ]]; then
             echo Using Google API Key for branch \"$gitBranch\"
             googleApiKey=$branchApiKey
@@ -48,6 +54,13 @@ jobs:
           fi
           # Expose variable to environment for later steps
           echo "::set-env name=REACT_APP_GOOGLE_API_KEY::$googleApiKey"
+
+        # NOTE: This stage runs if build is a fork (since secrets do not exist)
+      - name: Expose Application Environment Variables (for fork)
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+            # Expose variable to environment for later steps
+            echo "::set-env name=REACT_APP_GOOGLE_API_KEY::asdf"
 
       - name: Verify App
         # TODO: Add calling of lint command once it exists

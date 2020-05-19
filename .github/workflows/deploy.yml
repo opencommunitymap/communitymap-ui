@@ -39,10 +39,15 @@ jobs:
           NEXT_REACT_APP_GOOGLE_API_KEY: ${{ secrets.NEXT_REACT_APP_GOOGLE_API_KEY }}
           PROD_REACT_APP_GOOGLE_API_KEY: ${{ secrets.PROD_REACT_APP_GOOGLE_API_KEY }}
         run: |
+          # Get branch name from last section of ref
           gitBranch=${GITHUB_REF##*/}
+          # Uppercase branch name and replace "-" with "_"
           branchPrefix=$(echo $gitBranch | tr a-z A-Z | tr - _)
-          branchApiKeyName="${branchPrefix}_SERVICE_ACCOUNT"
+          # Create env variable name including branch
+          branchApiKeyName="${branchPrefix}_REACT_APP_GOOGLE_API_KEY"
+          # Evaluate name variable to get variables value
           branchApiKey=$(eval echo \$${branchApiKeyName})
+          # Exit if branch API key is not found
           if [[ -z "${branchApiKey}" ]]; then
             echo Branch Google API Key not found, exiting
             exit 1
