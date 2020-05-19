@@ -28,6 +28,27 @@ jobs:
         run: |
           yarn install --frozen-lockfile
 
+      - name: Expose Application Environment Variables
+        env:
+          REACT_APP_GOOGLE_API_KEY: ${{ secrets.REACT_APP_GOOGLE_API_KEY }}
+          MASTER_REACT_APP_GOOGLE_API_KEY: ${{ secrets.MASTER_REACT_APP_GOOGLE_API_KEY }}
+          NEXT_REACT_APP_GOOGLE_API_KEY: ${{ secrets.NEXT_REACT_APP_GOOGLE_API_KEY }}
+          PROD_REACT_APP_GOOGLE_API_KEY: ${{ secrets.PROD_REACT_APP_GOOGLE_API_KEY }}
+        run: |
+          gitBranch=${GITHUB_REF##*/}
+          branchPrefix=$(echo $gitBranch | tr a-z A-Z | tr - _)
+          branchApiKeyName="${branchPrefix}_SERVICE_ACCOUNT"
+          branchApiKey=$(eval echo \$${branchApiKeyName})
+          if [[ ! -z "${branchApiKey}" ]]; then
+            echo Using Google API Key for branch \"$gitBranch\"
+            googleApiKey=$branchApiKey
+          else
+            echo Falling back to default Google API Key
+            googleApiKey=$REACT_APP_GOOGLE_API_KEY
+          fi
+          # Expose variable to environment for later steps
+          echo "::set-env name=REACT_APP_GOOGLE_API_KEY::$googleApiKey"
+
       - name: Verify App
         # TODO: Add calling of lint command once it exists
         run: |
