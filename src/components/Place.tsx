@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { ObjectItem, ObjectComment, ObjectItemInput } from '../types';
-import { Icon, Button, Form } from 'semantic-ui-react';
+import { Icon, Image, Button, Form } from 'semantic-ui-react';
 import { reportError } from '../utils';
 import { CommentsList } from './Comments';
+import cx from 'classnames';
 
 export const Place: React.FC<{
   item: ObjectItem;
@@ -25,7 +26,7 @@ export const Place: React.FC<{
   onVote,
   onComment,
 }) => {
-  const { title, description } = item;
+  const { title, description, logoURL, short_description } = item;
 
   const [comment, setComment] = useState<string | null>(null);
 
@@ -39,13 +40,18 @@ export const Place: React.FC<{
   const icon = 'building outline';
 
   return (
-    <div className="item place-item">
+    <div className={cx({ item: true, 'place-item': true, expanded })}>
       <div className="title" onClick={onClick}>
-        <Icon name={icon} />
+        {logoURL ? <Image src={logoURL} /> : <Icon name={icon} />}
         {title}
       </div>
       <br />
-      {expanded && description !== title && <div>{description}</div>}
+      {!!short_description && (
+        <div className="short-description">{short_description}</div>
+      )}
+      {expanded && description !== title && (
+        <div className="description">{description}</div>
+      )}
       {!!commentsCount && (
         <div className="replies-count">{commentsCount} comments</div>
       )}
@@ -128,12 +134,13 @@ export const AddNewPlaceObject: React.FC<{
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
-          const { placeName, description } = state;
+          const { placeName, description, short_description = null } = state;
 
           onPost({
             type,
             title: placeName,
             description,
+            short_description,
             valid_until: '2100-01-05T09:00:00.000Z',
           });
         }}
@@ -141,7 +148,16 @@ export const AddNewPlaceObject: React.FC<{
         <Form.Input
           autoComplete="off"
           label="Name"
+          placeholder="e.g. Annie's Bakery"
           name="placeName"
+          required
+          onChange={onChange}
+        />
+        <Form.Input
+          autoComplete="off"
+          label="Very brief description"
+          name="short_description"
+          placeholder="e.g. Nice bagels and tasty latte"
           required
           onChange={onChange}
         />
