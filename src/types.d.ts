@@ -22,7 +22,9 @@ export interface ObjectVote {
 
 export interface ObjectItemInput {
   title: string;
+  short_description?: string;
   description: string;
+  logoURL?: string;
   type: 'chat' | 'request' | 'offer' | 'donation' | 'place';
   valid_until: string;
 }

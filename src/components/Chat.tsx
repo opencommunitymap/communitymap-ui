@@ -85,7 +85,9 @@ export const ChatItem: React.FC<{
         </div>
       )}
       <br />
-      {expanded && description !== title && <div>{description}</div>}
+      {expanded && description !== title && (
+        <div className="description">{description}</div>
+      )}
       {!!commentsCount && (
         <div className="replies-count">{commentsCount} replies</div>
       )}
