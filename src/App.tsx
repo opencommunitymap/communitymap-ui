@@ -33,7 +33,6 @@ import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { firebaseConfig } from './firebaseConfig';
 import { Segment, Modal, Loader } from 'semantic-ui-react';
 import { Place } from './components/Place';
 import {
@@ -42,9 +41,35 @@ import {
 } from './components/DirectMessage';
 import { useAuth, AuthProvider } from './Auth';
 
-firebase.initializeApp(firebaseConfig);
+const initFirebase = async () => {
+  if (process.env.NODE_ENV === 'production') {
+    return fetch('/__/firebase/init.json').then(async (response) => {
+      console.debug('Init firebase with default project config');
+      firebase.initializeApp(await response.json());
+    });
+  } else {
+    const { firebaseConfig } = require('./firebaseConfig');
+    console.debug('Init firebase with local config', firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
+  }
+};
 
-if (process.env.NODE_ENV === 'production') firebase.analytics();
+const FirebaseInitializer: React.FC = ({ children }) => {
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    initFirebase()
+      .then(() => {
+        if (process.env.NODE_ENV === 'production') {
+          firebase.analytics();
+        }
+        setDone(true);
+      })
+      .catch((err) => alert(err.message));
+  }, []);
+
+  return done ? <>{children}</> : <SplashScreen showLogo={false} />;
+};
 
 const embedBasename = '/embed';
 const isEmbed = window.location.pathname.indexOf(embedBasename) === 0;
@@ -260,9 +285,11 @@ function App() {
 }
 
 export default () => (
-  <AuthProvider>
-    <Router basename={isEmbed ? embedBasename : undefined}>
-      <App />
-    </Router>
-  </AuthProvider>
+  <FirebaseInitializer>
+    <AuthProvider>
+      <Router basename={isEmbed ? embedBasename : undefined}>
+        <App />
+      </Router>
+    </AuthProvider>
+  </FirebaseInitializer>
 );
