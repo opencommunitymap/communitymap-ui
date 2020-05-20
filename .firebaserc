@@ -2,7 +2,7 @@
   "projects": {
     "dev": "community-map-dev",
     "master": "community-map-dev",
-    "production": "community-map-dev",
+    "prod": "communitymap42",
     "default": "community-map-dev"
   }
 }
