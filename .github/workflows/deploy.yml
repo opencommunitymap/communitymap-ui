@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - next
-      - production
+      - prod
 
 jobs:
   deploy:
@@ -33,6 +33,28 @@ jobs:
         run: |
           yarn install --frozen-lockfile
 
+      - name: Expose Application Environment Variables
+        env:
+          MASTER_REACT_APP_GOOGLE_API_KEY: ${{ secrets.MASTER_REACT_APP_GOOGLE_API_KEY }}
+          NEXT_REACT_APP_GOOGLE_API_KEY: ${{ secrets.NEXT_REACT_APP_GOOGLE_API_KEY }}
+          PROD_REACT_APP_GOOGLE_API_KEY: ${{ secrets.PROD_REACT_APP_GOOGLE_API_KEY }}
+        run: |
+          # Get branch name from last section of ref
+          gitBranch=${GITHUB_REF##*/}
+          # Uppercase branch name and replace "-" with "_"
+          branchPrefix=$(echo $gitBranch | tr a-z A-Z | tr - _)
+          # Create env variable name including branch
+          branchApiKeyName="${branchPrefix}_REACT_APP_GOOGLE_API_KEY"
+          # Evaluate name variable to get variables value
+          branchApiKey=$(eval echo \$${branchApiKeyName})
+          # Exit if branch API key is not found
+          if [[ -z "${branchApiKey}" ]]; then
+            echo Branch Google API Key not found, exiting
+            exit 1
+          fi
+          # Expose variable to environment for later steps
+          echo "::set-env name=REACT_APP_GOOGLE_API_KEY::$branchApiKey"
+
       - name: Verify App
         run: |
           yarn build
@@ -46,12 +68,12 @@ jobs:
           $(yarn bin)/firebase-ci deploy -s
 
       - name: Check if version has been updated
-        if: github.ref == 'refs/heads/production'
+        if: github.ref == 'refs/heads/prod'
         id: check
         uses: EndBug/version-check@v1
 
       - name: Create Release
-        if: github.ref == 'refs/heads/production' && steps.check.outputs.changed == 'true'
+        if: github.ref == 'refs/heads/prod' && steps.check.outputs.changed == 'true'
         id: create_release
         uses: actions/create-release@latest
         env:
