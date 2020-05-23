@@ -3,7 +3,8 @@
 Open Community Map is a platform intended to gather various local community and location-based services on one map.
 
 It can be used from:
-- https://communitymap.online 
+
+- https://communitymap.online
 - Partner 3rd party website with the map embedded with `<iframe>`
 - Self-hosted solution
 
@@ -65,7 +66,6 @@ cd community-map/
 yarn install
 ```
 
-
 Now you can run the web app:
 
 ```
@@ -90,6 +90,14 @@ The maps with show 'For development purposes only' watermark all over the map.
 
 To fix that create _.env_ file and fill in your Google Maps Key.
 
+### Uploading images
+
+[Cloudinary](https://cloudinary.com/) is currently used as image storage with [their upload widget](https://cloudinary.com/documentation/upload_widget) - in order to be able to upload images you need to create cloudinary account and set your _cloud name_ as _REACT_APP_CLOUDINARY_CLOUD_NAME_.
+
+It's also recommended to create presets for image uploads. Currently Place logo can be uploaded, the preset can be defined by _REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO_ env variable.
+
+Fill them in your _.env_ for development and github secrets if using them for build and deploy.
+
 ## Configure with different Firebase project
 
 For self-hosted installation you need to configure different Firebase project.
@@ -111,6 +119,7 @@ export const firebaseConfig = {
   ...
 }
 ```
-------
+
+---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

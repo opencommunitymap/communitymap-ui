@@ -35,6 +35,9 @@ jobs:
           MASTER_REACT_APP_GOOGLE_API_KEY: ${{ secrets.MASTER_REACT_APP_GOOGLE_API_KEY }}
           NEXT_REACT_APP_GOOGLE_API_KEY: ${{ secrets.NEXT_REACT_APP_GOOGLE_API_KEY }}
           PROD_REACT_APP_GOOGLE_API_KEY: ${{ secrets.PROD_REACT_APP_GOOGLE_API_KEY }}
+          # these are optional
+          REACT_APP_CLOUDINARY_CLOUD_NAME: ${{ secrets.REACT_APP_CLOUDINARY_CLOUD_NAME }}
+          REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO: ${{ secrets.REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO }}
         run: |
           # Get branch name from last section of ref
           gitBranch=${GITHUB_REF##*/}
@@ -54,6 +57,8 @@ jobs:
           fi
           # Expose variable to environment for later steps
           echo "::set-env name=REACT_APP_GOOGLE_API_KEY::$googleApiKey"
+          echo "::set-env name=REACT_APP_CLOUDINARY_CLOUD_NAME::$REACT_APP_CLOUDINARY_CLOUD_NAME"
+          echo "::set-env name=REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO::$REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO"
 
         # NOTE: This stage runs if build is a fork (since secrets do not exist)
       - name: Expose Application Environment Variables (for fork)

@@ -4,6 +4,12 @@ import { Icon, Image, Button, Form } from 'semantic-ui-react';
 import { reportError } from '../utils';
 import { CommentsList } from './Comments';
 import cx from 'classnames';
+import CloudinaryImageUpload from './CloudinaryImageUpload';
+
+const {
+  REACT_APP_CLOUDINARY_CLOUD_NAME,
+  REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO,
+} = process.env;
 
 export const Place: React.FC<{
   item: ObjectItem;
@@ -146,6 +152,7 @@ export const AddNewPlaceObject: React.FC<{
             description,
             short_description = null,
             url = null,
+            logoURL = null,
           } = state;
 
           onPost({
@@ -154,10 +161,23 @@ export const AddNewPlaceObject: React.FC<{
             description,
             short_description,
             url,
+            logoURL,
             valid_until: '2100-01-05T09:00:00.000Z',
           });
         }}
       >
+        {REACT_APP_CLOUDINARY_CLOUD_NAME && (
+          <Form.Field>
+            <label>Logo</label>
+            <CloudinaryImageUpload
+              cloudName={REACT_APP_CLOUDINARY_CLOUD_NAME}
+              uploadPreset={REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO}
+              onChange={(logoURL) => setState({ ...state, logoURL })}
+            >
+              {state.logoURL && <Image src={state.logoURL} alt="logo" />}
+            </CloudinaryImageUpload>
+          </Form.Field>
+        )}
         <Form.Input
           autoComplete="off"
           label="Name"
