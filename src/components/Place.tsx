@@ -26,7 +26,7 @@ export const Place: React.FC<{
   onVote,
   onComment,
 }) => {
-  const { title, description, logoURL, short_description } = item;
+  const { title, description, logoURL, short_description, url } = item;
 
   const [comment, setComment] = useState<string | null>(null);
 
@@ -48,6 +48,13 @@ export const Place: React.FC<{
       <br />
       {!!short_description && (
         <div className="short-description">{short_description}</div>
+      )}
+      {expanded && !!url && (
+        <p className="external-url">
+          <a href={url} title={url}>
+            <Icon name="external" /> {url}
+          </a>
+        </p>
       )}
       {expanded && description !== title && (
         <div className="description">{description}</div>
@@ -134,13 +141,19 @@ export const AddNewPlaceObject: React.FC<{
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
-          const { placeName, description, short_description = null } = state;
+          const {
+            placeName,
+            description,
+            short_description = null,
+            url = null,
+          } = state;
 
           onPost({
             type,
             title: placeName,
             description,
             short_description,
+            url,
             valid_until: '2100-01-05T09:00:00.000Z',
           });
         }}
@@ -159,6 +172,12 @@ export const AddNewPlaceObject: React.FC<{
           name="short_description"
           placeholder="e.g. Nice bagels and tasty latte"
           required
+          onChange={onChange}
+        />
+        <Form.Input
+          autoComplete="off"
+          label="Website URL"
+          name="url"
           onChange={onChange}
         />
         <Form.TextArea
