@@ -11,6 +11,11 @@ const {
   REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO,
 } = process.env;
 
+const reHttp = /^https?:\/\//;
+// www.dd.com -> https://www.dd.com
+const normalizeUrl = (url: string) =>
+  reHttp.test(url) ? url : `https://${url}`;
+
 export const Place: React.FC<{
   item: ObjectItem;
   user: firebase.User | null;
@@ -57,7 +62,7 @@ export const Place: React.FC<{
       )}
       {expanded && !!url && (
         <p className="external-url">
-          <a href={url} title={url}>
+          <a href={normalizeUrl(url)} title={url}>
             <Icon name="external" /> {url}
           </a>
         </p>
