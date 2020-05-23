@@ -4,6 +4,12 @@ import { Icon, Image, Button, Form } from 'semantic-ui-react';
 import { reportError } from '../utils';
 import { CommentsList } from './Comments';
 import cx from 'classnames';
+import CloudinaryImageUpload from './CloudinaryImageUpload';
+
+const {
+  REACT_APP_CLOUDINARY_CLOUD_NAME,
+  REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO,
+} = process.env;
 
 export const Place: React.FC<{
   item: ObjectItem;
@@ -26,7 +32,7 @@ export const Place: React.FC<{
   onVote,
   onComment,
 }) => {
-  const { title, description, logoURL, short_description } = item;
+  const { title, description, logoURL, short_description, url } = item;
 
   const [comment, setComment] = useState<string | null>(null);
 
@@ -48,6 +54,13 @@ export const Place: React.FC<{
       <br />
       {!!short_description && (
         <div className="short-description">{short_description}</div>
+      )}
+      {expanded && !!url && (
+        <p className="external-url">
+          <a href={url} title={url}>
+            <Icon name="external" /> {url}
+          </a>
+        </p>
       )}
       {expanded && description !== title && (
         <div className="description">{description}</div>
@@ -134,17 +147,37 @@ export const AddNewPlaceObject: React.FC<{
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
-          const { placeName, description, short_description = null } = state;
+          const {
+            placeName,
+            description,
+            short_description = null,
+            url = null,
+            logoURL = null,
+          } = state;
 
           onPost({
             type,
             title: placeName,
             description,
             short_description,
+            url,
+            logoURL,
             valid_until: '2100-01-05T09:00:00.000Z',
           });
         }}
       >
+        {REACT_APP_CLOUDINARY_CLOUD_NAME && (
+          <Form.Field>
+            <label>Logo</label>
+            <CloudinaryImageUpload
+              cloudName={REACT_APP_CLOUDINARY_CLOUD_NAME}
+              uploadPreset={REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO}
+              onChange={(logoURL) => setState({ ...state, logoURL })}
+            >
+              {state.logoURL && <Image src={state.logoURL} alt="logo" />}
+            </CloudinaryImageUpload>
+          </Form.Field>
+        )}
         <Form.Input
           autoComplete="off"
           label="Name"
@@ -161,10 +194,16 @@ export const AddNewPlaceObject: React.FC<{
           required
           onChange={onChange}
         />
+        <Form.Input
+          autoComplete="off"
+          label="Website URL"
+          name="url"
+          onChange={onChange}
+        />
         <Form.TextArea
           autoFocus
           required
-          label="Desciption"
+          label="Description"
           name="description"
           onChange={onChange}
         />
