@@ -21,11 +21,12 @@ export interface ObjectVote {
 }
 
 export interface ObjectItemInput {
+  type: 'chat' | 'request' | 'offer' | 'donation' | 'place';
   title: string;
   short_description?: string;
   description: string;
   logoURL?: string;
-  type: 'chat' | 'request' | 'offer' | 'donation' | 'place';
+  url?: string;
   valid_until: string;
 }
 export interface ObjectItem extends ObjectItemInput {
