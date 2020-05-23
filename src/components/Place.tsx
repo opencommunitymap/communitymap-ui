@@ -183,7 +183,7 @@ export const AddNewPlaceObject: React.FC<{
         <Form.TextArea
           autoFocus
           required
-          label="Desciption"
+          label="Description"
           name="description"
           onChange={onChange}
         />
