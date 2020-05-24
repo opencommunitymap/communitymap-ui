@@ -1,42 +1,29 @@
-.home {
+/* Main elements positioning */
+
+#home {
   height: 100vh;
   width: 100%;
 }
-
-#control-bar {
+#new-content-widget {
   position: fixed;
   left: 10px;
   top: 10px;
   z-index: 2;
-  padding: 1.5em;
-  display: flex;
-  flex-direction: column;
 }
-#control-bar > * {
-  margin: 0.5em;
-  text-align: left;
-}
-#control-bar h5 {
-  /* margin: 0.5em; */
-  text-align: center;
-}
-
-#navigation-bar {
+#navigation-widget {
   position: fixed;
   bottom: 120px;
   right: 8px;
   z-index: 2;
 }
-
-/* .add-stuff-container {
-  background: white;
-  padding: 1em;
+#profile-widget {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-} */
+  top: 10px;
+  right: 55px;
+  z-index: 2;
+}
 
+/* General map elements styles with some enforsing limitations of map items view */
 .map-item:hover {
   opacity: 1;
   scale: 1.01;
@@ -49,7 +36,6 @@
   left: 50%;
   min-width: 190px;
   min-height: 40px;
-  /* opacity: 0.85; */
   user-select: none;
   transform: translate(5px, -50%);
   word-wrap: break-word;
@@ -57,13 +43,14 @@
 }
 
 .map-item.ui.segment {
-  padding: 0.5em 0.8em;
+  padding: 6px;
+  cursor: default;
+  font-weight: 400;
 }
 .map-item.ui.pointing.label:before {
   height: 1.5em;
   width: 1.5em;
 }
-
 .map-item::before {
   border-width: 0 0 1px 1px;
   /* prevents overlapping with content */
@@ -76,20 +63,13 @@
   left: 0;
   position: absolute;
   content: '';
-  /* transform: rotate(45deg); */
   background-image: none;
   z-index: 2;
   width: 0.6666em;
   height: 0.6666em;
-  transition: background 0.1s ease;
 }
 
-.item {
-  cursor: default;
-  font-weight: 400;
-}
-.item .title {
-  cursor: pointer;
+.map-item .title {
   display: inline-flex;
   align-items: center;
   font-weight: 600;
@@ -99,198 +79,40 @@
   max-height: 3em;
   width: 100%;
 }
-.item .description {
-  white-space: pre-wrap;
-  margin: 0.5em 0;
+.map-item .title img {
+  max-width: 2.2em !important;
+  max-height: 2.2em !important;
 }
-.item .short-description {
-  color: #777;
-  display: none;
-  margin: 5px 0;
+
+/* Alternative implementation of pointing label on map - not clear enough */
+/* .pointing-label-right-side {
+  border-radius: 5px;
+  box-shadow: 0 2px 4px 0 rgba(34, 36, 38, 0.12),
+    0 2px 10px 0 rgba(34, 36, 38, 0.15);
 }
-.item.expanded .short-description,
-.item:hover .short-description {
-  display: block;
-}
-.item .title img {
-  max-width: 1.5em;
-  max-height: 1.5em;
-  display: inline;
-  margin-right: 5px;
-}
-.item .like-widget {
-  display: inline-flex;
-  align-items: center;
-}
-.item .author-created {
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin: 0.5em 0;
-}
-.item .actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5em;
-}
-.item .like-widget button {
-  background: none !important;
-  padding: 5px !important;
-  /* margin: 5px 5px 5px -3px !important; */
-}
-.item .comment-widget button {
-  /* background: none !important; */
-  /* padding: 5px !important; */
-}
-.item .like-widget > .votes-count {
-  font-size: 1.5em;
-}
-.item .like-widget button.disabled {
-  color: red;
-}
-.item .replies-count {
+.pointing-label-right-side::before {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-right: 10px solid white;
+  border-bottom: 10px solid transparent;
+  transform: translateY(-50%);
+  content: '';
+  top: 50%;
+  right: 100%;
+  position: absolute;
+} */
+
+/* Common classes */
+.replies-count {
   font-size: 0.9em;
   font-weight: 400;
   padding-top: 8px;
-  /* text-align: right; */
-  /* padding: 5px 15px 0 0; */
 }
-.item .leave-comment {
-  padding: 1em 0;
-}
-.item .comments-section {
-  padding: 1em 0;
-}
-.item .comments-section h4 {
+
+.pale-heading {
   opacity: 0.7;
 }
-.item .comments-section .list .content .description {
-  margin: 0.5em 0;
-  opacity: 0.8;
-  font-size: 0.8em;
-}
-.item .comments-section .list .content .header {
-  font-weight: 500;
-  padding: 10px 5px;
-}
-
-.item.place-item {
-  background-color: rgba(255, 255, 255, 0.3) !important;
-}
-.item.place-item:not(:hover):not(.expanded) .replies-count {
-  display: none;
-}
-.item.place-item .external-url {
-  width: 300px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.add-new-chat form label {
-  opacity: 0.7;
-}
-.add-new-chat form textarea {
-  min-height: 150px;
-}
-
-#auth-bar {
-  position: fixed;
-  top: 10px;
-  right: 55px;
-  z-index: 2;
-}
-#auth-bar .user-menu-label {
-  position: absolute;
-  top: 6px;
-  right: 0px;
-}
-#auth-bar .has-unread-messages {
-  font-size: 12px;
-  top: -8px;
-  right: -8px;
-}
-
-#sign-out-button {
-  background-color: white !important;
-}
-
-#login-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  background-color: rgba(50, 50, 50, 0.5);
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#login-container .segment {
-  padding: 1.5em;
-  background-color: white;
-  border-radius: 5px;
-  text-align: center;
-}
-#login-container #firebaseui-auth-container {
-  margin: 3em 1.5em;
-}
-
-#center-pin {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -100%);
-}
-
-.splash {
-  text-align: center;
-}
-
-.splash-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .splash-logo {
-    animation: splash-logo-spin infinite 10s linear;
-  }
-}
-
-.splash-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-@keyframes splash-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.direct-message .single-message {
-  margin: 10px 0;
-}
-.direct-message .single-message .timestamp {
-  font-style: italic;
-  color: grey;
-  margin: 0 10px;
-}
-.direct-message-dialog .unread {
-  font-weight: 700;
-}
-.direct-message-dialog .read {
-  font-weight: 400;
+section {
+  margin: 1em 0;
 }

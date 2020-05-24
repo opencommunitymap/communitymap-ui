@@ -7,6 +7,7 @@ import {
 } from '../DB';
 import { useAuth } from '../Auth';
 import { Loader, Form, Button, Modal, List } from 'semantic-ui-react';
+import './DirectMessage.css';
 import {
   DirectMessageItem,
   UserProfile,

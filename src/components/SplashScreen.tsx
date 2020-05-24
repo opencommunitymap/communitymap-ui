@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../logo.svg';
+import './SplashScreen.css';
 
 export const SplashScreen: React.FC<{ showLogo?: boolean }> = ({
   showLogo = true,

@@ -1,0 +1,14 @@
+.direct-message .single-message {
+  margin: 10px 0;
+}
+.direct-message .single-message .timestamp {
+  font-style: italic;
+  color: grey;
+  margin: 0 10px;
+}
+.direct-message-dialog .unread {
+  font-weight: 700;
+}
+.direct-message-dialog .read {
+  font-weight: 400;
+}
