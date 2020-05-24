@@ -1,0 +1,10 @@
+#profile-widget .user-menu-label {
+  position: absolute;
+  top: 6px;
+  right: 0px;
+}
+#profile-widget .has-unread-messages {
+  font-size: 12px;
+  top: -8px;
+  right: -8px;
+}

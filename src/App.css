@@ -1,41 +1,28 @@
-.home {
+#home {
   height: 100vh;
   width: 100%;
 }
 
-#control-bar {
+#new-content-widget {
   position: fixed;
   left: 10px;
   top: 10px;
   z-index: 2;
-  padding: 1.5em;
-  display: flex;
-  flex-direction: column;
-}
-#control-bar > * {
-  margin: 0.5em;
-  text-align: left;
-}
-#control-bar h5 {
-  /* margin: 0.5em; */
-  text-align: center;
 }
 
-#navigation-bar {
+#navigation-widget {
   position: fixed;
   bottom: 120px;
   right: 8px;
   z-index: 2;
 }
 
-/* .add-stuff-container {
-  background: white;
-  padding: 1em;
+#profile-widget {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-} */
+  top: 10px;
+  right: 55px;
+  z-index: 2;
+}
 
 .map-item:hover {
   opacity: 1;
@@ -113,8 +100,8 @@
   display: block;
 }
 .item .title img {
-  max-width: 1.5em;
-  max-height: 1.5em;
+  max-width: 2.5em;
+  max-height: 2.5em;
   display: inline;
   margin-right: 5px;
 }
@@ -137,10 +124,6 @@
   background: none !important;
   padding: 5px !important;
   /* margin: 5px 5px 5px -3px !important; */
-}
-.item .comment-widget button {
-  /* background: none !important; */
-  /* padding: 5px !important; */
 }
 .item .like-widget > .votes-count {
   font-size: 1.5em;
@@ -192,105 +175,4 @@
 }
 .add-new-chat form textarea {
   min-height: 150px;
-}
-
-#auth-bar {
-  position: fixed;
-  top: 10px;
-  right: 55px;
-  z-index: 2;
-}
-#auth-bar .user-menu-label {
-  position: absolute;
-  top: 6px;
-  right: 0px;
-}
-#auth-bar .has-unread-messages {
-  font-size: 12px;
-  top: -8px;
-  right: -8px;
-}
-
-#sign-out-button {
-  background-color: white !important;
-}
-
-#login-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  background-color: rgba(50, 50, 50, 0.5);
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#login-container .segment {
-  padding: 1.5em;
-  background-color: white;
-  border-radius: 5px;
-  text-align: center;
-}
-#login-container #firebaseui-auth-container {
-  margin: 3em 1.5em;
-}
-
-#center-pin {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -100%);
-}
-
-.splash {
-  text-align: center;
-}
-
-.splash-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .splash-logo {
-    animation: splash-logo-spin infinite 10s linear;
-  }
-}
-
-.splash-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-@keyframes splash-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.direct-message .single-message {
-  margin: 10px 0;
-}
-.direct-message .single-message .timestamp {
-  font-style: italic;
-  color: grey;
-  margin: 0 10px;
-}
-.direct-message-dialog .unread {
-  font-weight: 700;
-}
-.direct-message-dialog .read {
-  font-weight: 400;
 }

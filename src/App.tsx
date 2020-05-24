@@ -16,11 +16,19 @@ import {
   EmbedParams,
   InitialAppParams,
 } from './types';
-import { SplashScreen } from './components/SplashScreen';
-import { Maps, MapItem } from './components/Maps';
-import { ChatItem } from './components/Chat';
-import { UserPage } from './components/UserPage';
-import { ControlBar, AuthBar, NavigationBar } from './components/ControlBar';
+import {
+  SplashScreen,
+  Maps,
+  MapItem,
+  ChatItem,
+  UserPage,
+  NewContentWidget,
+  ProfileWidget,
+  NavigationWidget,
+  Place,
+  DirectMessageModal,
+  DirectMessageDialogs,
+} from './components';
 import {
   useLoadObjects,
   postObject,
@@ -34,11 +42,6 @@ import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { Segment, Modal, Loader } from 'semantic-ui-react';
-import { Place } from './components/Place';
-import {
-  DirectMessageModal,
-  DirectMessageDialogs,
-} from './components/DirectMessage';
 import { useAuth, AuthProvider } from './Auth';
 
 const initFirebase = async () => {
@@ -181,17 +184,17 @@ const Home: React.FC = () => {
   const router = useHistory();
 
   return (
-    <div className="home">
+    <div id="home">
       {initialParams?.canAdd !== false && (
-        <ControlBar
+        <NewContentWidget
           authenticated={!!user}
           onAdd={(item) =>
             postObject(user, mapParams, item, embedParams?.appId)
           }
         />
       )}
-      <AuthBar />
-      <NavigationBar
+      <ProfileWidget />
+      <NavigationWidget
         onChangePosition={(lat, lng) => {
           console.log('located', lat, lng);
           setMapParams({
