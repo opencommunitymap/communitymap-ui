@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { ObjectItem, ObjectComment, ObjectItemInput } from '../types';
-import { Icon, Image, Button, Form } from 'semantic-ui-react';
-import { reportError } from '../utils';
-import { CommentsList } from './Comments';
+import { Icon, Image, Form } from 'semantic-ui-react';
+import { CommentsList, PostCommentWidget } from './Comments';
+import './Place.css';
 import cx from 'classnames';
 import CloudinaryImageUpload from './CloudinaryImageUpload';
+import { LikeWidget } from './LikeWidget';
 
 const {
   REACT_APP_CLOUDINARY_CLOUD_NAME,
@@ -39,8 +40,6 @@ export const Place: React.FC<{
 }) => {
   const { title, description, logoURL, short_description, url } = item;
 
-  const [comment, setComment] = useState<string | null>(null);
-
   const commentsCount = comments?.length || 0;
 
   const sortedComments = useMemo(() => {
@@ -51,14 +50,17 @@ export const Place: React.FC<{
   const icon = 'building outline';
 
   return (
-    <div className={cx({ item: true, 'place-item': true, expanded })}>
-      <div className="title" onClick={onClick}>
+    <div
+      className={cx({ item: true, 'place-item': true, expanded })}
+      onClick={onClick}
+    >
+      <div className="title">
         {logoURL ? <Image src={logoURL} /> : <Icon name={icon} />}
         {title}
       </div>
-      <br />
+
       {!!short_description && (
-        <div className="short-description">{short_description}</div>
+        <section className="short-description">{short_description}</section>
       )}
       {expanded && !!url && (
         <p className="external-url">
@@ -68,62 +70,25 @@ export const Place: React.FC<{
         </p>
       )}
       {expanded && description !== title && (
-        <div className="description">{description}</div>
+        <section className="description">{description}</section>
       )}
       {!!commentsCount && (
         <div className="replies-count">{commentsCount} comments</div>
       )}
       {expanded && (
-        <div className="actions">
-          <div className="like-widget">
-            <Button
-              icon
-              disabled={userVoted}
-              onClick={(e) => {
-                e.stopPropagation();
-                onVote().catch(reportError);
-              }}
-            >
-              <Icon size="big" name="thumbs up outline" />
-            </Button>
-            {!!votes && <div className="votes-count">{votes}</div>}
-          </div>
-
-          <div className="comment-widget">
-            {comment === null && !expanded && (
-              <Button basic onClick={() => !comment && setComment('')}>
-                Reply
-              </Button>
-            )}
-          </div>
-        </div>
+        <section>
+          <LikeWidget votes={votes} userVoted={userVoted} onVote={onVote} />
+        </section>
       )}
       {expanded && !!commentsCount && (
-        <div className="comments-section">
-          <h4>Replies</h4>
+        <section>
+          <h4 className="pale-heading">Replies</h4>
           <CommentsList comments={sortedComments!} />
-        </div>
+        </section>
       )}
-      {(comment !== null || expanded) &&
+      {expanded &&
         (!!user ? (
-          <div className="leave-comment">
-            <Form
-              onSubmit={(e) => {
-                e.preventDefault();
-                !!comment &&
-                  onComment(comment)
-                    .then(() => setComment(null))
-                    .catch(reportError);
-              }}
-            >
-              <Form.Input
-                value={comment || ''}
-                placeholder="Your comment here"
-                action={<Button icon="send" />}
-                onChange={(e) => setComment(e.target.value)}
-              />
-            </Form>
-          </div>
+          <PostCommentWidget onComment={onComment} />
         ) : (
           <div style={{ textAlign: 'center' }}>
             You need to register or sign in to be able to post
@@ -144,7 +109,7 @@ export const AddNewPlaceObject: React.FC<{
     setState({ ...state, [name]: value });
   };
   return (
-    <div className="add-new-chat">
+    <div className="add-new-place">
       <h4>
         <Icon name="building outline" /> New place
       </h4>

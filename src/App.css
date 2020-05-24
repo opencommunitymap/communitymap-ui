@@ -1,22 +1,21 @@
+/* Main elements positioning */
+
 #home {
   height: 100vh;
   width: 100%;
 }
-
 #new-content-widget {
   position: fixed;
   left: 10px;
   top: 10px;
   z-index: 2;
 }
-
 #navigation-widget {
   position: fixed;
   bottom: 120px;
   right: 8px;
   z-index: 2;
 }
-
 #profile-widget {
   position: fixed;
   top: 10px;
@@ -24,6 +23,7 @@
   z-index: 2;
 }
 
+/* General map elements styles with some enforsing limitations of map items view */
 .map-item:hover {
   opacity: 1;
   scale: 1.01;
@@ -36,7 +36,6 @@
   left: 50%;
   min-width: 190px;
   min-height: 40px;
-  /* opacity: 0.85; */
   user-select: none;
   transform: translate(5px, -50%);
   word-wrap: break-word;
@@ -44,13 +43,14 @@
 }
 
 .map-item.ui.segment {
-  padding: 0.5em 0.8em;
+  padding: 6px;
+  cursor: default;
+  font-weight: 400;
 }
 .map-item.ui.pointing.label:before {
   height: 1.5em;
   width: 1.5em;
 }
-
 .map-item::before {
   border-width: 0 0 1px 1px;
   /* prevents overlapping with content */
@@ -63,20 +63,13 @@
   left: 0;
   position: absolute;
   content: '';
-  /* transform: rotate(45deg); */
   background-image: none;
   z-index: 2;
   width: 0.6666em;
   height: 0.6666em;
-  transition: background 0.1s ease;
 }
 
-.item {
-  cursor: default;
-  font-weight: 400;
-}
-.item .title {
-  cursor: pointer;
+.map-item .title {
   display: inline-flex;
   align-items: center;
   font-weight: 600;
@@ -86,93 +79,40 @@
   max-height: 3em;
   width: 100%;
 }
-.item .description {
-  white-space: pre-wrap;
-  margin: 0.5em 0;
+.map-item .title img {
+  max-width: 2.2em !important;
+  max-height: 2.2em !important;
 }
-.item .short-description {
-  color: #777;
-  display: none;
-  margin: 5px 0;
+
+/* Alternative implementation of pointing label on map - not clear enough */
+/* .pointing-label-right-side {
+  border-radius: 5px;
+  box-shadow: 0 2px 4px 0 rgba(34, 36, 38, 0.12),
+    0 2px 10px 0 rgba(34, 36, 38, 0.15);
 }
-.item.expanded .short-description,
-.item:hover .short-description {
-  display: block;
-}
-.item .title img {
-  max-width: 2.5em;
-  max-height: 2.5em;
-  display: inline;
-  margin-right: 5px;
-}
-.item .like-widget {
-  display: inline-flex;
-  align-items: center;
-}
-.item .author-created {
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin: 0.5em 0;
-}
-.item .actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.5em;
-}
-.item .like-widget button {
-  background: none !important;
-  padding: 5px !important;
-  /* margin: 5px 5px 5px -3px !important; */
-}
-.item .like-widget > .votes-count {
-  font-size: 1.5em;
-}
-.item .like-widget button.disabled {
-  color: red;
-}
-.item .replies-count {
+.pointing-label-right-side::before {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-right: 10px solid white;
+  border-bottom: 10px solid transparent;
+  transform: translateY(-50%);
+  content: '';
+  top: 50%;
+  right: 100%;
+  position: absolute;
+} */
+
+/* Common classes */
+.replies-count {
   font-size: 0.9em;
   font-weight: 400;
   padding-top: 8px;
-  /* text-align: right; */
-  /* padding: 5px 15px 0 0; */
-}
-.item .leave-comment {
-  padding: 1em 0;
-}
-.item .comments-section {
-  padding: 1em 0;
-}
-.item .comments-section h4 {
-  opacity: 0.7;
-}
-.item .comments-section .list .content .description {
-  margin: 0.5em 0;
-  opacity: 0.8;
-  font-size: 0.8em;
-}
-.item .comments-section .list .content .header {
-  font-weight: 500;
-  padding: 10px 5px;
 }
 
-.item.place-item {
-  background-color: rgba(255, 255, 255, 0.3) !important;
-}
-.item.place-item:not(:hover):not(.expanded) .replies-count {
-  display: none;
-}
-.item.place-item .external-url {
-  width: 300px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.add-new-chat form label {
+.pale-heading {
   opacity: 0.7;
 }
-.add-new-chat form textarea {
-  min-height: 150px;
+section {
+  margin: 1em 0;
 }

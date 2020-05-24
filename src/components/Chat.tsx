@@ -5,7 +5,10 @@ import { reportError } from '../utils';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { useUserPublicInfo } from '../DB';
-import { CommentsList } from './Comments';
+import { CommentsList, PostCommentWidget } from './Comments';
+import './Chat.css';
+import cx from 'classnames';
+import { LikeWidget } from './LikeWidget';
 
 export const type2icon = (type: ObjectItemInput['type']) => {
   switch (type) {
@@ -61,7 +64,7 @@ export const ChatItem: React.FC<{
 
   const authorInfo = useUserPublicInfo(author, true);
 
-  const [comment, setComment] = useState<string | null>(null);
+  const [showCommentsWidget, setShowCommentsWidget] = useState(false);
 
   const commentsCount = comments?.length || 0;
 
@@ -73,8 +76,11 @@ export const ChatItem: React.FC<{
   const icon: any = type2icon(type);
 
   return (
-    <div className="item chat-item">
-      <div className="title" onClick={onClick}>
+    <div
+      className={cx({ item: true, 'chat-item': true, expanded })}
+      onClick={onClick}
+    >
+      <div className="title">
         <Icon name={icon} />
         {title}
       </div>
@@ -86,27 +92,15 @@ export const ChatItem: React.FC<{
       )}
       <br />
       {expanded && description !== title && (
-        <div className="description">{description}</div>
+        <section className="description">{description}</section>
       )}
       {!!commentsCount && (
         <div className="replies-count">{commentsCount} replies</div>
       )}
       <div className="actions">
-        <div className="like-widget">
-          <Button
-            icon
-            disabled={userVoted}
-            onClick={(e) => {
-              e.stopPropagation();
-              onVote().catch(reportError);
-            }}
-          >
-            <Icon size="big" name="thumbs up outline" />
-          </Button>
-          {!!votes && <div className="votes-count">{votes}</div>}
-        </div>
+        <LikeWidget votes={votes} userVoted={userVoted} onVote={onVote} />
 
-        <div className="comment-widget">
+        <div>
           {expanded && user?.uid === author && (
             <Button
               icon="close"
@@ -118,39 +112,28 @@ export const ChatItem: React.FC<{
               }}
             />
           )}
-          {comment === null && !expanded && (
-            <Button basic onClick={() => !comment && setComment('')}>
+          {!showCommentsWidget && !expanded && (
+            <Button
+              basic
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCommentsWidget(true);
+              }}
+            >
               Reply
             </Button>
           )}
         </div>
       </div>
       {expanded && !!commentsCount && (
-        <div className="comments-section">
-          <h4>Replies</h4>
+        <section>
+          <h4 className="pale-heading">Replies</h4>
           <CommentsList comments={sortedComments!} />
-        </div>
+        </section>
       )}
-      {(comment !== null || expanded) &&
+      {(showCommentsWidget || expanded) &&
         (!!user ? (
-          <div className="leave-comment">
-            <Form
-              onSubmit={(e) => {
-                e.preventDefault();
-                !!comment &&
-                  onComment(comment)
-                    .then(() => setComment(null))
-                    .catch(reportError);
-              }}
-            >
-              <Form.Input
-                value={comment || ''}
-                placeholder="Your comment here"
-                action={<Button icon="send" />}
-                onChange={(e) => setComment(e.target.value)}
-              />
-            </Form>
-          </div>
+          <PostCommentWidget onComment={onComment} />
         ) : (
           <div style={{ textAlign: 'center' }}>
             You need to register or sign in to be able to post

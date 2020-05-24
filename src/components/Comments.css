@@ -1,0 +1,9 @@
+.comments-list.list .content .description {
+  margin: 0.5em 0;
+  opacity: 0.8;
+  font-size: 0.8em;
+}
+.comments-list.list .content .header {
+  font-weight: 500;
+  padding: 10px 5px;
+}

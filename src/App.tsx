@@ -222,6 +222,7 @@ const Home: React.FC = () => {
           votesObj &&
           objects.map((it) => (
             <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
+              {/* <div className="map-item pointing-label-right-side"> */}
               <Segment raised className="map-item left pointing label">
                 <MapObjectRender
                   item={it}
@@ -229,6 +230,7 @@ const Home: React.FC = () => {
                   comments={commentsObj[it.id]}
                 />
               </Segment>
+              {/* </div> */}
             </MapItem>
           ))}
       </Maps>

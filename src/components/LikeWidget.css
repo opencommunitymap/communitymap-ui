@@ -1,0 +1,17 @@
+.like-widget {
+  display: inline-flex;
+  align-items: center;
+}
+
+.like-widget button {
+  background: none !important;
+  padding: 5px !important;
+}
+
+.like-widget > .votes-count {
+  font-size: 1.5em;
+}
+
+.like-widget button.disabled {
+  color: red;
+}
