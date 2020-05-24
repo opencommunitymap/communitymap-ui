@@ -3,6 +3,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
+import './Login.css';
 
 export const Login: React.FC<{ title?: string }> = ({
   title = 'You need to sign in to continue',

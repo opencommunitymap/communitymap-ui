@@ -1,0 +1,50 @@
+.add-new-place form label {
+  opacity: 0.7;
+}
+.add-new-place form textarea {
+  min-height: 150px;
+}
+
+.place-item {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+.place-item:not(.expanded) {
+  cursor: pointer;
+}
+.place-item:not(:hover):not(.expanded) .replies-count {
+  display: none;
+}
+
+.place-item .short-description {
+  color: #777;
+  display: none;
+  margin: 5px 0;
+}
+.place-item.expanded .short-description,
+.place-item:hover .short-description {
+  display: block;
+}
+
+.place-item .description {
+  white-space: pre-wrap;
+}
+
+.place-item .title {
+  min-height: 1.7em;
+  font-weight: 600;
+  font-size: 1.2em;
+}
+
+.place-item .title img {
+  max-width: 3.5em;
+  max-height: 3.5em;
+  display: inline;
+  margin-right: 5px;
+}
+
+.place-item .external-url {
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

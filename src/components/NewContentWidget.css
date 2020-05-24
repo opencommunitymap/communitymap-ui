@@ -1,0 +1,13 @@
+#new-content-widget {
+  padding: 1.5em;
+  display: flex;
+  flex-direction: column;
+}
+#new-content-widget > * {
+  margin: 0.5em;
+  text-align: left;
+}
+#new-content-widget h5 {
+  /* margin: 0.5em; */
+  text-align: center;
+}
