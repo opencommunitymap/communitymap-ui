@@ -28,6 +28,7 @@ import {
   Place,
   DirectMessageModal,
   DirectMessageDialogs,
+  PointingSegment,
 } from './components';
 import {
   useLoadObjects,
@@ -41,7 +42,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { Segment, Modal, Loader } from 'semantic-ui-react';
+import { Modal, Loader } from 'semantic-ui-react';
 import { useAuth, AuthProvider } from './Auth';
 
 const initFirebase = async () => {
@@ -222,15 +223,13 @@ const Home: React.FC = () => {
           votesObj &&
           objects.map((it) => (
             <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-              {/* <div className="map-item pointing-label-right-side"> */}
-              <Segment raised className="map-item left pointing label">
+              <PointingSegment>
                 <MapObjectRender
                   item={it}
                   votesInfo={votesObj[it.id]}
                   comments={commentsObj[it.id]}
                 />
-              </Segment>
-              {/* </div> */}
+              </PointingSegment>
             </MapItem>
           ))}
       </Maps>
