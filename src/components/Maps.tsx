@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import GoogleMapReact from 'google-map-react';
 import './Maps.css';
+import silverStyle from './MapsGoogleSilverStyle.json';
+import darkStyle from './MapsGoogleDarkStyle.json';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 
@@ -12,21 +14,39 @@ export const MapItem: React.FC<{ lat: number; lng: number }> = ({
   children,
 }) => <>{children}</>;
 
-const defaultProps = {
-  defaultCenter: { lat: 42.69, lng: 23.32 },
-  defaultZoom: 18,
-  defaultOptions: {
+const getProps = (theme: string) => {
+  let styles: any = [
+    {
+      // disables poi
+      featureType: 'poi',
+      elementType: 'labels',
+      stylers: [{ visibility: 'off' }],
+    },
+  ];
+  if (theme === 'dark') {
+    styles = darkStyle;
+  } else if (theme === 'silver') {
+    styles = silverStyle;
+  }
+  const options = {
     overviewMapControl: true,
-    streetViewControl: true,
+    streetViewControl: false,
     rotateControl: true,
     mapTypeControl: true,
-    styles: [],
-  },
+    styles,
+  };
+  return {
+    defaultCenter: { lat: 42.69, lng: 23.32 },
+    defaultZoom: 18,
+    defaultOptions: options,
+    options,
+  };
 };
 
 interface MapsProps {
   centerLat?: number;
   centerLng?: number;
+  theme?: string;
   onChange: (
     centerLat: number,
     centerLng: number,
@@ -41,19 +61,21 @@ export const Maps: React.FC<MapsProps> = ({
   children,
   centerLat,
   centerLng,
+  theme = 'standard',
   onChange,
 }) => {
   const center = useMemo(() => {
     if (!centerLat || !centerLng) return undefined;
     return { lat: centerLat, lng: centerLng };
   }, [centerLat, centerLng]);
+  const props = useMemo(() => getProps(theme), [theme]);
   return (
     <>
       <div id="center-pin">
         <PinImg />
       </div>
       <GoogleMapReact
-        {...defaultProps}
+        {...props}
         bootstrapURLKeys={{ key: GOOGLE_API_KEY }}
         center={center}
         onChange={(props) => {
