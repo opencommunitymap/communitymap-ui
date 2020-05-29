@@ -205,6 +205,7 @@ const Home: React.FC = () => {
         }}
       />
       <Maps
+        theme={initialParams?.theme}
         centerLat={mapParams?.centerLat || initialParams?.centerLat}
         centerLng={mapParams?.centerLng || initialParams?.centerLng}
         onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
