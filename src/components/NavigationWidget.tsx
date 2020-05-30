@@ -1,30 +1,25 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
+import { detectLocation } from '../utils';
 
 export const NavigationWidget: React.FC<{
   onChangePosition: (lat: number, lng: number) => void;
 }> = ({ onChangePosition }) => {
   const [loading, setLoading] = useState(false);
-  const locate = () => {
-    const geo = window.navigator.geolocation;
-    if (!geo) {
-      alert("Your browser doesn't support geolocation");
-      return;
-    }
+
+  const locate = async () => {
     setLoading(true);
-    geo.getCurrentPosition(
-      (pos) => {
-        setLoading(false);
-        onChangePosition(pos.coords.latitude, pos.coords.longitude);
-      },
-      (err) => {
-        setLoading(false);
-        console.log('Error getting location', err);
-        alert('Cannot get location');
-      },
-      { enableHighAccuracy: true }
-    );
+    try {
+      const pos = await detectLocation();
+      onChangePosition(pos.latitude, pos.longitude);
+    } catch (err) {
+      console.log('Error getting location', err);
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <div id="navigation-widget">
       <Button

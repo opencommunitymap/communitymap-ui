@@ -68,6 +68,7 @@ export interface InitialAppParams extends Partial<EmbedParams> {
   centerLat?: number;
   centerLng?: number;
   theme?: 'standard' | 'silver' | 'dark';
+  autolocate?: boolean;
 }
 
 export interface UserProfile {

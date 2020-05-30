@@ -46,6 +46,7 @@ import 'firebase/firestore';
 import { Modal, Loader } from 'semantic-ui-react';
 import { useAuth, AuthProvider } from './Auth';
 import { StoryItem } from './components/Story';
+import { detectLocation } from './utils';
 
 const initFirebase = async () => {
   if (process.env.NODE_ENV === 'production') {
@@ -167,6 +168,28 @@ const Home: React.FC = () => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
 
+  const setMapCenter = (lat: number, lng: number) => {
+    setMapParams({
+      ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
+      centerLat: lat,
+      centerLng: lng,
+    });
+  };
+
+  useEffect(() => {
+    if (initialParams?.autolocate) {
+      detectLocation()
+        .then((loc) => {
+          console.debug('Autolocate:', loc);
+          setMapCenter(loc.latitude, loc.longitude);
+        })
+        .catch((err) => {
+          console.log('Error autodetecting location:', err);
+          // silently ignore for the moment
+        });
+    }
+  }, []);
+
   const { objects, commentsObj, votesObj } = useLoadObjects(
     mapParams,
     user,
@@ -188,12 +211,8 @@ const Home: React.FC = () => {
       <ProfileWidget />
       <NavigationWidget
         onChangePosition={(lat, lng) => {
-          console.log('located', lat, lng);
-          setMapParams({
-            ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
-            centerLat: lat,
-            centerLng: lng,
-          });
+          console.debug('located', lat, lng);
+          setMapCenter(lat, lng);
         }}
       />
       <Maps
