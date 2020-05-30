@@ -6,6 +6,7 @@ import { Login } from './Login';
 import 'firebase/auth';
 import { reportError } from '../utils';
 import { AddNewPlaceObject } from './Place';
+import { AddNewStoryObject } from './Story';
 import './NewContentWidget.css';
 
 const AddNewObjectRender: React.FC<{
@@ -15,6 +16,11 @@ const AddNewObjectRender: React.FC<{
   switch (type) {
     case 'place':
       return <AddNewPlaceObject type={type} onPost={onAdd} />;
+    case 'story':
+      return <AddNewStoryObject type={type} onPost={onAdd} />;
+    case 'chat':
+    case 'request':
+    case 'offer':
     default:
       return <AddNewChatObject type={type} onPost={onAdd} />;
   }
@@ -72,6 +78,14 @@ export const NewContentWidget: React.FC<{
         primary
         content="Place"
         onClick={() => setAddType('place')}
+      />
+      <hr />
+      <Button
+        key="story"
+        icon="edit outline"
+        primary
+        content="Story"
+        onClick={() => setAddType('story')}
       />
     </Segment>
   );
