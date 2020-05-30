@@ -278,7 +278,7 @@ const Home: React.FC = () => {
 function App() {
   const user = useAuth();
 
-  const [splash, setSplash] = useState(true);
+  const [splash, setSplash] = useState(!isEmbed ? true : false);
   useEffect(() => {
     setTimeout(() => setSplash(false), 2000);
   }, []);
