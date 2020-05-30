@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ObjectItem, ObjectComment, ObjectItemInput } from '../types';
+import { ObjectItemInput, ObjectItemComponentProps } from '../types';
 import { Icon, Image, Form } from 'semantic-ui-react';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Place.css';
@@ -17,17 +17,7 @@ const reHttp = /^https?:\/\//;
 const normalizeUrl = (url: string) =>
   reHttp.test(url) ? url : `https://${url}`;
 
-export const Place: React.FC<{
-  item: ObjectItem;
-  user: firebase.User | null;
-  userVoted: boolean;
-  votes: number;
-  comments?: ObjectComment[];
-  expanded?: boolean;
-  onClick?: () => void;
-  onVote: () => Promise<any>;
-  onComment: (comment: string) => Promise<any>;
-}> = ({
+export const Place: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
   userVoted,

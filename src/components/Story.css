@@ -1,0 +1,37 @@
+.add-new-story form label {
+  opacity: 0.7;
+}
+.add-new-story form textarea {
+  min-height: 250px;
+}
+
+.story-item:not(.expanded) {
+  cursor: pointer;
+}
+
+.story-item .title {
+  font-weight: 600;
+  font-size: 1.2em;
+}
+
+.story-item .actions {
+  margin-bottom: 3px;
+}
+.story-item.expanded .actions {
+  margin-bottom: 1em;
+}
+
+.story-item .description {
+  white-space: pre-wrap;
+}
+.story-item .author-created {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin: 0.5em 0;
+}
+.story-item .actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5em;
+}

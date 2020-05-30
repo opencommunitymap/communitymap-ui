@@ -21,7 +21,7 @@ export interface ObjectVote {
 }
 
 export interface ObjectItemInput {
-  type: 'chat' | 'request' | 'offer' | 'donation' | 'place';
+  type: 'chat' | 'request' | 'offer' | 'donation' | 'place' | 'story';
   title: string;
   short_description?: string;
   description: string;
@@ -34,6 +34,19 @@ export interface ObjectItem extends ObjectItemInput {
   author: string;
   loc: Location;
   created: string;
+}
+
+export interface ObjectItemComponentProps {
+  item: ObjectItem;
+  user: firebase.User | null;
+  userVoted: boolean;
+  votes: number;
+  comments?: ObjectComment[];
+  expanded?: boolean;
+  onClick?: () => void;
+  onVote: () => Promise<any>;
+  onComment: (comment: string) => Promise<any>;
+  onClose: () => Promise<any>;
 }
 
 export interface MapParams {

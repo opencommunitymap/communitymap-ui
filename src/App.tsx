@@ -15,6 +15,7 @@ import {
   ObjectComment,
   EmbedParams,
   InitialAppParams,
+  ObjectItemComponentProps,
 } from './types';
 import {
   SplashScreen,
@@ -43,6 +44,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { Segment, Modal, Loader } from 'semantic-ui-react';
 import { useAuth, AuthProvider } from './Auth';
+import { StoryItem } from './components/Story';
 
 const initFirebase = async () => {
   if (process.env.NODE_ENV === 'production') {
@@ -96,39 +98,31 @@ const MapObjectRender: React.FC<{
   const user = useAuth() || null;
   const router = useHistory();
 
+  let RealComponent: React.FC<ObjectItemComponentProps>;
+
   switch (item.type) {
     case 'place':
-      return (
-        <Place
-          item={item}
-          user={user}
-          userVoted={votesInfo?.userVoted}
-          votes={votesInfo?.count}
-          comments={comments}
-          onClick={() => router.push(`/object/${item.id}`)}
-          onComment={async (comment) => leaveComment(user, item, comment)}
-          onVote={async () => voteUp(user, item)}
-        />
-      );
-    case 'request':
-    case 'offer':
-    case 'donation':
-    case 'chat':
+      RealComponent = Place;
+      break;
+    case 'story':
+      RealComponent = StoryItem;
+      break;
     default:
-      return (
-        <ChatItem
-          item={item}
-          user={user}
-          userVoted={votesInfo?.userVoted}
-          votes={votesInfo?.count}
-          comments={comments}
-          onClick={() => router.push(`/object/${item.id}`)}
-          onComment={async (comment) => leaveComment(user, item, comment)}
-          onVote={async () => voteUp(user, item)}
-          onClose={async () => closeObject(user, item)}
-        />
-      );
+      RealComponent = ChatItem;
   }
+  return (
+    <RealComponent
+      item={item}
+      user={user}
+      userVoted={votesInfo?.userVoted}
+      votes={votesInfo?.count}
+      comments={comments}
+      onClick={() => router.push(`/object/${item.id}`)}
+      onComment={async (comment) => leaveComment(user, item, comment)}
+      onVote={async () => voteUp(user, item)}
+      onClose={async () => closeObject(user, item)}
+    />
+  );
 };
 
 const DetailedObjectRender: React.FC = () => {
@@ -140,35 +134,32 @@ const DetailedObjectRender: React.FC = () => {
   if (object === undefined) return <Loader active />;
   if (object === null) return <div>Object not found :(</div>;
 
+  let RealComponent: React.FC<ObjectItemComponentProps>;
+
   switch (object.type) {
     case 'place':
-      return (
-        <Place
-          expanded
-          item={object}
-          user={user}
-          userVoted={votesInfo?.userVoted || false}
-          votes={votesInfo?.count || 0}
-          comments={comments || []}
-          onComment={async (comment) => leaveComment(user, object, comment)}
-          onVote={async () => voteUp(user, object)}
-        />
-      );
+      RealComponent = Place;
+      break;
+    case 'story':
+      RealComponent = StoryItem;
+      break;
     default:
-      return (
-        <ChatItem
-          expanded
-          item={object}
-          user={user}
-          userVoted={votesInfo?.userVoted || false}
-          votes={votesInfo?.count || 0}
-          comments={comments || []}
-          onComment={async (comment) => leaveComment(user, object, comment)}
-          onVote={async () => voteUp(user, object)}
-          onClose={async () => closeObject(user, object)}
-        />
-      );
+      RealComponent = ChatItem;
   }
+
+  return (
+    <RealComponent
+      expanded
+      item={object}
+      user={user}
+      userVoted={votesInfo?.userVoted || false}
+      votes={votesInfo?.count || 0}
+      comments={comments || []}
+      onComment={async (comment) => leaveComment(user, object, comment)}
+      onVote={async () => voteUp(user, object)}
+      onClose={async () => closeObject(user, object)}
+    />
+  );
 };
 
 const Home: React.FC = () => {
