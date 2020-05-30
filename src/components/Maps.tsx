@@ -32,7 +32,7 @@ const getProps = (theme: string) => {
     overviewMapControl: true,
     streetViewControl: false,
     rotateControl: true,
-    mapTypeControl: true,
+    mapTypeControl: false,
     styles,
   };
   return {
