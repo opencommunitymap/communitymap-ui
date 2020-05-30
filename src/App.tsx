@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -168,13 +168,16 @@ const Home: React.FC = () => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
 
-  const setMapCenter = (lat: number, lng: number) => {
-    setMapParams({
-      ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
-      centerLat: lat,
-      centerLng: lng,
-    });
-  };
+  const setMapCenter = useCallback(
+    (lat: number, lng: number) => {
+      setMapParams((mapParams) => ({
+        ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
+        centerLat: lat,
+        centerLng: lng,
+      }));
+    },
+    [setMapParams]
+  );
 
   useEffect(() => {
     if (initialParams?.autolocate) {
@@ -188,7 +191,7 @@ const Home: React.FC = () => {
           // silently ignore for the moment
         });
     }
-  }, []);
+  }, [setMapCenter]);
 
   const { objects, commentsObj, votesObj } = useLoadObjects(
     mapParams,
