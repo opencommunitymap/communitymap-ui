@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -15,6 +15,7 @@ import {
   ObjectComment,
   EmbedParams,
   InitialAppParams,
+  ObjectItemComponentProps,
 } from './types';
 import {
   SplashScreen,
@@ -28,6 +29,7 @@ import {
   Place,
   DirectMessageModal,
   DirectMessageDialogs,
+  PointingSegment,
 } from './components';
 import {
   useLoadObjects,
@@ -41,8 +43,10 @@ import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { Segment, Modal, Loader } from 'semantic-ui-react';
+import { Modal, Loader } from 'semantic-ui-react';
 import { useAuth, AuthProvider } from './Auth';
+import { StoryItem } from './components/Story';
+import { detectLocation } from './utils';
 
 const initFirebase = async () => {
   if (process.env.NODE_ENV === 'production') {
@@ -96,39 +100,31 @@ const MapObjectRender: React.FC<{
   const user = useAuth() || null;
   const router = useHistory();
 
+  let RealComponent: React.FC<ObjectItemComponentProps>;
+
   switch (item.type) {
     case 'place':
-      return (
-        <Place
-          item={item}
-          user={user}
-          userVoted={votesInfo?.userVoted}
-          votes={votesInfo?.count}
-          comments={comments}
-          onClick={() => router.push(`/object/${item.id}`)}
-          onComment={async (comment) => leaveComment(user, item, comment)}
-          onVote={async () => voteUp(user, item)}
-        />
-      );
-    case 'request':
-    case 'offer':
-    case 'donation':
-    case 'chat':
+      RealComponent = Place;
+      break;
+    case 'story':
+      RealComponent = StoryItem;
+      break;
     default:
-      return (
-        <ChatItem
-          item={item}
-          user={user}
-          userVoted={votesInfo?.userVoted}
-          votes={votesInfo?.count}
-          comments={comments}
-          onClick={() => router.push(`/object/${item.id}`)}
-          onComment={async (comment) => leaveComment(user, item, comment)}
-          onVote={async () => voteUp(user, item)}
-          onClose={async () => closeObject(user, item)}
-        />
-      );
+      RealComponent = ChatItem;
   }
+  return (
+    <RealComponent
+      item={item}
+      user={user}
+      userVoted={votesInfo?.userVoted}
+      votes={votesInfo?.count}
+      comments={comments}
+      onClick={() => router.push(`/object/${item.id}`)}
+      onComment={async (comment) => leaveComment(user, item, comment)}
+      onVote={async () => voteUp(user, item)}
+      onClose={async () => closeObject(user, item)}
+    />
+  );
 };
 
 const DetailedObjectRender: React.FC = () => {
@@ -140,40 +136,62 @@ const DetailedObjectRender: React.FC = () => {
   if (object === undefined) return <Loader active />;
   if (object === null) return <div>Object not found :(</div>;
 
+  let RealComponent: React.FC<ObjectItemComponentProps>;
+
   switch (object.type) {
     case 'place':
-      return (
-        <Place
-          expanded
-          item={object}
-          user={user}
-          userVoted={votesInfo?.userVoted || false}
-          votes={votesInfo?.count || 0}
-          comments={comments || []}
-          onComment={async (comment) => leaveComment(user, object, comment)}
-          onVote={async () => voteUp(user, object)}
-        />
-      );
+      RealComponent = Place;
+      break;
+    case 'story':
+      RealComponent = StoryItem;
+      break;
     default:
-      return (
-        <ChatItem
-          expanded
-          item={object}
-          user={user}
-          userVoted={votesInfo?.userVoted || false}
-          votes={votesInfo?.count || 0}
-          comments={comments || []}
-          onComment={async (comment) => leaveComment(user, object, comment)}
-          onVote={async () => voteUp(user, object)}
-          onClose={async () => closeObject(user, object)}
-        />
-      );
+      RealComponent = ChatItem;
   }
+
+  return (
+    <RealComponent
+      expanded
+      item={object}
+      user={user}
+      userVoted={votesInfo?.userVoted || false}
+      votes={votesInfo?.count || 0}
+      comments={comments || []}
+      onComment={async (comment) => leaveComment(user, object, comment)}
+      onVote={async () => voteUp(user, object)}
+      onClose={async () => closeObject(user, object)}
+    />
+  );
 };
 
 const Home: React.FC = () => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
+
+  const setMapCenter = useCallback(
+    (lat: number, lng: number) => {
+      setMapParams((mapParams) => ({
+        ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
+        centerLat: lat,
+        centerLng: lng,
+      }));
+    },
+    [setMapParams]
+  );
+
+  useEffect(() => {
+    if (initialParams?.autolocate) {
+      detectLocation()
+        .then((loc) => {
+          console.debug('Autolocate:', loc);
+          setMapCenter(loc.latitude, loc.longitude);
+        })
+        .catch((err) => {
+          console.log('Error autodetecting location:', err);
+          // silently ignore for the moment
+        });
+    }
+  }, [setMapCenter]);
 
   const { objects, commentsObj, votesObj } = useLoadObjects(
     mapParams,
@@ -196,15 +214,12 @@ const Home: React.FC = () => {
       <ProfileWidget />
       <NavigationWidget
         onChangePosition={(lat, lng) => {
-          console.log('located', lat, lng);
-          setMapParams({
-            ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
-            centerLat: lat,
-            centerLng: lng,
-          });
+          console.debug('located', lat, lng);
+          setMapCenter(lat, lng);
         }}
       />
       <Maps
+        theme={initialParams?.theme}
         centerLat={mapParams?.centerLat || initialParams?.centerLat}
         centerLng={mapParams?.centerLng || initialParams?.centerLng}
         onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
@@ -222,15 +237,13 @@ const Home: React.FC = () => {
           votesObj &&
           objects.map((it) => (
             <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-              {/* <div className="map-item pointing-label-right-side"> */}
-              <Segment raised className="map-item left pointing label">
+              <PointingSegment>
                 <MapObjectRender
                   item={it}
                   votesInfo={votesObj[it.id]}
                   comments={commentsObj[it.id]}
                 />
-              </Segment>
-              {/* </div> */}
+              </PointingSegment>
             </MapItem>
           ))}
       </Maps>
@@ -268,7 +281,7 @@ const Home: React.FC = () => {
 function App() {
   const user = useAuth();
 
-  const [splash, setSplash] = useState(true);
+  const [splash, setSplash] = useState(!isEmbed ? true : false);
   useEffect(() => {
     setTimeout(() => setSplash(false), 2000);
   }, []);

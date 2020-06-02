@@ -52,7 +52,7 @@ export const ProfileWidget: React.FC = () => {
       {user ? (
         <Dropdown
           trigger={
-            <Button basic icon size="large">
+            <Button className="profile-button" icon size="large">
               <Icon.Group>
                 <Icon name="user outline" />
                 {unreadDialogs > 0 && (

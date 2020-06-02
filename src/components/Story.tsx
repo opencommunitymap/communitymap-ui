@@ -6,38 +6,11 @@ import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { useUserPublicInfo } from '../DB';
 import { CommentsList, PostCommentWidget } from './Comments';
-import './Chat.css';
+import './Story.css';
 import cx from 'classnames';
 import { LikeWidget } from './LikeWidget';
 
-export const type2icon = (type: ObjectItemInput['type']) => {
-  switch (type) {
-    case 'request':
-      return 'hand paper';
-    case 'offer':
-      return 'heart';
-    case 'donation':
-      return 'heart';
-    case 'chat':
-    default:
-      return 'chat';
-  }
-};
-export const type2title = (type: ObjectItemInput['type']) => {
-  switch (type) {
-    case 'request':
-      return 'Ask Help';
-    case 'offer':
-      return 'Offer Help';
-    case 'donation':
-      return 'Donate';
-    case 'chat':
-    default:
-      return 'Chat';
-  }
-};
-
-export const ChatItem: React.FC<ObjectItemComponentProps> = ({
+export const StoryItem: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
   userVoted,
@@ -49,7 +22,7 @@ export const ChatItem: React.FC<ObjectItemComponentProps> = ({
   onComment,
   onClose,
 }) => {
-  const { type, author, title, description, created } = item;
+  const { author, title, description, created } = item;
 
   const authorInfo = useUserPublicInfo(author, true);
 
@@ -62,11 +35,11 @@ export const ChatItem: React.FC<ObjectItemComponentProps> = ({
     return comments.sort((l, r) => (l.created < r.created ? -1 : 1));
   }, [comments]);
 
-  const icon: any = type2icon(type);
+  const icon = 'edit outline';
 
   return (
     <div
-      className={cx({ item: true, 'chat-item': true, expanded })}
+      className={cx({ item: true, 'story-item': true, expanded })}
       onClick={onClick}
     >
       <div className="title">
@@ -93,7 +66,7 @@ export const ChatItem: React.FC<ObjectItemComponentProps> = ({
           {expanded && user?.uid === author && (
             <Button
               icon="close"
-              content="Close"
+              content="Delete"
               basic
               onClick={() => {
                 if (window.confirm('Are you sure you want to close it?'))
@@ -132,29 +105,7 @@ export const ChatItem: React.FC<ObjectItemComponentProps> = ({
   );
 };
 
-const minutes2text = (minutes: number) => {
-  if (minutes < 60) return `${minutes} minutes`;
-  if (minutes < 24 * 60) return `${minutes / 60} hours`;
-  return `${minutes / (24 * 60)} days`;
-};
-
-const validUntilOptions = [
-  5,
-  15,
-  30,
-  60,
-  3 * 60,
-  12 * 60,
-  24 * 60,
-  2 * 24 * 60,
-  7 * 24 * 60,
-].map((minutes) => ({
-  value: minutes,
-  key: minutes,
-  text: minutes2text(minutes),
-}));
-
-export const AddNewChatObject: React.FC<{
+export const AddNewStoryObject: React.FC<{
   type: ObjectItemInput['type'];
   onPost: (data: ObjectItemInput) => void;
 }> = ({ type, onPost }) => {
@@ -165,9 +116,9 @@ export const AddNewChatObject: React.FC<{
     setState({ ...state, [name]: value });
   };
   return (
-    <div className="add-new-chat">
+    <div className="add-new-story">
       <h4>
-        <Icon name={type2icon(type)} /> {type2title(type)}
+        <Icon name="edit outline" /> Create story
       </h4>
       <Form
         onSubmit={(e) => {
@@ -185,24 +136,15 @@ export const AddNewChatObject: React.FC<{
       >
         <Form.Input
           autoComplete="off"
-          label="Topic (optional)"
+          label="Subject"
           name="topic"
           onChange={onChange}
         />
         <Form.TextArea
           autoFocus
-          label="Message"
+          label="Story"
           name="message"
           onChange={onChange}
-        />
-        <Form.Dropdown
-          options={validUntilOptions}
-          label="Valid for next"
-          selection
-          defaultValue={state.valid_until}
-          onChange={(e, { value }) =>
-            setState({ ...state, valid_until: value })
-          }
         />
 
         <Form.Button primary>Post</Form.Button>

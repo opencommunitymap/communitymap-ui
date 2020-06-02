@@ -11,7 +11,8 @@ export const Login: React.FC<{ title?: string }> = ({
   useEffect(() => {
     var uiConfig = {
       signInFlow: 'popup',
-      signInSuccessUrl: window.location.origin,
+      // signInSuccessUrl: window.location.origin,
+      signInSuccessUrl: window.location.href,
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
