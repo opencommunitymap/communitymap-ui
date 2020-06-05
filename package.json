@@ -1,0 +1,12 @@
+{
+  "name": "communitymap-ui",
+  "private": true,
+  "license": "Apache-2.0",
+  "workspaces": [
+    "react-communitymap",
+    "webapp"
+  ],
+  "scripts": {
+    "build": "yarn workspaces run build"
+  }
+}

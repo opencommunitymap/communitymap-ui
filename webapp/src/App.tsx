@@ -29,8 +29,9 @@ import {
   Place,
   DirectMessageModal,
   DirectMessageDialogs,
-  PointingSegment,
 } from './components';
+import { PointingSegment } from 'react-communitymap';
+
 import {
   useLoadObjects,
   postObject,

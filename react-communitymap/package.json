@@ -1,15 +1,16 @@
 {
-  "name": "community-map",
-  "version": "0.1.0",
-  "private": true,
+  "name": "react-communitymap",
+  "version": "0.1.0-rc1",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "deploy": "yarn build && firebase deploy",
-    "deploy_hosting": "yarn build && firebase deploy --only hosting:communitymap",
-    "index_sync": "firebase firestore:indexes > firestore.indexes.json",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "jest",
+    "build": "rm -rf dist && tsc && copyfiles -u 1 src/*.css src/**/*.css dist/",
+    "watch": "tsc -w"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -18,14 +19,14 @@
     "firebaseui": "^4.5.1",
     "google-map-react": "^1.1.7",
     "query-string": "^6.12.1",
-    "react": "^16.13.1",
-    "react-communitymap": "^0.1.0",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
     "@testing-library/jest-dom": "^5.9.0",
     "@testing-library/react": "^10.2.0",
     "@testing-library/user-event": "^11.1.0",
@@ -36,10 +37,17 @@
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^26.0.1",
+    "copyfiles": "^2.3.0",
     "firebase-ci": "^0.13.0",
     "firebase-tools": "^8.4.1",
+    "jest": "^26.0.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "typescript": "~3.9.5"
+    "regenerator-runtime": "^0.13.5",
+    "typescript": "^3.8.3"
   },
   "eslintConfig": {
     "extends": "react-app"

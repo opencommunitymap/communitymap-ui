@@ -8,7 +8,6 @@ export * from './NavigationWidget';
 export * from './NewContentWidget';
 export * from './Chat';
 export * from './Place';
-export * from './PointingSegment';
 export * from './ProfileWidget';
 export * from './SplashScreen';
 export * from './UserPage';

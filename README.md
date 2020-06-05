@@ -5,7 +5,7 @@ Open Community Map is a platform intended to gather various local community and 
 It can be used from:
 
 - https://communitymap.online
-- Partner 3rd party website with the map embedded with `<iframe>`
+- Partner 3rd party website with the map embedded with `<iframe>` or with [React SDK](#React%20SDK)
 - Self-hosted solution
 
 More details about project ideas and structure can be found in the [Wiki](https://github.com/opencommunitymap/communitymap-ui/wiki)
@@ -49,6 +49,14 @@ Optional _canAdd_ allows to hide UI elements for adding objects from this view. 
   height="850"
 ></iframe>
 ```
+
+### React SDK
+
+This is the most flexible and powerful way for integration. It allows different customizations and interactions with the map and its objects.
+
+Read more in its [Documentation](react-communitymap/README.md)
+
+It's in early alpha and could be subject for many changes.
 
 ## API
 
