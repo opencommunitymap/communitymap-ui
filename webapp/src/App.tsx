@@ -19,8 +19,8 @@ import {
 } from './types';
 import {
   SplashScreen,
-  Maps,
-  MapItem,
+  // Maps,
+  // MapItem,
   ChatItem,
   UserPage,
   NewContentWidget,
@@ -30,7 +30,7 @@ import {
   DirectMessageModal,
   DirectMessageDialogs,
 } from './components';
-import { PointingSegment } from 'react-communitymap';
+import { PointingSegment, CommunityMap, Pin } from 'react-communitymap';
 
 import {
   useLoadObjects,
@@ -165,6 +165,8 @@ const DetailedObjectRender: React.FC = () => {
   );
 };
 
+const defaultCenter = { lat: 42.69, lng: 23.32 };
+
 const Home: React.FC = () => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
@@ -204,79 +206,85 @@ const Home: React.FC = () => {
 
   return (
     <div id="home">
-      {initialParams?.canAdd !== false && (
-        <NewContentWidget
-          authenticated={!!user}
-          onAdd={(item) =>
-            postObject(user, mapParams, item, embedParams?.appId)
-          }
-        />
-      )}
-      <ProfileWidget />
-      <NavigationWidget
-        onChangePosition={(lat, lng) => {
-          console.debug('located', lat, lng);
-          setMapCenter(lat, lng);
-        }}
-      />
-      <Maps
-        theme={initialParams?.theme}
-        centerLat={mapParams?.centerLat || initialParams?.centerLat}
-        centerLng={mapParams?.centerLng || initialParams?.centerLng}
-        onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
-          setMapParams({
-            centerLat,
-            centerLng,
-            minLat,
-            maxLat,
-            minLng,
-            maxLng,
-          })
-        }
-      >
-        {commentsObj &&
-          votesObj &&
-          objects.map((it) => (
-            <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-              <PointingSegment>
-                <MapObjectRender
-                  item={it}
-                  votesInfo={votesObj[it.id]}
-                  comments={commentsObj[it.id]}
-                />
-              </PointingSegment>
-            </MapItem>
-          ))}
-      </Maps>
-      <Switch>
-        <Route path="/object/:objectId">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Content scrolling>
-              <DetailedObjectRender />
-            </Modal.Content>
-          </Modal>
-        </Route>
-        <Route path="/users/:userId">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Content scrolling>
-              <UserPage />
-            </Modal.Content>
-          </Modal>
-        </Route>
-        <Route path="/direct-messages/:dmKey">
-          <DirectMessageModal onClose={() => router.push('/')} />
-        </Route>
-        <Route path="/my-messages">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Header>Messages</Modal.Header>
-            <Modal.Content scrolling>
-              <DirectMessageDialogs />
-            </Modal.Content>
-          </Modal>
-        </Route>
-      </Switch>
+      <CommunityMap centerPin={<Pin />} center={defaultCenter}></CommunityMap>;
     </div>
   );
+
+  // return (
+  //   <div id="home">
+  //     {initialParams?.canAdd !== false && (
+  //       <NewContentWidget
+  //         authenticated={!!user}
+  //         onAdd={(item) =>
+  //           postObject(user, mapParams, item, embedParams?.appId)
+  //         }
+  //       />
+  //     )}
+  //     <ProfileWidget />
+  //     <NavigationWidget
+  //       onChangePosition={(lat, lng) => {
+  //         console.debug('located', lat, lng);
+  //         setMapCenter(lat, lng);
+  //       }}
+  //     />
+  //     <Maps
+  //       theme={initialParams?.theme}
+  //       centerLat={mapParams?.centerLat || initialParams?.centerLat}
+  //       centerLng={mapParams?.centerLng || initialParams?.centerLng}
+  //       onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
+  //         setMapParams({
+  //           centerLat,
+  //           centerLng,
+  //           minLat,
+  //           maxLat,
+  //           minLng,
+  //           maxLng,
+  //         })
+  //       }
+  //     >
+  //       {commentsObj &&
+  //         votesObj &&
+  //         objects.map((it) => (
+  //           <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
+  //             <PointingSegment>
+  //               <MapObjectRender
+  //                 item={it}
+  //                 votesInfo={votesObj[it.id]}
+  //                 comments={commentsObj[it.id]}
+  //               />
+  //             </PointingSegment>
+  //           </MapItem>
+  //         ))}
+  //     </Maps>
+  //     <Switch>
+  //       <Route path="/object/:objectId">
+  //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
+  //           <Modal.Content scrolling>
+  //             <DetailedObjectRender />
+  //           </Modal.Content>
+  //         </Modal>
+  //       </Route>
+  //       <Route path="/users/:userId">
+  //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
+  //           <Modal.Content scrolling>
+  //             <UserPage />
+  //           </Modal.Content>
+  //         </Modal>
+  //       </Route>
+  //       <Route path="/direct-messages/:dmKey">
+  //         <DirectMessageModal onClose={() => router.push('/')} />
+  //       </Route>
+  //       <Route path="/my-messages">
+  //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
+  //           <Modal.Header>Messages</Modal.Header>
+  //           <Modal.Content scrolling>
+  //             <DirectMessageDialogs />
+  //           </Modal.Content>
+  //         </Modal>
+  //       </Route>
+  //     </Switch>
+  //   </div>
+  // );
 };
 
 function App() {

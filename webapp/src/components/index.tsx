@@ -3,7 +3,6 @@ export * from './CloudinaryImageUpload';
 export * from './Comments';
 export * from './DirectMessage';
 export * from './Login';
-export * from './Maps';
 export * from './NavigationWidget';
 export * from './NewContentWidget';
 export * from './Chat';
