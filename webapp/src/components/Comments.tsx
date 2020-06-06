@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { ObjectComment } from '../types';
-import { useUserPublicInfo } from '../DB';
+import { ObjectComment, useUserPublicInfo } from 'react-communitymap';
 import { List, Form, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import './Comments.css';

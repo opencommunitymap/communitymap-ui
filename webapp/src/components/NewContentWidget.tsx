@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Segment, Modal } from 'semantic-ui-react';
-import { ObjectItemInput } from '../types';
+import { ObjectItemInput } from 'react-communitymap';
 import { AddNewChatObject, type2icon, type2title } from './Chat';
 import { Login } from './Login';
 import 'firebase/auth';

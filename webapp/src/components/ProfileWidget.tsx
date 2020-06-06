@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../Auth';
-import { useMyDirectMessages } from '../DB';
+import {
+  useAuth,
+  useMyDirectMessages,
+  useUserPublicInfo,
+  useAsyncStatus,
+  saveUserPublicInfo,
+} from 'react-communitymap';
 import firebase from 'firebase';
 import { Login } from '.';
 import {
@@ -17,7 +22,6 @@ import {
   Grid,
 } from 'semantic-ui-react';
 import './ProfileWidget.css';
-import { useUserPublicInfo, useAsyncStatus, saveUserPublicInfo } from '../DB';
 import { Link } from 'react-router-dom';
 
 export const ProfileWidget: React.FC = () => {

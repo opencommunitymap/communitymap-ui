@@ -4,16 +4,14 @@ import {
   useDirectMessage,
   useUserPublicInfo,
   useMyDirectMessages,
-} from '../DB';
-import { useAuth } from '../Auth';
-import { Loader, Form, Button, Modal, List } from 'semantic-ui-react';
-import './DirectMessage.css';
-import {
+  useAuth,
   DirectMessageItem,
   UserProfile,
   DirectMessageInfo,
   AuthUser,
-} from '../types';
+} from 'react-communitymap';
+import { Loader, Form, Button, Modal, List } from 'semantic-ui-react';
+import './DirectMessage.css';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { directMessageId, reportError } from '../utils';

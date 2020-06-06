@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Icon, Form } from 'semantic-ui-react';
-import { ObjectItemInput, ObjectItemComponentProps } from '../types';
+import {
+  ObjectItemInput,
+  ObjectItemComponentProps,
+  useUserPublicInfo,
+} from 'react-communitymap';
 import { reportError } from '../utils';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
-import { useUserPublicInfo } from '../DB';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Chat.css';
 import cx from 'classnames';

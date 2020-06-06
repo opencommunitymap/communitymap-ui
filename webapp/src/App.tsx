@@ -9,18 +9,9 @@ import {
 import 'semantic-ui-css/semantic.min.css';
 import queryString from 'query-string';
 import './App.css';
-import {
-  MapParams,
-  ObjectItem,
-  ObjectComment,
-  EmbedParams,
-  InitialAppParams,
-  ObjectItemComponentProps,
-} from './types';
+
 import {
   SplashScreen,
-  // Maps,
-  // MapItem,
   ChatItem,
   UserPage,
   NewContentWidget,
@@ -30,22 +21,32 @@ import {
   DirectMessageModal,
   DirectMessageDialogs,
 } from './components';
-import { PointingSegment, CommunityMap, Pin } from 'react-communitymap';
-
 import {
+  PointingSegment,
+  CommunityMap,
+  Pin,
   useLoadObjects,
   postObject,
   leaveComment,
   voteUp,
   closeObject,
   useLoadSingleObject,
-} from './DB';
+  ObjectItem,
+  ObjectComment,
+  EmbedParams,
+  InitialAppParams,
+  ObjectItemComponentProps,
+  MapParams,
+  useAuth,
+  AuthProvider,
+} from 'react-communitymap';
+
 import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { Modal, Loader } from 'semantic-ui-react';
-import { useAuth, AuthProvider } from './Auth';
+// import { useAuth, AuthProvider } from './Auth';
 import { StoryItem } from './components/Story';
 import { detectLocation } from './utils';
 

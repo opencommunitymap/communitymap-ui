@@ -8,7 +8,7 @@ import {
   UserProfile,
   DirectMessageInfo,
   DirectMessageItem,
-} from './types';
+} from '../';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
