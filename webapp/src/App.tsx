@@ -5,6 +5,7 @@ import {
   Route,
   useHistory,
   useParams,
+  useRouteMatch,
 } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import queryString from 'query-string';
@@ -209,12 +210,22 @@ const Home: React.FC = () => {
 
   const router = useHistory();
 
+  const objectRouteMatch = useRouteMatch<{ objectId: string }>(
+    '/object/:objectId'
+  );
+
   return (
     <div id="home">
       <CommunityMap
-        centerPin={<Pin />}
         center={defaultCenter}
-        renderObject={({ item }) => (item.type === 'story' ? true : null)}
+        showObjectId={objectRouteMatch?.params?.objectId}
+        onClickObject={(obj) => {
+          router.push(`/object/${obj.id}`);
+          return true;
+        }}
+        onObjectModalClose={() => router.push('/')}
+        // centerPin={<Pin />}
+        // renderObject={({ item }) => (item.type === 'story' ? true : null)}
       ></CommunityMap>
     </div>
   );

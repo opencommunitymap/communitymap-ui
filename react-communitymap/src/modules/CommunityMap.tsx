@@ -19,16 +19,20 @@ import {
   PointingSegment,
   MapBounds,
 } from '..';
+import { Modal } from 'semantic-ui-react';
 
-export type RenderObjectCallback = (props: {
+export interface RenderObjectCallbackProps {
   item: ObjectItem;
   comments: ObjectComment[];
   votesCount: number;
   currentUser: firebase.User | null;
   userVoted: boolean;
-  hover: boolean;
   expanded: boolean;
-}) => JSX.Element | boolean | null;
+  defaultOnClickHandler?: () => void;
+}
+export type RenderObjectCallback = (
+  props: RenderObjectCallbackProps
+) => JSX.Element | boolean | null;
 
 export interface CommunityMapProps {
   // Initial coordinates
@@ -51,6 +55,10 @@ export interface CommunityMapProps {
   // return falsy value to prevent object from displaying
   renderObject?: RenderObjectCallback;
 
+  onClickObject?: (objectItem: ObjectItem) => boolean | undefined | null;
+  showObjectId?: string;
+  onObjectModalClose?: () => void;
+
   // filter loading objects by origin
   filterOrigin?: string;
 }
@@ -63,6 +71,9 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   autolocate,
   filterOrigin,
   mapStyles,
+  onClickObject,
+  showObjectId: extShowObjectId,
+  onObjectModalClose,
 }) => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
@@ -98,41 +109,74 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
     filterOrigin
   );
 
-  const render = renderObject || defaultObjectRender;
+  const render: RenderObjectCallback = (props) => {
+    const rend = renderObject || defaultObjectRender;
+    const itemView = rend(props);
+    if (!itemView) return null;
+    if (itemView === true) return defaultObjectRender(props);
+    return itemView;
+  };
 
+  const [intShowObjectId, setIntShowObjectId] = useState<null | string>(null);
+  const showObjectId = extShowObjectId || intShowObjectId;
+  const showObject = showObjectId
+    ? objects.find((o) => o.id === showObjectId)
+    : null;
+
+  const onModalClose = useCallback(() => {
+    onObjectModalClose?.();
+    setIntShowObjectId(null);
+  }, [setIntShowObjectId, onObjectModalClose]);
   return (
-    <Maps
-      styles={mapStyles}
-      centerPin={centerPin}
-      center={center}
-      onChange={(center, bounds, zoom) => {
-        setMapParams({ center, bounds });
-        onChange?.(center, bounds, zoom);
-      }}
-    >
-      {commentsObj &&
-        votesObj &&
-        objects.map((it) => {
-          const props = {
-            item: it,
-            comments: commentsObj[it.id],
-            userVoted: votesObj[it.id]?.userVoted,
-            votesCount: votesObj[it.id]?.count,
-            expanded: false,
-            hover: false,
-            currentUser: user,
-          };
-          let itemView = render(props);
-          if (!itemView) return null;
-          if (itemView === true) itemView = defaultObjectRender(props);
+    <>
+      <Maps
+        styles={mapStyles}
+        centerPin={centerPin}
+        center={center}
+        onChange={(center, bounds, zoom) => {
+          setMapParams({ center, bounds });
+          onChange?.(center, bounds, zoom);
+        }}
+      >
+        {commentsObj &&
+          votesObj &&
+          objects.map((it) => {
+            const defaultOnClickHandler = () => {
+              if (onClickObject && !onClickObject(it)) return;
+              setIntShowObjectId(it.id);
+            };
 
-          return (
-            <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-              {itemView}
-            </MapItem>
-          );
-        })}
-    </Maps>
+            return (
+              <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
+                {render({
+                  item: it,
+                  comments: commentsObj[it.id],
+                  userVoted: votesObj[it.id]?.userVoted,
+                  votesCount: votesObj[it.id]?.count,
+                  defaultOnClickHandler,
+                  expanded: false,
+                  currentUser: user,
+                })}
+              </MapItem>
+            );
+          })}
+      </Maps>
+      <Modal open={!!showObject} onClose={onModalClose} closeIcon>
+        <Modal.Content scrolling>
+          {!!showObject &&
+            commentsObj &&
+            votesObj &&
+            render({
+              item: showObject,
+              comments: commentsObj[showObject.id],
+              userVoted: votesObj[showObject.id]?.userVoted,
+              votesCount: votesObj[showObject.id]?.count,
+              expanded: true,
+              currentUser: user,
+            })}
+        </Modal.Content>
+      </Modal>
+    </>
   );
 };
 
@@ -142,8 +186,8 @@ const defaultObjectRender: RenderObjectCallback = ({
   votesCount,
   currentUser,
   userVoted,
-  hover,
   expanded,
+  defaultOnClickHandler,
 }) => {
   let RealComponent: React.FC<ObjectItemComponentProps>;
 
@@ -157,21 +201,19 @@ const defaultObjectRender: RenderObjectCallback = ({
     default:
       RealComponent = Chat;
   }
-  return (
-    <PointingSegment>
-      <RealComponent
-        item={item}
-        user={currentUser}
-        userVoted={userVoted}
-        votes={votesCount}
-        comments={comments}
-        // onClick={() => router.push(`/object/${item.id}`)}
-        onClick={() => alert('click TODO')}
-        onComment={async (comment) => leaveComment(currentUser, item, comment)}
-        onVote={async () => voteUp(currentUser, item)}
-        onClose={async () => closeObject(currentUser, item)}
-        expanded={expanded}
-      />
-    </PointingSegment>
+  const comp = (
+    <RealComponent
+      item={item}
+      user={currentUser}
+      userVoted={userVoted}
+      votes={votesCount}
+      comments={comments}
+      onClick={defaultOnClickHandler}
+      onComment={async (comment) => leaveComment(currentUser, item, comment)}
+      onVote={async () => voteUp(currentUser, item)}
+      onClose={async () => closeObject(currentUser, item)}
+      expanded={expanded}
+    />
   );
+  return expanded ? comp : <PointingSegment>{comp}</PointingSegment>;
 };
