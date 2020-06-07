@@ -9,12 +9,13 @@ import {
   UserProfile,
   DirectMessageInfo,
   AuthUser,
+  reportError,
+  directMessageId,
 } from 'react-communitymap';
 import { Loader, Form, Button, Modal, List } from 'semantic-ui-react';
 import './DirectMessage.css';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { directMessageId, reportError } from '../utils';
 dayjs.extend(relativeTime);
 
 const SingleMessage: React.FC<{

@@ -4,8 +4,8 @@ import {
   ObjectItemInput,
   ObjectItemComponentProps,
   useUserPublicInfo,
-} from 'react-communitymap';
-import { reportError } from '../utils';
+  reportError,
+} from '..';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { CommentsList, PostCommentWidget } from './Comments';
@@ -40,7 +40,7 @@ export const type2title = (type: ObjectItemInput['type']) => {
   }
 };
 
-export const ChatItem: React.FC<ObjectItemComponentProps> = ({
+export const Chat: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
   userVoted,

@@ -1,8 +1,11 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useUserPublicInfo, useAuth } from 'react-communitymap';
+import {
+  useUserPublicInfo,
+  useAuth,
+  directMessageId,
+} from 'react-communitymap';
 import { Loader, Button } from 'semantic-ui-react';
-import { directMessageId } from '../utils';
 
 export const UserPage = () => {
   const me = useAuth();

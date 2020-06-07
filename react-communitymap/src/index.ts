@@ -1,8 +1,30 @@
+export * from './components/PointingSegment';
+export * from './components/Pin';
+export * from './components/Maps';
+export * from './components/Chat';
+export * from './components/Place';
+export * from './components/Story';
+export * from './modules/Auth';
+export * from './modules/DB';
+export * from './modules/CommunityMap';
+export * from './utils';
+
 export type AuthUser = undefined | null | firebase.User;
 
-export interface Location {
+export interface Loc {
   latitude: number;
   longitude: number;
+}
+export interface MapBounds {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+}
+
+export interface MapParams {
+  center: Loc;
+  bounds: MapBounds;
 }
 
 export interface ObjectComment {
@@ -32,7 +54,7 @@ export interface ObjectItemInput {
 export interface ObjectItem extends ObjectItemInput {
   id: string;
   author: string;
-  loc: Location;
+  loc: Loc;
   created: string;
 }
 
@@ -47,28 +69,6 @@ export interface ObjectItemComponentProps {
   onVote: () => Promise<any>;
   onComment: (comment: string) => Promise<any>;
   onClose: () => Promise<any>;
-}
-
-export interface MapParams {
-  centerLat: number;
-  centerLng: number;
-  minLat: number;
-  maxLat: number;
-  minLng: number;
-  maxLng: number;
-}
-
-export interface EmbedParams {
-  appId: string;
-}
-
-export interface InitialAppParams extends Partial<EmbedParams> {
-  filterOrigin?: string;
-  canAdd?: boolean;
-  centerLat?: number;
-  centerLng?: number;
-  theme?: 'standard' | 'silver' | 'dark';
-  autolocate?: boolean;
 }
 
 export interface UserProfile {
@@ -94,12 +94,3 @@ export interface DirectMessageItem {
   timestamp: string;
   content: string;
 }
-
-export const GAGA = 42;
-
-export * from './components/PointingSegment';
-export * from './components/Pin';
-export * from './components/Maps';
-export * from './modules/Auth';
-export * from './modules/DB';
-export * from './modules/CommunityMap';

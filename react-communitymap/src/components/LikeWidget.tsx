@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 import './LikeWidget.css';
-import { reportError } from '../utils';
+import { reportError } from '..';
 
 export interface LikeWidgetProps {
   votes: number;

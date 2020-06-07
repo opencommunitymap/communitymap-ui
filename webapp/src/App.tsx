@@ -12,12 +12,10 @@ import './App.css';
 
 import {
   SplashScreen,
-  ChatItem,
   UserPage,
   NewContentWidget,
   ProfileWidget,
   NavigationWidget,
-  Place,
   DirectMessageModal,
   DirectMessageDialogs,
 } from './components';
@@ -33,22 +31,23 @@ import {
   useLoadSingleObject,
   ObjectItem,
   ObjectComment,
-  EmbedParams,
-  InitialAppParams,
   ObjectItemComponentProps,
-  MapParams,
   useAuth,
   AuthProvider,
+  Loc,
+  MapParams,
+  detectLocation,
+  Place,
+  Story,
+  Chat,
 } from 'react-communitymap';
-
+import { InitialAppParams, EmbedParams } from './types';
 import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { Modal, Loader } from 'semantic-ui-react';
 // import { useAuth, AuthProvider } from './Auth';
-import { StoryItem } from './components/Story';
-import { detectLocation } from './utils';
 
 const initFirebase = async () => {
   if (process.env.NODE_ENV === 'production') {
@@ -109,10 +108,10 @@ const MapObjectRender: React.FC<{
       RealComponent = Place;
       break;
     case 'story':
-      RealComponent = StoryItem;
+      RealComponent = Story;
       break;
     default:
-      RealComponent = ChatItem;
+      RealComponent = Chat;
   }
   return (
     <RealComponent
@@ -145,10 +144,10 @@ const DetailedObjectRender: React.FC = () => {
       RealComponent = Place;
       break;
     case 'story':
-      RealComponent = StoryItem;
+      RealComponent = Story;
       break;
     default:
-      RealComponent = ChatItem;
+      RealComponent = Chat;
   }
 
   return (
@@ -166,48 +165,53 @@ const DetailedObjectRender: React.FC = () => {
   );
 };
 
-const defaultCenter = { lat: 42.69, lng: 23.32 };
+const defaultCenter = { latitude: 42.69, longitude: 23.32 };
 
 const Home: React.FC = () => {
-  const user = useAuth() || null;
-  const [mapParams, setMapParams] = useState<MapParams | null>(null);
+  // const user = useAuth() || null;
+  // const [mapParams, setMapParams] = useState<MapParams | null>(null);
 
-  const setMapCenter = useCallback(
-    (lat: number, lng: number) => {
-      setMapParams((mapParams) => ({
-        ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
-        centerLat: lat,
-        centerLng: lng,
-      }));
-    },
-    [setMapParams]
-  );
+  // const setMapCenter = useCallback(
+  //   (center: Loc) => {
+  //     setMapParams((mapParams) =>
+  //       mapParams
+  //         ? { ...mapParams, center }
+  //         : { center, bounds: { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 } }
+  //     );
+  //     // ({
+  //     //   ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
+  //     //   centerLat: lat,
+  //     //   centerLng: lng,
+  //     // }));
+  //   },
+  //   [setMapParams]
+  // );
 
-  useEffect(() => {
-    if (initialParams?.autolocate) {
-      detectLocation()
-        .then((loc) => {
-          console.debug('Autolocate:', loc);
-          setMapCenter(loc.latitude, loc.longitude);
-        })
-        .catch((err) => {
-          console.log('Error autodetecting location:', err);
-          // silently ignore for the moment
-        });
-    }
-  }, [setMapCenter]);
+  // useEffect(() => {
+  //   if (initialParams?.autolocate) {
+  //     detectLocation()
+  //       .then((loc) => {
+  //         console.debug('Autolocate:', loc);
+  //         setMapCenter(loc);
+  //       })
+  //       .catch((err) => {
+  //         console.log('Error autodetecting location:', err);
+  //         // silently ignore for the moment
+  //       });
+  //   }
+  // }, [setMapCenter]);
 
-  const { objects, commentsObj, votesObj } = useLoadObjects(
-    mapParams,
-    user,
-    initialParams?.filterOrigin
-  );
+  // const { objects, commentsObj, votesObj } = useLoadObjects(
+  //   mapParams?.bounds || null,
+  //   user,
+  //   initialParams?.filterOrigin
+  // );
 
   const router = useHistory();
 
   return (
     <div id="home">
-      <CommunityMap centerPin={<Pin />} center={defaultCenter}></CommunityMap>;
+      <CommunityMap centerPin={<Pin />} center={defaultCenter}></CommunityMap>
     </div>
   );
 

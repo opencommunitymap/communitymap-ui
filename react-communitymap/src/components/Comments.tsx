@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { ObjectComment, useUserPublicInfo } from 'react-communitymap';
 import { List, Form, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import './Comments.css';
-import { reportError } from '../utils';
+import { ObjectComment, useUserPublicInfo, reportError } from '..';
 
 const CommentView: React.FC<{ comment: ObjectComment }> = ({ comment: c }) => {
   const { author, comment, created } = c;

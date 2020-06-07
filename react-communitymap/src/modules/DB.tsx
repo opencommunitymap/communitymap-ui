@@ -3,11 +3,12 @@ import {
   ObjectItem,
   ObjectComment,
   ObjectVote,
-  MapParams,
   ObjectItemInput,
   UserProfile,
   DirectMessageInfo,
   DirectMessageItem,
+  MapBounds,
+  Loc,
 } from '../';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
@@ -16,16 +17,16 @@ import dayjs from 'dayjs';
 import { useAuth } from './Auth';
 
 export const useLoadObjects = (
-  mapParams: any | null,
+  mapBounds: MapBounds | null,
   user: firebase.User | null,
   filterOrigin?: string
 ) => {
   const [objects, setObjects] = useState<ObjectItem[]>([]);
 
   useEffect(() => {
-    if (!mapParams) return;
-    const { minLat, maxLat, minLng, maxLng } = mapParams;
-    console.debug('Load by', mapParams);
+    if (!mapBounds) return;
+    const { minLat, maxLat, minLng, maxLng } = mapBounds;
+    console.debug('Load by', mapBounds);
 
     const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
@@ -51,7 +52,7 @@ export const useLoadObjects = (
       setObjects(objs);
     });
     return unsub;
-  }, [mapParams, filterOrigin]);
+  }, [mapBounds, filterOrigin]);
 
   const [commentsObj, setCommentsObj] = useState<{
     [k: string]: ObjectComment[];
@@ -61,7 +62,7 @@ export const useLoadObjects = (
   } | null>(null);
 
   useEffect(() => {
-    if (!mapParams) return;
+    if (!mapBounds) return;
 
     const objectIds = objects.map((o) => o.id).slice(0, 10); // TODO fix!!!
     console.debug('Load comments for', objectIds);
@@ -109,7 +110,7 @@ export const useLoadObjects = (
       unsubComments();
       unsubVotes();
     };
-  }, [mapParams, objects, user]);
+  }, [mapBounds, objects, user]);
 
   const data = useMemo(() => ({ objects, commentsObj, votesObj }), [
     objects,
@@ -226,15 +227,14 @@ export const useAsyncStatus = (cb: () => Promise<any>) => {
 
 export const postObject = async (
   user: firebase.User | null,
-  mapParams: MapParams | null,
+  loc: Loc | null,
   item: ObjectItemInput,
   origin?: string
 ) => {
-  if (!user || !mapParams) {
+  if (!user || !loc) {
     alert('Temporary cannot post objects. Try again');
     throw new Error('Cannot post object');
   }
-  const { centerLat, centerLng } = mapParams;
 
   const timenow = new Date().toISOString();
   return firebase
@@ -246,7 +246,7 @@ export const postObject = async (
       origin: origin || null,
       created: timenow,
       updated: timenow,
-      loc: new firebase.firestore.GeoPoint(centerLat, centerLng),
+      loc: new firebase.firestore.GeoPoint(loc.latitude, loc.longitude),
     });
 };
 

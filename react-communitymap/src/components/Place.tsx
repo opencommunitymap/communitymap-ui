@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ObjectItemInput, ObjectItemComponentProps } from 'react-communitymap';
+import { ObjectItemInput, ObjectItemComponentProps } from '..';
 import { Icon, Image, Form } from 'semantic-ui-react';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Place.css';

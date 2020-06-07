@@ -1,9 +1,8 @@
 import React, { useMemo, ComponentType } from 'react';
-import GoogleMapReact, { MapTypeStyle } from 'google-map-react';
+import GoogleMapReact, { MapTypeStyle, Coords } from 'google-map-react';
 import { Pin } from './Pin';
+import { Loc, MapBounds } from '..';
 import './Maps.css';
-// import silverStyle from './MapsGoogleSilverStyle.json';
-// import darkStyle from './MapsGoogleDarkStyle.json';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 
@@ -11,8 +10,8 @@ export const MapItem: React.FC<{ lat: number; lng: number }> = ({
   children,
 }) => <>{children}</>;
 
-const getProps = (theme: string) => {
-  let styles: any = [
+const getProps = (customStyles?: MapTypeStyle[]) => {
+  let defaultStyles: any = [
     {
       // disables poi
       featureType: 'poi',
@@ -20,17 +19,12 @@ const getProps = (theme: string) => {
       stylers: [{ visibility: 'off' }],
     },
   ];
-  // if (theme === 'dark') {
-  //   styles = darkStyle;
-  // } else if (theme === 'silver') {
-  //   styles = silverStyle;
-  // }
   const options = {
     overviewMapControl: true,
     streetViewControl: false,
     rotateControl: true,
     mapTypeControl: false,
-    styles,
+    styles: customStyles || defaultStyles,
   };
   return {
     defaultCenter: { lat: 42.69, lng: 23.32 },
@@ -40,49 +34,47 @@ const getProps = (theme: string) => {
   };
 };
 
-interface MapsProps {
-  centerLat?: number;
-  centerLng?: number;
-  theme?: string;
-  centerPin?: JSX.Element;
+export interface MapsProps {
+  center?: Loc;
   styles?: MapTypeStyle[];
-  onChange: (
-    centerLat: number,
-    centerLng: number,
-    minLat: number,
-    maxLat: number,
-    minLng: number,
-    maxLng: number
-  ) => void;
+  centerPin?: JSX.Element | null;
+  onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
 }
+
+const coord2loc = (c: Coords): Loc => ({ latitude: c.lat, longitude: c.lng });
 
 export const Maps: React.FC<MapsProps> = ({
   children,
-  centerLat,
-  centerLng,
-  theme = 'standard',
+  center,
   centerPin = <Pin />,
+  styles,
   onChange,
 }) => {
-  const center = useMemo(() => {
-    if (!centerLat || !centerLng) return undefined;
-    return { lat: centerLat, lng: centerLng };
-  }, [centerLat, centerLng]);
-  const props = useMemo(() => getProps(theme), [theme]);
+  const centerCoords = useMemo(
+    () =>
+      center ? { lat: center.latitude, lng: center.longitude } : undefined,
+    [center]
+  );
+  const props = useMemo(() => getProps(styles), []);
   return (
     <>
       <div id="center-pin">{centerPin}</div>
       <GoogleMapReact
         {...props}
         bootstrapURLKeys={{ key: GOOGLE_API_KEY }}
-        center={center}
+        center={centerCoords}
         onChange={(props) => {
           const {
             center,
             bounds: { sw, ne },
+            zoom,
           } = props;
           console.debug('GoogleMaps onChange', props);
-          onChange(center.lat, center.lng, sw.lat, ne.lat, sw.lng, ne.lng);
+          onChange?.(
+            coord2loc(center),
+            { minLat: sw.lat, maxLat: ne.lat, minLng: sw.lng, maxLng: ne.lng },
+            zoom
+          );
         }}
       >
         {children}

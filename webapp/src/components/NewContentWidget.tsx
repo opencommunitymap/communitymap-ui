@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Button, Segment, Modal } from 'semantic-ui-react';
-import { ObjectItemInput } from 'react-communitymap';
-import { AddNewChatObject, type2icon, type2title } from './Chat';
+import {
+  ObjectItemInput,
+  reportError,
+  AddNewPlaceObject,
+  AddNewStoryObject,
+  AddNewChatObject,
+  type2icon,
+  type2title,
+} from 'react-communitymap';
 import { Login } from './Login';
 import 'firebase/auth';
-import { reportError } from '../utils';
-import { AddNewPlaceObject } from './Place';
-import { AddNewStoryObject } from './Story';
 import './NewContentWidget.css';
 
 const AddNewObjectRender: React.FC<{

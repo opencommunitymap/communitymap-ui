@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
-import { detectLocation } from '../utils';
+import { detectLocation } from 'react-communitymap';
 
 export const NavigationWidget: React.FC<{
   onChangePosition: (lat: number, lng: number) => void;

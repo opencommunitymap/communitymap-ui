@@ -4,8 +4,8 @@ import {
   ObjectItemInput,
   ObjectItemComponentProps,
   useUserPublicInfo,
-} from 'react-communitymap';
-import { reportError } from '../utils';
+  reportError,
+} from '..';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { CommentsList, PostCommentWidget } from './Comments';
@@ -13,7 +13,7 @@ import './Story.css';
 import cx from 'classnames';
 import { LikeWidget } from './LikeWidget';
 
-export const StoryItem: React.FC<ObjectItemComponentProps> = ({
+export const Story: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
   userVoted,
