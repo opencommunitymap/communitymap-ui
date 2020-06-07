@@ -28,7 +28,7 @@ export type RenderObjectCallback = (props: {
   userVoted: boolean;
   hover: boolean;
   expanded: boolean;
-}) => JSX.Element | null;
+}) => JSX.Element | boolean | null;
 
 export interface CommunityMapProps {
   // Initial coordinates
@@ -47,9 +47,11 @@ export interface CommunityMapProps {
   autolocate?: boolean;
 
   // Render the objects with custom styling and functionalities
+  // return true to apply default behavior
+  // return falsy value to prevent object from displaying
   renderObject?: RenderObjectCallback;
 
-  // filter objects by origin
+  // filter loading objects by origin
   filterOrigin?: string;
 }
 
@@ -110,19 +112,26 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
     >
       {commentsObj &&
         votesObj &&
-        objects.map((it) => (
-          <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-            {render({
-              item: it,
-              comments: commentsObj[it.id],
-              userVoted: votesObj[it.id]?.userVoted,
-              votesCount: votesObj[it.id]?.count,
-              expanded: false,
-              hover: false,
-              currentUser: user,
-            })}
-          </MapItem>
-        ))}
+        objects.map((it) => {
+          const props = {
+            item: it,
+            comments: commentsObj[it.id],
+            userVoted: votesObj[it.id]?.userVoted,
+            votesCount: votesObj[it.id]?.count,
+            expanded: false,
+            hover: false,
+            currentUser: user,
+          };
+          let itemView = render(props);
+          if (!itemView) return null;
+          if (itemView === true) itemView = defaultObjectRender(props);
+
+          return (
+            <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
+              {itemView}
+            </MapItem>
+          );
+        })}
     </Maps>
   );
 };

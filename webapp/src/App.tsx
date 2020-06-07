@@ -211,7 +211,11 @@ const Home: React.FC = () => {
 
   return (
     <div id="home">
-      <CommunityMap centerPin={<Pin />} center={defaultCenter}></CommunityMap>
+      <CommunityMap
+        centerPin={<Pin />}
+        center={defaultCenter}
+        renderObject={({ item }) => (item.type === 'story' ? true : null)}
+      ></CommunityMap>
     </div>
   );
 
