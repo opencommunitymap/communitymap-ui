@@ -8,6 +8,7 @@ export * from './modules/Auth';
 export * from './modules/DB';
 export * from './modules/CommunityMap';
 export * from './utils';
+export { initFirebase } from './utils/firebase';
 
 export type AuthUser = undefined | null | firebase.User;
 

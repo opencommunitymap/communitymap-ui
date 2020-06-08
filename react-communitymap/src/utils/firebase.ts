@@ -2,10 +2,12 @@ import * as firebase from 'firebase/app';
 import prodConf from './.fb-conf-prod';
 import devConf from './.fb-conf-dev';
 
+const APP_NAME = '__open_community_map__';
 let __initialized = false;
 
-export default (config: 'production' | 'development' | Object) => {
-  if (__initialized) return;
+export const initFirebase = (
+  config: 'production' | 'development' | Object = 'production'
+) => {
   __initialized = true;
 
   const conf =
@@ -15,5 +17,11 @@ export default (config: 'production' | 'development' | Object) => {
         : devConf
       : config;
   console.log('Init firebase with', config);
-  firebase.initializeApp(conf);
+  return firebase.initializeApp(conf, APP_NAME);
 };
+
+const getFirebase = () => {
+  if (!__initialized) initFirebase();
+  return firebase.app(APP_NAME);
+};
+export default getFirebase;

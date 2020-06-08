@@ -21,7 +21,6 @@ import {
 } from '..';
 import { Modal } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
-import initFirebaseOnce from '../utils/init_firebase';
 
 export interface RenderObjectCallbackProps {
   item: ObjectItem;
@@ -66,9 +65,6 @@ export interface CommunityMapProps {
 
   // filter loading objects by origin
   filterOrigin?: string;
-
-  // OCM database to connect to, default is NODE_ENV
-  firebaseConfig?: 'production' | 'development' | Object;
 }
 
 export const CommunityMap: React.FC<CommunityMapProps> = ({
@@ -83,10 +79,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   onClickObject,
   showObjectId: extShowObjectId,
   onObjectModalClose,
-  firebaseConfig = process.env.NODE_ENV || 'production',
 }) => {
-  initFirebaseOnce(firebaseConfig);
-
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
 
