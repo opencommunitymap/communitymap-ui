@@ -4,8 +4,6 @@ import { Pin } from './Pin';
 import { Loc, MapBounds } from '..';
 import './Maps.css';
 
-const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
-
 export const MapItem: React.FC<{ lat: number; lng: number }> = ({
   children,
 }) => <>{children}</>;
@@ -38,6 +36,7 @@ export interface MapsProps {
   center?: Loc;
   styles?: MapTypeStyle[];
   centerPin?: JSX.Element | null;
+  mapApiKey?: string;
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
 }
 
@@ -48,6 +47,7 @@ export const Maps: React.FC<MapsProps> = ({
   center,
   centerPin = <Pin />,
   styles,
+  mapApiKey,
   onChange,
 }) => {
   const centerCoords = useMemo(
@@ -61,7 +61,7 @@ export const Maps: React.FC<MapsProps> = ({
       <div id="center-pin">{centerPin}</div>
       <GoogleMapReact
         {...props}
-        bootstrapURLKeys={{ key: GOOGLE_API_KEY }}
+        bootstrapURLKeys={{ key: mapApiKey || '' }}
         center={centerCoords}
         onChange={(props) => {
           const {

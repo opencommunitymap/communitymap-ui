@@ -50,6 +50,8 @@ import 'firebase/firestore';
 import { Modal, Loader } from 'semantic-ui-react';
 // import { useAuth, AuthProvider } from './Auth';
 
+const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
+
 const initFirebase = async () => {
   if (process.env.NODE_ENV === 'production') {
     return fetch('/__/firebase/init.json').then(async (response) => {
@@ -218,6 +220,7 @@ const Home: React.FC = () => {
     <div id="home">
       <CommunityMap
         center={defaultCenter}
+        mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
         onClickObject={(obj) => {
           router.push(`/object/${obj.id}`);

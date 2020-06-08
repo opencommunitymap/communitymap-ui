@@ -43,6 +43,9 @@ export interface CommunityMapProps {
   // Google Maps style, https://mapstyle.withgoogle.com/
   mapStyles?: MapTypeStyle[];
 
+  // Api Key for Google Maps
+  mapApiKey?: string;
+
   // Pin icon showing the center of the map
   centerPin?: JSX.Element | null;
 
@@ -76,6 +79,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   autolocate,
   filterOrigin,
   mapStyles,
+  mapApiKey,
   onClickObject,
   showObjectId: extShowObjectId,
   onObjectModalClose,
@@ -139,6 +143,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
     <>
       <Maps
         styles={mapStyles}
+        mapApiKey={mapApiKey}
         centerPin={centerPin}
         center={center}
         onChange={(center, bounds, zoom) => {
