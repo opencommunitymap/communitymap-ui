@@ -20,6 +20,7 @@ import {
   MapBounds,
 } from '..';
 import { Modal } from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
 import initFirebaseOnce from '../utils/init_firebase';
 
 export interface RenderObjectCallbackProps {
