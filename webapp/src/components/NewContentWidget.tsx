@@ -8,8 +8,8 @@ import {
   AddNewChatObject,
   type2icon,
   type2title,
+  Login,
 } from 'react-communitymap';
-import { Login } from './Login';
 import 'firebase/auth';
 import './NewContentWidget.css';
 

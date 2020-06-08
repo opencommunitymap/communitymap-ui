@@ -1,0 +1,10 @@
+#profile-widget .profile-button {
+  background: white;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+}
+#profile-widget {
+  position: fixed;
+  top: 10px;
+  right: 55px;
+  z-index: 2;
+}

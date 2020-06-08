@@ -19,6 +19,7 @@ import {
   PointingSegment,
   MapBounds,
   useLoadSingleObject,
+  ProfileWidget,
 } from '..';
 import { Modal, Loader } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
@@ -49,6 +50,8 @@ export interface CommunityMapProps {
   // Pin icon showing the center of the map
   centerPin?: JSX.Element | null;
 
+  profileWidget?: JSX.Element | null;
+
   // Called initially and after moving the map or changing the zoom
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
 
@@ -73,6 +76,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   centerPin,
   center,
   renderObject,
+  profileWidget = <ProfileWidget />,
   autolocate,
   filterOrigin,
   mapStyles,
@@ -176,6 +180,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
           )}
         </Modal.Content>
       </Modal>
+      {profileWidget}
     </>
   );
 };

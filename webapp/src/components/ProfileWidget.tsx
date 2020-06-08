@@ -5,9 +5,9 @@ import {
   useUserPublicInfo,
   useAsyncStatus,
   saveUserPublicInfo,
+  Login,
 } from 'react-communitymap';
 import firebase from 'firebase';
-import { Login } from '.';
 import {
   Modal,
   Dropdown,
