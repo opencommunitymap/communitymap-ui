@@ -18,8 +18,9 @@ import {
   useLoadObjects,
   PointingSegment,
   MapBounds,
+  useLoadSingleObject,
 } from '..';
-import { Modal } from 'semantic-ui-react';
+import { Modal, Loader } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
 export interface RenderObjectCallbackProps {
@@ -124,14 +125,12 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
 
   const [intShowObjectId, setIntShowObjectId] = useState<null | string>(null);
   const showObjectId = extShowObjectId || intShowObjectId;
-  const showObject = showObjectId
-    ? objects.find((o) => o.id === showObjectId)
-    : null;
 
   const onModalClose = useCallback(() => {
     onObjectModalClose?.();
     setIntShowObjectId(null);
   }, [setIntShowObjectId, onObjectModalClose]);
+
   return (
     <>
       <Maps
@@ -167,21 +166,49 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
             );
           })}
       </Maps>
-      <Modal open={!!showObject} onClose={onModalClose} closeIcon>
+      <Modal open={!!showObjectId} onClose={onModalClose} closeIcon>
         <Modal.Content scrolling>
-          {!!showObject &&
-            commentsObj &&
-            votesObj &&
-            render({
-              item: showObject,
-              comments: commentsObj[showObject.id],
-              userVoted: votesObj[showObject.id]?.userVoted,
-              votesCount: votesObj[showObject.id]?.count,
-              expanded: true,
-              currentUser: user,
-            })}
+          {!!showObjectId && (
+            <ExpandedObjectView
+              objectId={showObjectId}
+              renderObject={renderObject}
+            />
+          )}
         </Modal.Content>
       </Modal>
+    </>
+  );
+};
+
+const ExpandedObjectView: React.FC<{
+  objectId: string;
+  renderObject?: RenderObjectCallback;
+}> = ({ objectId, renderObject }) => {
+  const user = useAuth() || null;
+
+  const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
+
+  if (object === undefined) return <Loader active />;
+  if (object === null) return <div>Object not found :(</div>;
+
+  const render: RenderObjectCallback = (props) => {
+    const rend = renderObject || defaultObjectRender;
+    const itemView = rend(props);
+    if (!itemView) return null;
+    if (itemView === true) return defaultObjectRender(props);
+    return itemView;
+  };
+
+  return (
+    <>
+      {render({
+        item: object,
+        comments: comments || [],
+        userVoted: votesInfo?.userVoted || false,
+        votesCount: votesInfo?.count || 0,
+        expanded: true,
+        currentUser: user,
+      })}
     </>
   );
 };
