@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { List, Form, Button } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import './Comments.css';
 import { ObjectComment, useUserPublicInfo, reportError } from '..';
 
@@ -11,7 +11,10 @@ const CommentView: React.FC<{ comment: ObjectComment }> = ({ comment: c }) => {
     <List.Item>
       <List.Content>
         <List.Description>
-          <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '}
+          {/* <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '} */}
+          <a href="#" onClick={() => alert('TODO user')}>
+            {authorInfo?.name || 'Anonymous'}
+          </a>{' '}
           on {new Date(created).toLocaleString()}
         </List.Description>
         <List.Header>{comment}</List.Header>

@@ -7,7 +7,7 @@ import {
   reportError,
 } from '..';
 import dayjs from 'dayjs';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Chat.css';
 import cx from 'classnames';
@@ -78,7 +78,10 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
       </div>
       {expanded && (
         <div className="author-created">
-          <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '}
+          {/* <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '} */}
+          <a href="#" onClick={() => alert('TODO user')}>
+            {authorInfo?.name || 'Anonymous'}
+          </a>{' '}
           on {new Date(created).toLocaleString()}
         </div>
       )}
