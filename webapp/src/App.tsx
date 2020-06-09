@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  // useCallback
+} from 'react';
 import {
   BrowserRouter as Router,
-  Switch,
-  Route,
+  // Switch,
+  // Route,
   useHistory,
-  useParams,
+  // useParams,
   useRouteMatch,
 } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
@@ -13,64 +17,70 @@ import './App.css';
 
 import {
   SplashScreen,
-  UserPage,
-  NewContentWidget,
-  ProfileWidget,
-  NavigationWidget,
-  DirectMessageModal,
-  DirectMessageDialogs,
+  // UserPage,
+  // NewContentWidget,
+  // ProfileWidget,
+  // NavigationWidget,
+  // DirectMessageModal,
+  // DirectMessageDialogs,
 } from './components';
 import {
-  PointingSegment,
+  // PointingSegment,
   CommunityMap,
   Pin,
-  useLoadObjects,
-  postObject,
-  leaveComment,
-  voteUp,
-  closeObject,
-  useLoadSingleObject,
-  ObjectItem,
-  ObjectComment,
-  ObjectItemComponentProps,
+  // useLoadObjects,
+  // postObject,
+  // leaveComment,
+  // voteUp,
+  // closeObject,
+  // useLoadSingleObject,
+  // ObjectItem,
+  // ObjectComment,
+  // ObjectItemComponentProps,
   useAuth,
   AuthProvider,
-  Loc,
-  MapParams,
-  detectLocation,
-  Place,
-  Story,
-  Chat,
+  // Loc,
+  // MapParams,
+  // detectLocation,
+  // Place,
+  // Story,
+  // Chat,
 } from 'react-communitymap';
 import { InitialAppParams, EmbedParams } from './types';
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
+import { initFirebase } from 'react-communitymap';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { Modal, Loader } from 'semantic-ui-react';
+// import {
+//   Modal,
+//   Loader,
+// } from 'semantic-ui-react';
 // import { useAuth, AuthProvider } from './Auth';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
+const OCM_ENV = process.env.REACT_APP_OCM_ENV || process.env.NODE_ENV;
 
-const initFirebase = async () => {
-  if (process.env.NODE_ENV === 'production') {
-    return fetch('/__/firebase/init.json').then(async (response) => {
-      console.debug('Init firebase with default project config');
-      firebase.initializeApp(await response.json());
-    });
-  } else {
-    const { firebaseConfig } = require('./firebaseConfig');
-    console.debug('Init firebase with local config', firebaseConfig);
-    firebase.initializeApp(firebaseConfig);
-  }
+const __initFirebase = async () => {
+  return initFirebase(OCM_ENV);
+  // if (process.env.NODE_ENV === 'production') {
+  //   return fetch('/__/firebase/init.json').then(async (response) => {
+  //     console.debug('Init firebase with default project config');
+  //     firebase.initializeApp(await response.json());
+  //   });
+  // } else {
+  //   const { firebaseConfig } = require('./firebaseConfig');
+  //   console.debug('Init firebase with local config', firebaseConfig);
+  //   firebase.initializeApp(firebaseConfig);
+  // }
 };
 
 const FirebaseInitializer: React.FC = ({ children }) => {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    initFirebase()
-      .then(() => {
+    __initFirebase()
+      .then((firebase) => {
         if (process.env.NODE_ENV === 'production') {
           firebase.analytics();
         }
@@ -96,119 +106,82 @@ const embedParams: EmbedParams | null = isEmbed
     }
   : null;
 
-const MapObjectRender: React.FC<{
-  item: ObjectItem;
-  comments?: ObjectComment[];
-  votesInfo: { count: number; userVoted: boolean };
-}> = ({ item, votesInfo, comments }) => {
-  const user = useAuth() || null;
-  const router = useHistory();
+// const MapObjectRender: React.FC<{
+//   item: ObjectItem;
+//   comments?: ObjectComment[];
+//   votesInfo: { count: number; userVoted: boolean };
+// }> = ({ item, votesInfo, comments }) => {
+//   const user = useAuth() || null;
+//   const router = useHistory();
 
-  let RealComponent: React.FC<ObjectItemComponentProps>;
+//   let RealComponent: React.FC<ObjectItemComponentProps>;
 
-  switch (item.type) {
-    case 'place':
-      RealComponent = Place;
-      break;
-    case 'story':
-      RealComponent = Story;
-      break;
-    default:
-      RealComponent = Chat;
-  }
-  return (
-    <RealComponent
-      item={item}
-      user={user}
-      userVoted={votesInfo?.userVoted}
-      votes={votesInfo?.count}
-      comments={comments}
-      onClick={() => router.push(`/object/${item.id}`)}
-      onComment={async (comment) => leaveComment(user, item, comment)}
-      onVote={async () => voteUp(user, item)}
-      onClose={async () => closeObject(user, item)}
-    />
-  );
-};
+//   switch (item.type) {
+//     case 'place':
+//       RealComponent = Place;
+//       break;
+//     case 'story':
+//       RealComponent = Story;
+//       break;
+//     default:
+//       RealComponent = Chat;
+//   }
+//   return (
+//     <RealComponent
+//       item={item}
+//       user={user}
+//       userVoted={votesInfo?.userVoted}
+//       votes={votesInfo?.count}
+//       comments={comments}
+//       onClick={() => router.push(`/object/${item.id}`)}
+//       onComment={async (comment) => leaveComment(user, item, comment)}
+//       onVote={async () => voteUp(user, item)}
+//       onClose={async () => closeObject(user, item)}
+//     />
+//   );
+// };
 
-const DetailedObjectRender: React.FC = () => {
-  const user = useAuth() || null;
-  const { objectId = 'n/a' } = useParams();
+// const DetailedObjectRender: React.FC = () => {
+//   const user = useAuth() || null;
+//   const { objectId = 'n/a' } = useParams();
 
-  const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
+//   const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
 
-  if (object === undefined) return <Loader active />;
-  if (object === null) return <div>Object not found :(</div>;
+//   if (object === undefined) return <Loader active />;
+//   if (object === null) return <div>Object not found :(</div>;
 
-  let RealComponent: React.FC<ObjectItemComponentProps>;
+//   let RealComponent: React.FC<ObjectItemComponentProps>;
 
-  switch (object.type) {
-    case 'place':
-      RealComponent = Place;
-      break;
-    case 'story':
-      RealComponent = Story;
-      break;
-    default:
-      RealComponent = Chat;
-  }
+//   switch (object.type) {
+//     case 'place':
+//       RealComponent = Place;
+//       break;
+//     case 'story':
+//       RealComponent = Story;
+//       break;
+//     default:
+//       RealComponent = Chat;
+//   }
 
-  return (
-    <RealComponent
-      expanded
-      item={object}
-      user={user}
-      userVoted={votesInfo?.userVoted || false}
-      votes={votesInfo?.count || 0}
-      comments={comments || []}
-      onComment={async (comment) => leaveComment(user, object, comment)}
-      onVote={async () => voteUp(user, object)}
-      onClose={async () => closeObject(user, object)}
-    />
-  );
-};
+//   return (
+//     <RealComponent
+//       expanded
+//       item={object}
+//       user={user}
+//       userVoted={votesInfo?.userVoted || false}
+//       votes={votesInfo?.count || 0}
+//       comments={comments || []}
+//       onComment={async (comment) => leaveComment(user, object, comment)}
+//       onVote={async () => voteUp(user, object)}
+//       onClose={async () => closeObject(user, object)}
+//     />
+//   );
+// };
 
 const defaultCenter = { latitude: 42.69, longitude: 23.32 };
 
 const Home: React.FC = () => {
   // const user = useAuth() || null;
-  // const [mapParams, setMapParams] = useState<MapParams | null>(null);
-
-  // const setMapCenter = useCallback(
-  //   (center: Loc) => {
-  //     setMapParams((mapParams) =>
-  //       mapParams
-  //         ? { ...mapParams, center }
-  //         : { center, bounds: { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 } }
-  //     );
-  //     // ({
-  //     //   ...(mapParams || { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }),
-  //     //   centerLat: lat,
-  //     //   centerLng: lng,
-  //     // }));
-  //   },
-  //   [setMapParams]
-  // );
-
-  // useEffect(() => {
-  //   if (initialParams?.autolocate) {
-  //     detectLocation()
-  //       .then((loc) => {
-  //         console.debug('Autolocate:', loc);
-  //         setMapCenter(loc);
-  //       })
-  //       .catch((err) => {
-  //         console.log('Error autodetecting location:', err);
-  //         // silently ignore for the moment
-  //       });
-  //   }
-  // }, [setMapCenter]);
-
-  // const { objects, commentsObj, votesObj } = useLoadObjects(
-  //   mapParams?.bounds || null,
-  //   user,
-  //   initialParams?.filterOrigin
-  // );
 
   const router = useHistory();
 
@@ -227,7 +200,8 @@ const Home: React.FC = () => {
           return true;
         }}
         onObjectModalClose={() => router.push('/')}
-        // centerPin={<Pin />}
+        centerPin={<Pin color="#2185d0" />}
+        autolocate={initialParams?.autolocate}
         // renderObject={({ item }) => (item.type === 'story' ? true : null)}
       ></CommunityMap>
     </div>
