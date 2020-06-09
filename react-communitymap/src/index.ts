@@ -1,3 +1,4 @@
+export * from './components/AuthorWidget';
 export * from './components/PointingSegment';
 export * from './components/Pin';
 export * from './components/Maps';
@@ -96,3 +97,5 @@ export interface DirectMessageItem {
   timestamp: string;
   content: string;
 }
+
+export type RenderAuthorCallback = (user: UserProfile) => JSX.Element;

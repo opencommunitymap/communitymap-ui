@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import { List, Form, Button } from 'semantic-ui-react';
-// import { Link } from 'react-router-dom';
 import './Comments.css';
-import { ObjectComment, useUserPublicInfo, reportError } from '..';
+import { ObjectComment, reportError, AuthorWidget } from '..';
 
 const CommentView: React.FC<{ comment: ObjectComment }> = ({ comment: c }) => {
   const { author, comment, created } = c;
-  const authorInfo = useUserPublicInfo(author);
   return (
     <List.Item>
       <List.Content>
         <List.Description>
-          {/* <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '} */}
-          <a href="#" onClick={() => alert('TODO user')}>
-            {authorInfo?.name || 'Anonymous'}
-          </a>{' '}
-          on {new Date(created).toLocaleString()}
+          <AuthorWidget userId={author} />
+          {' on '}
+          {new Date(created).toLocaleString()}
         </List.Description>
         <List.Header>{comment}</List.Header>
       </List.Content>

@@ -20,7 +20,9 @@ import {
   MapBounds,
   useLoadSingleObject,
   ProfileWidget,
+  RenderAuthorCallback,
 } from '..';
+import { RenderAuthorProvider } from '../utils/renderAuthor';
 import { Modal, Loader } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -63,6 +65,9 @@ export interface CommunityMapProps {
   // return falsy value to prevent object from displaying
   renderObject?: RenderObjectCallback;
 
+  // Allows to render custom element for author of posts or comments on variious places
+  renderAuthor?: RenderAuthorCallback;
+
   onClickObject?: (objectItem: ObjectItem) => boolean | undefined | null;
   showObjectId?: string;
   onObjectModalClose?: () => void;
@@ -76,6 +81,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   centerPin,
   center,
   renderObject,
+  renderAuthor,
   profileWidget = <ProfileWidget />,
   autolocate,
   filterOrigin,
@@ -136,7 +142,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   }, [setIntShowObjectId, onObjectModalClose]);
 
   return (
-    <>
+    <RenderAuthorProvider value={renderAuthor}>
       <Maps
         styles={mapStyles}
         mapApiKey={mapApiKey}
@@ -181,7 +187,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
         </Modal.Content>
       </Modal>
       {profileWidget}
-    </>
+    </RenderAuthorProvider>
   );
 };
 

@@ -3,11 +3,10 @@ import { Button, Icon, Form } from 'semantic-ui-react';
 import {
   ObjectItemInput,
   ObjectItemComponentProps,
-  useUserPublicInfo,
   reportError,
+  AuthorWidget,
 } from '..';
 import dayjs from 'dayjs';
-// import { Link } from 'react-router-dom';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Chat.css';
 import cx from 'classnames';
@@ -54,8 +53,6 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
 }) => {
   const { type, author, title, description, created } = item;
 
-  const authorInfo = useUserPublicInfo(author, true);
-
   const [showCommentsWidget, setShowCommentsWidget] = useState(false);
 
   const commentsCount = comments?.length || 0;
@@ -78,11 +75,9 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
       </div>
       {expanded && (
         <div className="author-created">
-          {/* <Link to={`/users/${author}`}>{authorInfo?.name || 'Anonymous'}</Link>{' '} */}
-          <a href="#" onClick={() => alert('TODO user')}>
-            {authorInfo?.name || 'Anonymous'}
-          </a>{' '}
-          on {new Date(created).toLocaleString()}
+          <AuthorWidget userId={author} watchForChanges />
+          {' on '}
+          {new Date(created).toLocaleString()}
         </div>
       )}
       <br />
