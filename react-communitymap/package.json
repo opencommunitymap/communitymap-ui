@@ -5,8 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "build": "rm -rf dist && tsc && copyfiles -u 1 src/*.css src/**/*.css dist/",
-    "watch": "tsc -w"
+    "build": "rm -rf dist && tsc && yarn sync-css",
+    "watch": "rm -rf dist && concurrently 'tsc -w' 'yarn sync-css -w'",
+    "sync-css": "sync-glob -d false src/components/*.css dist/components/"
   },
   "peerDependencies": {
     "react": "^16.0.0",
@@ -38,15 +39,16 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^26.0.1",
-    "copyfiles": "^2.3.0",
+    "babel-jest": "^24.9.0",
+    "concurrently": "^5.2.0",
     "firebase-ci": "^0.13.0",
     "firebase-tools": "^8.4.1",
-    "jest": "^26.0.1",
+    "jest": "^24.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "regenerator-runtime": "^0.13.5",
+    "sync-glob": "^1.4.0",
     "typescript": "^3.8.3"
   },
   "eslintConfig": {
