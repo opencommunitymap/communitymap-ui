@@ -10,6 +10,7 @@ import {
   useHistory,
   // useParams,
   useRouteMatch,
+  Link,
 } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import queryString from 'query-string';
@@ -39,6 +40,7 @@ import {
   // ObjectItemComponentProps,
   useAuth,
   AuthProvider,
+  RenderAuthorCallback,
   // Loc,
   // MapParams,
   // detectLocation,
@@ -108,6 +110,10 @@ const embedParams: EmbedParams | null = isEmbed
 
 const defaultCenter = { latitude: 42.69, longitude: 23.32 };
 
+const renderAuthor: RenderAuthorCallback = (authorInfo) => (
+  <Link to={`/users/${authorInfo.id}`}>{authorInfo?.name || 'Anonymous'}</Link>
+);
+
 const Home: React.FC = () => {
   // const user = useAuth() || null;
 
@@ -131,12 +137,20 @@ const Home: React.FC = () => {
         centerPin={<Pin color="#2185d0" />}
         autolocate={initialParams?.autolocate}
         profileWidget={<ProfileWidgetPlus />}
+        renderAuthor={renderAuthor}
         // renderObject={({ item }) => (item.type === 'story' ? true : null)}
       ></CommunityMap>
 
       <Switch>
         <Route path="/direct-messages/:dmKey">
           <DirectMessageModal onClose={() => router.push('/')} />
+        </Route>
+        <Route path="/users/:userId">
+          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
+            <Modal.Content scrolling>
+              <UserPage />
+            </Modal.Content>
+          </Modal>
         </Route>
         <Route path="/my-messages">
           <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
@@ -149,21 +163,6 @@ const Home: React.FC = () => {
       </Switch>
     </div>
   );
-
-  // return (
-  //   <div id="home">
-
-  //     <Switch>
-  //       <Route path="/users/:userId">
-  //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-  //           <Modal.Content scrolling>
-  //             <UserPage />
-  //           </Modal.Content>
-  //         </Modal>
-  //       </Route>
-  //     </Switch>
-  //   </div>
-  // );
 };
 
 function App() {
