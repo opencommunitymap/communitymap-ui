@@ -20,7 +20,7 @@ import {
   SplashScreen,
   ProfileWidgetPlus,
   UserPage,
-  // NewContentWidget,
+  NewContentWidget,
   // NavigationWidget,
   DirectMessageModal,
   DirectMessageDialogs,
@@ -41,6 +41,7 @@ import {
   useAuth,
   AuthProvider,
   RenderAuthorCallback,
+  postObject,
   // Loc,
   // MapParams,
   // detectLocation,
@@ -115,8 +116,8 @@ const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
 );
 
 const Home: React.FC = () => {
-  // const user = useAuth() || null;
-
+  const user = useAuth() || null;
+  const [currentLocation, setCurrentLocation] = useState(defaultCenter);
   const router = useHistory();
 
   const objectRouteMatch = useRouteMatch<{ objectId: string }>(
@@ -127,6 +128,7 @@ const Home: React.FC = () => {
     <div id="home">
       <CommunityMap
         center={defaultCenter}
+        onChange={(center) => setCurrentLocation(center)}
         mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
         onClickObject={(obj) => {
@@ -140,6 +142,14 @@ const Home: React.FC = () => {
         renderAuthor={renderAuthor}
         // renderObject={({ item }) => (item.type === 'story' ? true : null)}
       ></CommunityMap>
+      {initialParams?.canAdd !== false && (
+        <NewContentWidget
+          authenticated={!!user}
+          onAdd={(item) =>
+            postObject(user, currentLocation, item, embedParams?.appId)
+          }
+        />
+      )}
 
       <Switch>
         <Route path="/direct-messages/:dmKey">
