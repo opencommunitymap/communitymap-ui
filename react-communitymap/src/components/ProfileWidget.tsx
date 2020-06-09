@@ -18,7 +18,7 @@ export const ProfileWidget: React.FC = () => {
 
   return (
     <div id="profile-widget">
-      {login && <Login title="" />}
+      {login && <Login title="" onClose={() => setLogin(false)} />}
       {user ? (
         <Dropdown
           trigger={

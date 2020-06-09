@@ -40,7 +40,7 @@ export const NewContentWidget: React.FC<{
 
   return (
     <Segment id="new-content-widget">
-      {showLogin && <Login />}
+      {showLogin && <Login onClose={() => setAddType(null)} />}
       {authenticated && (
         <>
           {!!addType && (

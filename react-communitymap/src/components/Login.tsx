@@ -4,13 +4,14 @@ import getFirebase from '../utils/firebase';
 import 'firebase/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
-import './Login.css';
+import { Modal } from 'semantic-ui-react';
 
-export const Login: React.FC<{ title?: string }> = ({
+export const Login: React.FC<{ title?: string; onClose?: () => void }> = ({
   title = 'You need to sign in to continue',
+  onClose,
 }) => {
   useEffect(() => {
-    var uiConfig = {
+    const uiConfig = {
       signInFlow: 'popup',
       // signInSuccessUrl: window.location.origin,
       signInSuccessUrl: window.location.href,
@@ -30,19 +31,26 @@ export const Login: React.FC<{ title?: string }> = ({
     };
 
     // Initialize the FirebaseUI Widget using Firebase.
-    var ui = new firebaseui.auth.AuthUI(getFirebase().auth());
+    const ui = new firebaseui.auth.AuthUI(
+      getFirebase().auth(),
+      getFirebase().name
+    );
     // The start method will wait until the DOM is loaded.
     ui.start('#firebaseui-auth-container', uiConfig);
 
-    return () => ui.reset();
+    return () => {
+      ui.delete();
+    };
   }, []);
 
   return (
-    <div id="login-container">
-      <div className="segment">
-        {!!title && <h4>{title}</h4>}
-        <div id="firebaseui-auth-container"></div>
-      </div>
-    </div>
+    <Modal closeIcon size="mini" open onClose={onClose}>
+      <Modal.Header>{title}</Modal.Header>
+      <Modal.Content>
+        <div style={{ margin: '3em 1.5em' }}>
+          <div id="firebaseui-auth-container"></div>
+        </div>
+      </Modal.Content>
+    </Modal>
   );
 };
