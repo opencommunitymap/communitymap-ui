@@ -11,7 +11,7 @@ import {
   Loc,
 } from '../';
 import * as firebase from 'firebase/app';
-import getFirebase from '../utils/firebase';
+import { getFirebaseApp } from '../utils/firebase';
 import 'firebase/auth';
 import 'firebase/firestore';
 import dayjs from 'dayjs';
@@ -31,7 +31,7 @@ export const useLoadObjects = (
 
     const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
-    let ref = getFirebase()
+    let ref = getFirebaseApp()
       .firestore()
       .collection('objects')
       // .where('valid_until', '>=', now)
@@ -69,7 +69,7 @@ export const useLoadObjects = (
     console.debug('Load comments for', objectIds);
     if (!objectIds.length) return;
 
-    const unsubComments = getFirebase()
+    const unsubComments = getFirebaseApp()
       .firestore()
       .collection('comments')
       .where('object_id', 'in', objectIds)
@@ -86,7 +86,7 @@ export const useLoadObjects = (
         setCommentsObj(objs);
       });
 
-    const unsubVotes = getFirebase()
+    const unsubVotes = getFirebaseApp()
       .firestore()
       .collection('votes')
       .where('object_id', 'in', objectIds)
@@ -132,7 +132,7 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
   useEffect(() => {
     console.debug('Load by id', id);
 
-    const unsub = getFirebase()
+    const unsub = getFirebaseApp()
       .firestore()
       .collection('objects')
       .doc(id)
@@ -152,7 +152,7 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
   useEffect(() => {
     console.debug('Load comments for', id);
 
-    const unsubComments = getFirebase()
+    const unsubComments = getFirebaseApp()
       .firestore()
       .collection('comments')
       .where('object_id', '==', id)
@@ -165,7 +165,7 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
         setComments(comms);
       });
 
-    const unsubVotes = getFirebase()
+    const unsubVotes = getFirebaseApp()
       .firestore()
       .collection('votes')
       .where('object_id', '==', id)
@@ -238,7 +238,7 @@ export const postObject = async (
   }
 
   const timenow = new Date().toISOString();
-  return getFirebase()
+  return getFirebaseApp()
     .firestore()
     .collection('objects')
     .add({
@@ -260,10 +260,14 @@ export const closeObject = async (
     throw new Error('Cannot close object');
   }
   const timenow = new Date().toISOString();
-  return getFirebase().firestore().collection('objects').doc(item.id!).update({
-    valid_until: dayjs().toISOString(),
-    updated: timenow,
-  });
+  return getFirebaseApp()
+    .firestore()
+    .collection('objects')
+    .doc(item.id!)
+    .update({
+      valid_until: dayjs().toISOString(),
+      updated: timenow,
+    });
 };
 
 export const voteUp = async (user: firebase.User | null, item: ObjectItem) => {
@@ -273,7 +277,7 @@ export const voteUp = async (user: firebase.User | null, item: ObjectItem) => {
   }
 
   const timenow = new Date().toISOString();
-  return getFirebase().firestore().collection('votes').add({
+  return getFirebaseApp().firestore().collection('votes').add({
     object_id: item.id,
     author: user.uid,
     value: 1,
@@ -292,7 +296,7 @@ export const leaveComment = async (
   }
 
   const timenow = new Date().toISOString();
-  return getFirebase().firestore().collection('comments').add({
+  return getFirebaseApp().firestore().collection('comments').add({
     object_id: item.id,
     author: user.uid,
     comment,
@@ -305,7 +309,7 @@ export const useUserPublicInfo = (userId: string, subscribe = false) => {
 
   useEffect(() => {
     console.debug('Load user id', userId);
-    const ref = getFirebase()
+    const ref = getFirebaseApp()
       .firestore()
       .collection('users-public')
       .doc(userId);
@@ -337,7 +341,7 @@ export const saveUserPublicInfo = async (userInfo: UserProfile) => {
   const { id, ...data } = userInfo;
 
   const timenow = new Date().toISOString();
-  return getFirebase()
+  return getFirebaseApp()
     .firestore()
     .collection('users-public')
     .doc(id)
@@ -355,7 +359,8 @@ export const useDirectMessage = (dialogId: string) => {
   const [messages, setMessages] = useState<DirectMessageItem[]>([]);
 
   const ref = useMemo(
-    () => getFirebase().firestore().collection('direct-messages').doc(dialogId),
+    () =>
+      getFirebaseApp().firestore().collection('direct-messages').doc(dialogId),
     [dialogId]
   );
   const me = useAuth();
@@ -451,7 +456,7 @@ export const useMyDirectMessages = () => {
   useEffect(() => {
     if (!me) return;
 
-    return getFirebase()
+    return getFirebaseApp()
       .firestore()
       .collection('direct-messages')
       .where('members', 'array-contains', me.uid)

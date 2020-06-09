@@ -20,8 +20,7 @@ export const initFirebase = (
   return firebase.initializeApp(conf, APP_NAME);
 };
 
-const getFirebase = () => {
+export const getFirebaseApp = () => {
   if (!__initialized) initFirebase();
   return firebase.app(APP_NAME);
 };
-export default getFirebase;

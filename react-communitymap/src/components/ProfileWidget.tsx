@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import getFirebase from '../utils/firebase';
+import { getFirebaseApp } from '../utils/firebase';
 import { useAuth, Login } from '..';
 import { Dropdown, Button, Icon } from 'semantic-ui-react';
 import './ProfileWidget.css';
@@ -14,7 +14,7 @@ export const ProfileWidget: React.FC = () => {
     }
   }, [user, login]);
 
-  const signOut = () => getFirebase().auth().signOut();
+  const signOut = () => getFirebaseApp().auth().signOut();
 
   return (
     <div id="profile-widget">
