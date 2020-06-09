@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Maps, MapItem, MapsProps } from '../components/Maps';
 import { MapTypeStyle } from 'google-map-react';
 import {
   Loc,
@@ -21,6 +20,8 @@ import {
   useLoadSingleObject,
   ProfileWidget,
   RenderAuthorCallback,
+  Maps,
+  MapItem,
 } from '..';
 import { RenderAuthorProvider } from '../utils/renderAuthor';
 import { Modal, Loader } from 'semantic-ui-react';

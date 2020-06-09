@@ -1,4 +1,4 @@
-import React, { useMemo, ComponentType } from 'react';
+import React, { useMemo } from 'react';
 import GoogleMapReact, { MapTypeStyle, Coords } from 'google-map-react';
 import { Pin } from './Pin';
 import { Loc, MapBounds } from '..';
