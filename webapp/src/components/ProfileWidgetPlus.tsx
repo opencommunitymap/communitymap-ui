@@ -6,6 +6,7 @@ import {
   useAsyncStatus,
   saveUserPublicInfo,
   Login,
+  getFirebaseApp,
 } from 'react-communitymap';
 import firebase from 'firebase';
 import {
@@ -21,10 +22,10 @@ import {
   Image,
   Grid,
 } from 'semantic-ui-react';
-import './ProfileWidget.css';
+import './ProfileWidgetPlus.css';
 import { Link } from 'react-router-dom';
 
-export const ProfileWidget: React.FC = () => {
+export const ProfileWidgetPlus: React.FC = () => {
   const user = useAuth();
   const { dialogs } = useMyDirectMessages();
   const unreadDialogs =
@@ -40,11 +41,11 @@ export const ProfileWidget: React.FC = () => {
 
   const [showProfile, setShowProfile] = useState(false);
 
-  const signOut = () => firebase.auth().signOut();
+  const signOut = () => getFirebaseApp().auth().signOut();
 
   return (
     <div id="profile-widget">
-      {login && <Login title="" />}
+      {login && <Login title="" onClose={() => setLogin(false)} />}
       {showProfile && !!user && (
         <Modal open closeIcon onClose={() => setShowProfile(false)}>
           <Modal.Header>Your profile</Modal.Header>

@@ -5,8 +5,8 @@ import React, {
 } from 'react';
 import {
   BrowserRouter as Router,
-  // Switch,
-  // Route,
+  Switch,
+  Route,
   useHistory,
   // useParams,
   useRouteMatch,
@@ -17,12 +17,12 @@ import './App.css';
 
 import {
   SplashScreen,
-  // UserPage,
+  ProfileWidgetPlus,
+  UserPage,
   // NewContentWidget,
-  // ProfileWidget,
   // NavigationWidget,
-  // DirectMessageModal,
-  // DirectMessageDialogs,
+  DirectMessageModal,
+  DirectMessageDialogs,
 } from './components';
 import {
   // PointingSegment,
@@ -52,10 +52,10 @@ import { initFirebase } from 'react-communitymap';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-// import {
-//   Modal,
-//   Loader,
-// } from 'semantic-ui-react';
+import {
+  Modal,
+  // Loader,
+} from 'semantic-ui-react';
 // import { useAuth, AuthProvider } from './Auth';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
@@ -106,78 +106,6 @@ const embedParams: EmbedParams | null = isEmbed
     }
   : null;
 
-// const MapObjectRender: React.FC<{
-//   item: ObjectItem;
-//   comments?: ObjectComment[];
-//   votesInfo: { count: number; userVoted: boolean };
-// }> = ({ item, votesInfo, comments }) => {
-//   const user = useAuth() || null;
-//   const router = useHistory();
-
-//   let RealComponent: React.FC<ObjectItemComponentProps>;
-
-//   switch (item.type) {
-//     case 'place':
-//       RealComponent = Place;
-//       break;
-//     case 'story':
-//       RealComponent = Story;
-//       break;
-//     default:
-//       RealComponent = Chat;
-//   }
-//   return (
-//     <RealComponent
-//       item={item}
-//       user={user}
-//       userVoted={votesInfo?.userVoted}
-//       votes={votesInfo?.count}
-//       comments={comments}
-//       onClick={() => router.push(`/object/${item.id}`)}
-//       onComment={async (comment) => leaveComment(user, item, comment)}
-//       onVote={async () => voteUp(user, item)}
-//       onClose={async () => closeObject(user, item)}
-//     />
-//   );
-// };
-
-// const DetailedObjectRender: React.FC = () => {
-//   const user = useAuth() || null;
-//   const { objectId = 'n/a' } = useParams();
-
-//   const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
-
-//   if (object === undefined) return <Loader active />;
-//   if (object === null) return <div>Object not found :(</div>;
-
-//   let RealComponent: React.FC<ObjectItemComponentProps>;
-
-//   switch (object.type) {
-//     case 'place':
-//       RealComponent = Place;
-//       break;
-//     case 'story':
-//       RealComponent = Story;
-//       break;
-//     default:
-//       RealComponent = Chat;
-//   }
-
-//   return (
-//     <RealComponent
-//       expanded
-//       item={object}
-//       user={user}
-//       userVoted={votesInfo?.userVoted || false}
-//       votes={votesInfo?.count || 0}
-//       comments={comments || []}
-//       onComment={async (comment) => leaveComment(user, object, comment)}
-//       onVote={async () => voteUp(user, object)}
-//       onClose={async () => closeObject(user, object)}
-//     />
-//   );
-// };
-
 const defaultCenter = { latitude: 42.69, longitude: 23.32 };
 
 const Home: React.FC = () => {
@@ -202,80 +130,34 @@ const Home: React.FC = () => {
         onObjectModalClose={() => router.push('/')}
         centerPin={<Pin color="#2185d0" />}
         autolocate={initialParams?.autolocate}
+        profileWidget={<ProfileWidgetPlus />}
         // renderObject={({ item }) => (item.type === 'story' ? true : null)}
       ></CommunityMap>
+
+      <Switch>
+        <Route path="/direct-messages/:dmKey">
+          <DirectMessageModal onClose={() => router.push('/')} />
+        </Route>
+        <Route path="/my-messages">
+          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
+            <Modal.Header>Messages</Modal.Header>
+            <Modal.Content scrolling>
+              <DirectMessageDialogs />
+            </Modal.Content>
+          </Modal>
+        </Route>
+      </Switch>
     </div>
   );
 
   // return (
   //   <div id="home">
-  //     {initialParams?.canAdd !== false && (
-  //       <NewContentWidget
-  //         authenticated={!!user}
-  //         onAdd={(item) =>
-  //           postObject(user, mapParams, item, embedParams?.appId)
-  //         }
-  //       />
-  //     )}
-  //     <ProfileWidget />
-  //     <NavigationWidget
-  //       onChangePosition={(lat, lng) => {
-  //         console.debug('located', lat, lng);
-  //         setMapCenter(lat, lng);
-  //       }}
-  //     />
-  //     <Maps
-  //       theme={initialParams?.theme}
-  //       centerLat={mapParams?.centerLat || initialParams?.centerLat}
-  //       centerLng={mapParams?.centerLng || initialParams?.centerLng}
-  //       onChange={(centerLat, centerLng, minLat, maxLat, minLng, maxLng) =>
-  //         setMapParams({
-  //           centerLat,
-  //           centerLng,
-  //           minLat,
-  //           maxLat,
-  //           minLng,
-  //           maxLng,
-  //         })
-  //       }
-  //     >
-  //       {commentsObj &&
-  //         votesObj &&
-  //         objects.map((it) => (
-  //           <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
-  //             <PointingSegment>
-  //               <MapObjectRender
-  //                 item={it}
-  //                 votesInfo={votesObj[it.id]}
-  //                 comments={commentsObj[it.id]}
-  //               />
-  //             </PointingSegment>
-  //           </MapItem>
-  //         ))}
-  //     </Maps>
+
   //     <Switch>
-  //       <Route path="/object/:objectId">
-  //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-  //           <Modal.Content scrolling>
-  //             <DetailedObjectRender />
-  //           </Modal.Content>
-  //         </Modal>
-  //       </Route>
   //       <Route path="/users/:userId">
   //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
   //           <Modal.Content scrolling>
   //             <UserPage />
-  //           </Modal.Content>
-  //         </Modal>
-  //       </Route>
-  //       <Route path="/direct-messages/:dmKey">
-  //         <DirectMessageModal onClose={() => router.push('/')} />
-  //       </Route>
-  //       <Route path="/my-messages">
-  //         <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-  //           <Modal.Header>Messages</Modal.Header>
-  //           <Modal.Content scrolling>
-  //             <DirectMessageDialogs />
   //           </Modal.Content>
   //         </Modal>
   //       </Route>
