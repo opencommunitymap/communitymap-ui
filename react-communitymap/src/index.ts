@@ -98,4 +98,7 @@ export interface DirectMessageItem {
   content: string;
 }
 
-export type RenderAuthorCallback = (user: UserProfile) => JSX.Element;
+export type RenderAuthorCallback = (
+  userId: string,
+  user: UserProfile | null
+) => JSX.Element;

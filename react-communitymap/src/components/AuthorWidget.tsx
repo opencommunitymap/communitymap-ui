@@ -14,10 +14,10 @@ export const AuthorWidget: React.FC<AuthorWidgetProps> = React.memo(
   ({ userId, watchForChanges = false }) => {
     const renderAuthor = useRenderAuthorCallback() || defaultRenderAuthor;
     const userInfo = useUserPublicInfo(userId, watchForChanges);
-    return userInfo ? renderAuthor(userInfo) : <span />;
+    return userInfo !== undefined ? renderAuthor(userId, userInfo) : <span />;
   }
 );
 
-const defaultRenderAuthor: RenderAuthorCallback = (user) => (
-  <span>{user.name || 'Anonymous'}</span>
+const defaultRenderAuthor: RenderAuthorCallback = (userId, user) => (
+  <span>{user?.name || 'Anonymous'}</span>
 );

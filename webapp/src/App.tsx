@@ -110,8 +110,8 @@ const embedParams: EmbedParams | null = isEmbed
 
 const defaultCenter = { latitude: 42.69, longitude: 23.32 };
 
-const renderAuthor: RenderAuthorCallback = (authorInfo) => (
-  <Link to={`/users/${authorInfo.id}`}>{authorInfo?.name || 'Anonymous'}</Link>
+const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
+  <Link to={`/users/${userId}`}>{authorInfo?.name || 'Anonymous'}</Link>
 );
 
 const Home: React.FC = () => {
