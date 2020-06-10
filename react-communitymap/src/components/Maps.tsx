@@ -8,7 +8,10 @@ export const MapItem: React.FC<{ lat: number; lng: number }> = ({
   children,
 }) => <>{children}</>;
 
-const getProps = (customStyles?: MapTypeStyle[]) => {
+const getProps = (
+  customStyles?: MapTypeStyle[],
+  showZoomControls?: boolean
+) => {
   let defaultStyles: any = [
     {
       // disables poi
@@ -22,6 +25,7 @@ const getProps = (customStyles?: MapTypeStyle[]) => {
     streetViewControl: false,
     rotateControl: true,
     mapTypeControl: false,
+    zoomControl: showZoomControls,
     styles: customStyles || defaultStyles,
   };
   return {
@@ -36,6 +40,7 @@ export interface MapsProps {
   center?: Loc;
   styles?: MapTypeStyle[];
   centerPin?: JSX.Element | null;
+  showZoomControls?: boolean;
   mapApiKey?: string;
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
 }
@@ -47,6 +52,7 @@ export const Maps: React.FC<MapsProps> = ({
   center,
   centerPin = <Pin />,
   styles,
+  showZoomControls,
   mapApiKey,
   onChange,
 }) => {
@@ -55,7 +61,10 @@ export const Maps: React.FC<MapsProps> = ({
       center ? { lat: center.latitude, lng: center.longitude } : undefined,
     [center]
   );
-  const props = useMemo(() => getProps(styles), []);
+  const props = useMemo(() => getProps(styles, showZoomControls), [
+    styles,
+    showZoomControls,
+  ]);
   return (
     <>
       <div id="center-pin">{centerPin}</div>

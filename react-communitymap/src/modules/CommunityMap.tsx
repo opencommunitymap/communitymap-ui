@@ -69,6 +69,9 @@ export interface CommunityMapProps {
   // Allows to render custom element for author of posts or comments on variious places
   renderAuthor?: RenderAuthorCallback;
 
+  // allows hiding default map zoom controls, default true
+  showZoomControls?: boolean;
+
   onClickObject?: (objectItem: ObjectItem) => boolean | undefined | null;
   showObjectId?: string;
   onObjectModalClose?: () => void;
@@ -83,6 +86,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   center,
   renderObject,
   renderAuthor,
+  showZoomControls,
   profileWidget = <ProfileWidget />,
   autolocate,
   filterOrigin,
@@ -149,6 +153,7 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
         mapApiKey={mapApiKey}
         centerPin={centerPin}
         center={center}
+        showZoomControls={showZoomControls}
         onChange={(center, bounds, zoom) => {
           setMapParams({ center, bounds });
           onChange?.(center, bounds, zoom);
