@@ -26,9 +26,9 @@ import {
   AuthProvider,
   RenderAuthorCallback,
   postObject,
-} from 'react-communitymap';
+  initFirebase,
+} from '@opencommunitymap/react-sdk';
 import { InitialAppParams, EmbedParams } from './types';
-import { initFirebase } from 'react-communitymap';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';

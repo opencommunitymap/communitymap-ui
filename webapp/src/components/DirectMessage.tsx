@@ -11,7 +11,7 @@ import {
   AuthUser,
   reportError,
   directMessageId,
-} from 'react-communitymap';
+} from '@opencommunitymap/react-sdk';
 import { Loader, Form, Button, Modal, List } from 'semantic-ui-react';
 import './DirectMessage.css';
 import dayjs from 'dayjs';

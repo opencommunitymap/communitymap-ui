@@ -4,7 +4,7 @@ import {
   useUserPublicInfo,
   useAuth,
   directMessageId,
-} from 'react-communitymap';
+} from '@opencommunitymap/react-sdk';
 import { Loader, Button } from 'semantic-ui-react';
 
 export const UserPage = () => {

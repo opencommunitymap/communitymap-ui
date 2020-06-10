@@ -1,4 +1,4 @@
-import { Loc, MapBounds } from 'react-communitymap';
+import { Loc, MapBounds } from '@opencommunitymap/react-sdk';
 
 export interface EmbedParams {
   appId: string;

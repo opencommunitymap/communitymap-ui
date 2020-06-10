@@ -7,7 +7,7 @@ import {
   saveUserPublicInfo,
   Login,
   getFirebaseApp,
-} from 'react-communitymap';
+} from '@opencommunitymap/react-sdk';
 import firebase from 'firebase';
 import {
   Modal,

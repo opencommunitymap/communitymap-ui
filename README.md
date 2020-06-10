@@ -74,9 +74,21 @@ cd community-map/
 yarn install
 ```
 
-Now you can run the web app:
+Build the _react-sdk_ library, that is part of the repo.
 
 ```
+cd react-sdk/
+
+yarn build
+```
+
+Use `yarn watch` to make the build process monitor continuosly file changes.
+
+Now you can run the web app in another console:
+
+```
+cd webapp/
+
 yarn start
 ```
 

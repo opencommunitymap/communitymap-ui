@@ -9,7 +9,7 @@ import {
   type2icon,
   type2title,
   Login,
-} from 'react-communitymap';
+} from '@opencommunitymap/react-sdk';
 import 'firebase/auth';
 import './NewContentWidget.css';
 

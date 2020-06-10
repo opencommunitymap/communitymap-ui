@@ -12,6 +12,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@opencommunitymap/react-sdk": "^0.1.0-rc1",
     "classnames": "^2.2.6",
     "dayjs": "^1.8.28",
     "firebase": "^7.15.0",
@@ -19,7 +20,6 @@
     "google-map-react": "^1.1.7",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
-    "react-communitymap": "^0.1.0-rc1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "semantic-ui-css": "^2.4.1",
