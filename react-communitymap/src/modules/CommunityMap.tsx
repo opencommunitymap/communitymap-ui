@@ -19,6 +19,7 @@ import {
   MapBounds,
   useLoadSingleObject,
   ProfileWidget,
+  NavigationWidget,
   RenderAuthorCallback,
   Maps,
   MapItem,
@@ -44,6 +45,8 @@ export interface CommunityMapProps {
   // Initial coordinates
   center?: Loc;
 
+  zoom?: number;
+
   // Google Maps style, https://mapstyle.withgoogle.com/
   mapStyles?: MapTypeStyle[];
 
@@ -54,6 +57,8 @@ export interface CommunityMapProps {
   centerPin?: JSX.Element | null;
 
   profileWidget?: JSX.Element | null;
+
+  navigationWidget?: JSX.Element | null;
 
   // Called initially and after moving the map or changing the zoom
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
@@ -84,10 +89,12 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
   onChange,
   centerPin,
   center,
+  zoom,
   renderObject,
   renderAuthor,
   showZoomControls,
-  profileWidget = <ProfileWidget />,
+  profileWidget,
+  navigationWidget,
   autolocate,
   filterOrigin,
   mapStyles,
@@ -98,31 +105,27 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
 }) => {
   const user = useAuth() || null;
   const [mapParams, setMapParams] = useState<MapParams | null>(null);
-
-  const setMapCenter = useCallback(
-    (center: Loc) => {
-      setMapParams((mapParams) =>
-        mapParams
-          ? { ...mapParams, center }
-          : { center, bounds: { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 } }
-      );
-    },
-    [setMapParams]
+  const [autodetectedCenter, setAutodetectedCenter] = useState<Loc | null>(
+    null
   );
 
-  useEffect(() => {
-    if (autolocate) {
+  const doAutolocate = useCallback(
+    () =>
       detectLocation()
         .then((loc) => {
           console.debug('Autolocate:', loc);
-          setMapCenter(loc);
+          setAutodetectedCenter(loc);
         })
         .catch((err) => {
           console.log('Error autodetecting location:', err);
           // silently ignore for the moment
-        });
-    }
-  }, [setMapCenter]);
+        }),
+    [setAutodetectedCenter]
+  );
+
+  useEffect(() => {
+    autolocate && doAutolocate();
+  }, [doAutolocate]);
 
   const { objects, commentsObj, votesObj } = useLoadObjects(
     mapParams?.bounds || null,
@@ -152,10 +155,12 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
         styles={mapStyles}
         mapApiKey={mapApiKey}
         centerPin={centerPin}
-        center={center}
+        center={autodetectedCenter || center}
+        zoom={zoom}
         showZoomControls={showZoomControls}
         onChange={(center, bounds, zoom) => {
           setMapParams({ center, bounds });
+          setAutodetectedCenter(null);
           onChange?.(center, bounds, zoom);
         }}
       >
@@ -192,7 +197,12 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
           )}
         </Modal.Content>
       </Modal>
-      {profileWidget}
+      {profileWidget || <ProfileWidget />}
+      {navigationWidget || (
+        <NavigationWidget
+          onChangePosition={(loc) => setAutodetectedCenter(loc)}
+        />
+      )}
     </RenderAuthorProvider>
   );
 };

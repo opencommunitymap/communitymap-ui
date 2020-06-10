@@ -38,6 +38,7 @@ const getProps = (
 
 export interface MapsProps {
   center?: Loc;
+  zoom?: number;
   styles?: MapTypeStyle[];
   centerPin?: JSX.Element | null;
   showZoomControls?: boolean;
@@ -50,6 +51,7 @@ const coord2loc = (c: Coords): Loc => ({ latitude: c.lat, longitude: c.lng });
 export const Maps: React.FC<MapsProps> = ({
   children,
   center,
+  zoom,
   centerPin = <Pin />,
   styles,
   showZoomControls,
@@ -72,6 +74,7 @@ export const Maps: React.FC<MapsProps> = ({
         {...props}
         bootstrapURLKeys={{ key: mapApiKey || '' }}
         center={centerCoords}
+        zoom={zoom}
         onChange={(props) => {
           const {
             center,

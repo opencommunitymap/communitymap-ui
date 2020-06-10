@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
-import { detectLocation } from 'react-communitymap';
+import { detectLocation, Loc } from '..';
 
 export const NavigationWidget: React.FC<{
-  onChangePosition: (lat: number, lng: number) => void;
+  onChangePosition: (loc: Loc) => void;
 }> = ({ onChangePosition }) => {
   const [loading, setLoading] = useState(false);
 
@@ -11,7 +11,7 @@ export const NavigationWidget: React.FC<{
     setLoading(true);
     try {
       const pos = await detectLocation();
-      onChangePosition(pos.latitude, pos.longitude);
+      onChangePosition(pos);
     } catch (err) {
       console.log('Error getting location', err);
       alert(err.message);

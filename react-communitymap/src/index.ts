@@ -6,6 +6,7 @@ export * from './components/Chat';
 export * from './components/Place';
 export * from './components/Story';
 export * from './components/Login';
+export * from './components/NavigationWidget';
 export * from './components/ProfileWidget';
 export * from './modules/Auth';
 export * from './modules/DB';

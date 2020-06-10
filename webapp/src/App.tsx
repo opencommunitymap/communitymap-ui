@@ -21,7 +21,6 @@ import {
   ProfileWidgetPlus,
   UserPage,
   NewContentWidget,
-  // NavigationWidget,
   DirectMessageModal,
   DirectMessageDialogs,
 } from './components';
