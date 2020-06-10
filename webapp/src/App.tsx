@@ -1,14 +1,9 @@
-import React, {
-  useState,
-  useEffect,
-  // useCallback
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   useHistory,
-  // useParams,
   useRouteMatch,
   Link,
 } from 'react-router-dom';
@@ -25,40 +20,19 @@ import {
   DirectMessageDialogs,
 } from './components';
 import {
-  // PointingSegment,
   CommunityMap,
   Pin,
-  // useLoadObjects,
-  // postObject,
-  // leaveComment,
-  // voteUp,
-  // closeObject,
-  // useLoadSingleObject,
-  // ObjectItem,
-  // ObjectComment,
-  // ObjectItemComponentProps,
   useAuth,
   AuthProvider,
   RenderAuthorCallback,
   postObject,
-  // Loc,
-  // MapParams,
-  // detectLocation,
-  // Place,
-  // Story,
-  // Chat,
 } from 'react-communitymap';
 import { InitialAppParams, EmbedParams } from './types';
-// import * as firebase from 'firebase/app';
 import { initFirebase } from 'react-communitymap';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-import {
-  Modal,
-  // Loader,
-} from 'semantic-ui-react';
-// import { useAuth, AuthProvider } from './Auth';
+import { Modal } from 'semantic-ui-react';
 
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 const OCM_ENV = process.env.REACT_APP_OCM_ENV || process.env.NODE_ENV;
