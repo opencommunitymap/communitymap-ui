@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from 'semantic-ui-react';
 import { detectLocation, Loc } from '..';
+import './commonStyles.css';
 
 export const NavigationWidget: React.FC<{
   onChangePosition: (loc: Loc) => void;

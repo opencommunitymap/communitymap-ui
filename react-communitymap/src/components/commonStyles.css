@@ -1,0 +1,27 @@
+#profile-widget {
+  position: fixed;
+  top: 10px;
+  right: 55px;
+  z-index: 2;
+}
+
+#navigation-widget {
+  position: fixed;
+  bottom: 120px;
+  right: 8px;
+  z-index: 2;
+}
+
+/* Common classes */
+.replies-count {
+  font-size: 0.9em;
+  font-weight: 400;
+  padding-top: 8px;
+}
+
+.pale-heading {
+  opacity: 0.7;
+}
+section {
+  margin: 1em 0;
+}

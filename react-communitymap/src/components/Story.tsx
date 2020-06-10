@@ -9,6 +9,7 @@ import {
 import dayjs from 'dayjs';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Story.css';
+import './commonStyles.css';
 import cx from 'classnames';
 import { LikeWidget } from './LikeWidget';
 

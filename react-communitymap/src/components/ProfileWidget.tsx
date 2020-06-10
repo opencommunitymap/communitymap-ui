@@ -3,6 +3,7 @@ import { getFirebaseApp } from '../utils/firebase';
 import { useAuth, Login } from '..';
 import { Dropdown, Button, Icon } from 'semantic-ui-react';
 import './ProfileWidget.css';
+import './commonStyles.css';
 
 export const ProfileWidget: React.FC = () => {
   const user = useAuth();

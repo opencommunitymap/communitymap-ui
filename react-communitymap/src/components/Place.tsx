@@ -3,6 +3,7 @@ import { ObjectItemInput, ObjectItemComponentProps } from '..';
 import { Icon, Image, Form } from 'semantic-ui-react';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Place.css';
+import './commonStyles.css';
 import cx from 'classnames';
 import CloudinaryImageUpload from './CloudinaryImageUpload';
 import { LikeWidget } from './LikeWidget';
