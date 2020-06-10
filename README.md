@@ -54,7 +54,7 @@ Optional _canAdd_ allows to hide UI elements for adding objects from this view. 
 
 This is the most flexible and powerful way for integration. It allows different customizations and interactions with the map and its objects.
 
-Read more in its [Documentation](react-communitymap/README.md)
+Read more in its [Documentation](react-sdk/README.md)
 
 It's in early alpha and could be subject for many changes.
 

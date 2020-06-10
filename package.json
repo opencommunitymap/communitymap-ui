@@ -3,7 +3,7 @@
   "private": true,
   "license": "Apache-2.0",
   "workspaces": [
-    "react-communitymap",
+    "react-sdk",
     "webapp"
   ],
   "scripts": {

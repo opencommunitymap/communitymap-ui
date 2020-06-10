@@ -20,7 +20,7 @@ Simple example - just showing Community Map at current location.
 
 ```jsx
 import React from 'react';
-import { CommunityMap } from 'react-communitymap';
+import { CommunityMap } from '@opencommunitymap/react-sdk';
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 
 <div style={{ width: '100%', height: 500 }}>
@@ -32,7 +32,7 @@ Complex example - with autolocation, filtering content by origin (specific proje
 
 ```jsx
 import React, { useState } from 'react';
-import { CommunityMap, Pin, detectLocation } from 'react-communitymap';
+import { CommunityMap, Pin, detectLocation } from '@opencommunitymap/react-sdk';
 import mapStyles from './customGoogleMapsDarkStyle.json';
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
