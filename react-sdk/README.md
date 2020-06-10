@@ -6,7 +6,17 @@ This is the early beta version that may be subject to many changes, including th
 
 ## Installation
 
-TODO
+Install _react-sdk_ and firebase packages:
+
+```
+npm i @opencommunitymap/react-sdk firebase firebaseui
+```
+
+or
+
+```
+yarn add @opencommunitymap/react-sdk firebase firebaseui
+```
 
 ### Google Maps API key
 
