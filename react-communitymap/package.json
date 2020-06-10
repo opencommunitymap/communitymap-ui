@@ -10,16 +10,15 @@
     "sync-css": "sync-glob -d false src/components/*.css dist/components/"
   },
   "peerDependencies": {
+    "firebase": "^7.0.0",
+    "firebaseui": "^4.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   },
   "dependencies": {
     "classnames": "^2.2.6",
     "dayjs": "^1.8.28",
-    "firebase": "^7.15.0",
-    "firebaseui": "^4.5.1",
     "google-map-react": "^1.1.7",
-    "query-string": "^6.12.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2"
   },
@@ -41,6 +40,8 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^24.9.0",
     "concurrently": "^5.2.0",
+    "firebase": "^7.15.0",
+    "firebaseui": "^4.5.1",
     "firebase-ci": "^0.13.0",
     "firebase-tools": "^8.4.1",
     "jest": "^24.9.0",
