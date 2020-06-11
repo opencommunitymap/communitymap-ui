@@ -1,0 +1,59 @@
+{
+  "name": "community-map",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "deploy": "yarn build && firebase deploy",
+    "deploy_hosting": "yarn build && firebase deploy --only hosting:communitymap",
+    "index_sync": "firebase firestore:indexes > firestore.indexes.json",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@opencommunitymap/react-sdk": "^0.1.0-rc1",
+    "classnames": "^2.2.6",
+    "dayjs": "^1.8.28",
+    "firebase": "^7.15.0",
+    "firebaseui": "^4.5.1",
+    "google-map-react": "^1.1.7",
+    "query-string": "^6.12.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.9.0",
+    "@testing-library/react": "^10.2.0",
+    "@testing-library/user-event": "^11.1.0",
+    "@types/classnames": "^2.2.10",
+    "@types/google-map-react": "^1.1.8",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.11",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "firebase-ci": "^0.13.0",
+    "firebase-tools": "^8.4.1",
+    "react-scripts": "3.4.1",
+    "typescript": "~3.9.5"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+/* Main elements positioning */
+
+#home {
+  height: 100vh;
+  width: 100%;
+}
+#new-content-widget {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  z-index: 2;
+}
