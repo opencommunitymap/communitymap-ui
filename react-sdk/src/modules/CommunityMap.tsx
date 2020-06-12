@@ -28,6 +28,8 @@ import { RenderAuthorProvider } from '../utils/renderAuthor';
 import { Modal, Loader } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
+const isDEV_ENV = process.env.NODE_ENV === 'development';
+
 export interface RenderObjectCallbackProps {
   item: ObjectItem;
   comments: ObjectComment[];
@@ -148,6 +150,16 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
     onObjectModalClose?.();
     setIntShowObjectId(null);
   }, [setIntShowObjectId, onObjectModalClose]);
+
+  if (isDEV_ENV && mapParams && mapParams.bounds.maxLat === undefined) {
+    return (
+      <div style={{ color: 'red' }}>
+        Make sure the container element has width and height. The map will try
+        to fill the parent container, but if the container has no size, the map
+        will collapse to 0 width / height.
+      </div>
+    );
+  }
 
   return (
     <RenderAuthorProvider value={renderAuthor}>
