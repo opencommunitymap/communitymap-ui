@@ -23,6 +23,7 @@ import {
   RenderAuthorCallback,
   Maps,
   MapItem,
+  AuthProvider,
 } from '..';
 import { RenderAuthorProvider } from '../utils/renderAuthor';
 import { Modal, Loader } from 'semantic-ui-react';
@@ -87,7 +88,7 @@ export interface CommunityMapProps {
   filterOrigin?: string;
 }
 
-export const CommunityMap: React.FC<CommunityMapProps> = ({
+const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   onChange,
   centerPin,
   center,
@@ -216,6 +217,14 @@ export const CommunityMap: React.FC<CommunityMapProps> = ({
         />
       )}
     </RenderAuthorProvider>
+  );
+};
+
+export const CommunityMap: React.FC<CommunityMapProps> = (props) => {
+  return (
+    <AuthProvider>
+      <CommunityMapImpl {...props} />
+    </AuthProvider>
   );
 };
 

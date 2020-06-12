@@ -11,10 +11,15 @@ export const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     return getFirebaseApp()
       .auth()
-      .onIdTokenChanged((user) => {
-        console.debug('Loaded user', user);
-        setUser(user);
-      });
+      .onIdTokenChanged(
+        (user) => {
+          console.debug('Loaded user', user);
+          setUser(user);
+        },
+        (err) => {
+          console.log('Error loading Auth info:', err);
+        }
+      );
   }, []);
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
