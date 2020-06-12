@@ -27,6 +27,10 @@ export const useLoadObjects = (
   useEffect(() => {
     if (!mapBounds) return;
     const { minLat, maxLat, minLng, maxLng } = mapBounds;
+    if (!minLat || !maxLat || !minLng || !maxLng) {
+      console.log('Invalid map bounds:', mapBounds);
+      return;
+    }
     console.debug('Load by', mapBounds);
 
     const now = new Date().toISOString();
