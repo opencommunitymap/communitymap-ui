@@ -9,4 +9,5 @@
   left: 10px;
   top: 10px;
   z-index: 2;
+  margin-top: 0 !important;
 }
