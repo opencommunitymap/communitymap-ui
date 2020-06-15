@@ -1,0 +1,72 @@
+{
+  "name": "@opencommunitymap/react-sdk",
+  "version": "0.1.0-rc3",
+  "license": "Apache-2.0",
+  "author": "Open Community Map team",
+  "homepage": "https://github.com/opencommunitymap/communitymap-ui",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf dist && tsc && yarn sync-css",
+    "watch": "rm -rf dist && concurrently 'tsc -w' 'yarn sync-css -w'",
+    "sync-css": "sync-glob -d false src/components/*.css dist/components/"
+  },
+  "peerDependencies": {
+    "firebase": "^7.0.0",
+    "firebaseui": "^4.0.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "dayjs": "^1.8.28",
+    "google-map-react": "^1.1.7",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
+    "@testing-library/jest-dom": "^5.9.0",
+    "@testing-library/react": "^10.2.0",
+    "@testing-library/user-event": "^11.1.0",
+    "@types/classnames": "^2.2.10",
+    "@types/google-map-react": "^1.1.8",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.11",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.5",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^24.9.0",
+    "concurrently": "^5.2.0",
+    "firebase": "^7.15.0",
+    "firebaseui": "^4.5.1",
+    "firebase-ci": "^0.13.0",
+    "firebase-tools": "^8.4.1",
+    "jest": "^24.9.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1",
+    "regenerator-runtime": "^0.13.5",
+    "sync-glob": "^1.4.0",
+    "typescript": "^3.8.3"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

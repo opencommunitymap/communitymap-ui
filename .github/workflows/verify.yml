@@ -36,6 +36,9 @@ jobs:
           NEXT_REACT_APP_GOOGLE_API_KEY: ${{ secrets.NEXT_REACT_APP_GOOGLE_API_KEY }}
           PROD_REACT_APP_GOOGLE_API_KEY: ${{ secrets.PROD_REACT_APP_GOOGLE_API_KEY }}
           # these are optional
+          PROD_REACT_APP_OCM_ENV: ${{ secrets.PROD_REACT_APP_OCM_ENV }}
+          MASTER_REACT_APP_OCM_ENV: ${{ secrets.MASTER_REACT_APP_OCM_ENV }}
+          NEXT_REACT_APP_OCM_ENV: ${{ secrets.NEXT_REACT_APP_OCM_ENV }}
           REACT_APP_CLOUDINARY_CLOUD_NAME: ${{ secrets.REACT_APP_CLOUDINARY_CLOUD_NAME }}
           REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO: ${{ secrets.REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO }}
         run: |
@@ -45,8 +48,10 @@ jobs:
           branchPrefix=$(echo $gitBranch | tr a-z A-Z | tr - _)
           # Create env variable name including branch
           branchApiKeyName="${branchPrefix}_REACT_APP_GOOGLE_API_KEY"
+          branchOcmEnvName="${branchPrefix}_REACT_APP_OCM_ENV"
           # Evaluate name variable to get variables value
           branchApiKey=$(eval echo \$${branchApiKeyName})
+          branchOcmEnv=$(eval echo \$${branchOcmEnvName})
           # Set value if it exists, otherwise fallback to default
           if [[ ! -z "${branchApiKey}" ]]; then
             echo Using Google API Key for branch \"$gitBranch\"
@@ -54,6 +59,10 @@ jobs:
           else
             echo Falling back to default Google API Key
             googleApiKey=$REACT_APP_GOOGLE_API_KEY
+          fi
+          if [[ ! -z "${branchOcmEnv}" ]]; then
+            echo Using special OCM env for branch \"$gitBranch\"
+            echo "::set-env name=REACT_APP_OCM_ENV::$branchOcmEnv"
           fi
           # Expose variable to environment for later steps
           echo "::set-env name=REACT_APP_GOOGLE_API_KEY::$googleApiKey"

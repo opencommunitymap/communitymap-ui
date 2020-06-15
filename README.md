@@ -5,7 +5,7 @@ Open Community Map is a platform intended to gather various local community and 
 It can be used from:
 
 - https://communitymap.online
-- Partner 3rd party website with the map embedded with `<iframe>`
+- Partner 3rd party website with the map embedded with `<iframe>` or with [React SDK](#React%20SDK)
 - Self-hosted solution
 
 More details about project ideas and structure can be found in the [Wiki](https://github.com/opencommunitymap/communitymap-ui/wiki)
@@ -50,6 +50,14 @@ Optional _canAdd_ allows to hide UI elements for adding objects from this view. 
 ></iframe>
 ```
 
+### React SDK
+
+This is the most flexible and powerful way for integration. It allows different customizations and interactions with the map and its objects.
+
+Read more in its [Documentation](react-sdk/README.md)
+
+It's in early alpha and could be subject for many changes.
+
 ## API
 
 Check out the [API documentation](https://github.com/opencommunitymap/communitymap-cloud-functions/blob/master/docs/API.md)
@@ -66,9 +74,21 @@ cd community-map/
 yarn install
 ```
 
-Now you can run the web app:
+Build the _react-sdk_ library, that is part of the repo.
 
 ```
+cd react-sdk/
+
+yarn build
+```
+
+Use `yarn watch` to make the build process monitor continuosly file changes.
+
+Now you can run the web app in another console:
+
+```
+cd webapp/
+
 yarn start
 ```
 
