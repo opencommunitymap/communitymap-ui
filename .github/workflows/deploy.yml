@@ -85,6 +85,8 @@ jobs:
         if: github.ref == 'refs/heads/prod'
         id: check
         uses: EndBug/version-check@v1
+        with:
+          file-name: react-sdk/package.json
 
       - name: Create Release
         if: github.ref == 'refs/heads/prod' && steps.check.outputs.changed == 'true'
@@ -96,4 +98,4 @@ jobs:
           tag_name: v${{ env.PACKAGE_VERSION }}
           release_name: v${{ env.PACKAGE_VERSION }}
           draft: false
-          prerelease: false
+          prerelease: true
