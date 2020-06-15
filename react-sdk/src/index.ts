@@ -53,6 +53,7 @@ export interface ObjectItemInput {
   description: string;
   logoURL?: string;
   url?: string;
+  external_data?: any;
   valid_until: string;
 }
 export interface ObjectItem extends ObjectItemInput {

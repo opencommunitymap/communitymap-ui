@@ -25,6 +25,7 @@ const getProps = (
     streetViewControl: false,
     rotateControl: true,
     mapTypeControl: false,
+    fullscreenControl: false,
     zoomControl: showZoomControls,
     styles: customStyles || defaultStyles,
   };
