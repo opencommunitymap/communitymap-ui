@@ -100,7 +100,7 @@ const Home: React.FC = () => {
   return (
     <div id="home">
       <CommunityMap
-        center={defaultCenter}
+        defaultCenter={defaultCenter}
         onChange={(center) => setCurrentLocation(center)}
         mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
