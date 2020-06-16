@@ -40,6 +40,8 @@ const getProps = (
 export interface MapsProps {
   center?: Loc;
   zoom?: number;
+  defaultCenter?: Loc;
+  defaultZoom?: number;
   styles?: MapTypeStyle[];
   centerPin?: JSX.Element | null;
   showZoomControls?: boolean;
@@ -48,21 +50,26 @@ export interface MapsProps {
 }
 
 const coord2loc = (c: Coords): Loc => ({ latitude: c.lat, longitude: c.lng });
+const loc2coord = (l: Loc): Coords => ({ lat: l.latitude, lng: l.longitude });
 
 export const Maps: React.FC<MapsProps> = ({
   children,
   center,
   zoom,
+  defaultCenter,
+  defaultZoom,
   centerPin = <Pin />,
   styles,
   showZoomControls,
   mapApiKey,
   onChange,
 }) => {
-  const centerCoords = useMemo(
-    () =>
-      center ? { lat: center.latitude, lng: center.longitude } : undefined,
-    [center]
+  const { centerCoords, defaultCenterCoords } = useMemo(
+    () => ({
+      centerCoords: center ? loc2coord(center) : undefined,
+      defaultCenterCoords: defaultCenter ? loc2coord(defaultCenter) : undefined,
+    }),
+    [center, defaultCenter]
   );
   const props = useMemo(() => getProps(styles, showZoomControls), [
     styles,
@@ -76,6 +83,8 @@ export const Maps: React.FC<MapsProps> = ({
         bootstrapURLKeys={{ key: mapApiKey || '' }}
         center={centerCoords}
         zoom={zoom}
+        defaultCenter={defaultCenterCoords || props.defaultCenter}
+        defaultZoom={defaultZoom || props.defaultZoom}
         onChange={(props) => {
           const {
             center,
