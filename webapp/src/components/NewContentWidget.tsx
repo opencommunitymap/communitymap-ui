@@ -8,10 +8,10 @@ import {
   AddNewChatObject,
   type2icon,
   type2title,
-  Login,
 } from '@opencommunitymap/react-sdk';
 import 'firebase/auth';
 import './NewContentWidget.css';
+import { Login } from './Login';
 
 const AddNewObjectRender: React.FC<{
   type: ObjectItemInput['type'];
