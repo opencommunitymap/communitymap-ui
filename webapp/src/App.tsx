@@ -18,6 +18,9 @@ import {
   NewContentWidget,
   DirectMessageModal,
   DirectMessageDialogs,
+  TermsOfService,
+  PrivacyPolicy,
+  CookieConsentBanner,
 } from './components';
 import {
   CommunityMap,
@@ -143,6 +146,22 @@ const Home: React.FC = () => {
             </Modal.Content>
           </Modal>
         </Route>
+        <Route path="/terms">
+          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
+            <Modal.Header>Terms of Service</Modal.Header>
+            <Modal.Content scrolling>
+              <TermsOfService />
+            </Modal.Content>
+          </Modal>
+        </Route>
+        <Route path="/privacy">
+          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
+            <Modal.Header>Privacy and Cookie Policy</Modal.Header>
+            <Modal.Content scrolling>
+              <PrivacyPolicy />
+            </Modal.Content>
+          </Modal>
+        </Route>
       </Switch>
     </div>
   );
@@ -177,6 +196,7 @@ export default () => (
     <AuthProvider>
       <Router basename={isEmbed ? embedBasename : undefined}>
         <App />
+        <CookieConsentBanner />
       </Router>
     </AuthProvider>
   </FirebaseInitializer>
