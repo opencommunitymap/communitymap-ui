@@ -114,6 +114,7 @@ const Home: React.FC = () => {
         onObjectModalClose={() => router.push('/')}
         centerPin={<Pin color="#2185d0" />}
         autolocate={initialParams?.autolocate}
+        filterOrigin={initialParams?.filterOrigin}
         profileWidget={<ProfileWidgetPlus />}
         renderAuthor={renderAuthor}
         // renderObject={({ item }) => (item.type === 'story' ? true : null)}
