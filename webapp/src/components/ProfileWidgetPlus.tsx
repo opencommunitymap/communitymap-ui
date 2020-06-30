@@ -5,7 +5,6 @@ import {
   useUserPublicInfo,
   useAsyncStatus,
   saveUserPublicInfo,
-  Login,
   getFirebaseApp,
 } from '@opencommunitymap/react-sdk';
 import firebase from 'firebase';
@@ -24,6 +23,7 @@ import {
 } from 'semantic-ui-react';
 import './ProfileWidgetPlus.css';
 import { Link } from 'react-router-dom';
+import { Login } from './Login';
 
 export const ProfileWidgetPlus: React.FC = () => {
   const user = useAuth();
@@ -90,6 +90,14 @@ export const ProfileWidgetPlus: React.FC = () => {
                 </Label>
               )}
             </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item as={Link} to="/terms">
+              Terms of Service
+            </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/privacy">
+              Privacy Policy
+            </Dropdown.Item>
+            <Dropdown.Divider />
             <Dropdown.Item onClick={signOut}>
               <Icon name="log out" />
               Log out
@@ -97,9 +105,32 @@ export const ProfileWidgetPlus: React.FC = () => {
           </Dropdown.Menu>
         </Dropdown>
       ) : (
-        <Button primary size="large" onClick={() => setLogin(true)}>
-          Sign in
-        </Button>
+        // <Button primary size="large" onClick={() => setLogin(true)}>
+        //   Sign in
+        // </Button>
+        <Dropdown
+          trigger={
+            <Button className="profile-button" icon size="large">
+              <Icon name="bars" />
+            </Button>
+          }
+          pointing="top right"
+          icon={null}
+        >
+          <Dropdown.Menu>
+            <Dropdown.Item as={Link} to="/terms">
+              Terms of Service
+            </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/privacy">
+              Privacy Policy
+            </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={() => setLogin(true)}>
+              <Icon name="sign in" />
+              Sign in
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       )}
     </div>
   );

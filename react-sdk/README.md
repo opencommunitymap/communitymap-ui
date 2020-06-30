@@ -46,6 +46,8 @@ import { CommunityMap, Pin, detectLocation } from '@opencommunitymap/react-sdk';
 import mapStyles from './customGoogleMapsDarkStyle.json';
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
+const defaultCenter = { latitude: 42.69, longitude: 23.32 };
+const defaultZoom = 18;
 // include your custom Navigation, NewContentWidget, MapItemWidget
 
 const Map = () => {
@@ -62,6 +64,8 @@ const Map = () => {
         centerPin={<Pin color="#79CAB5" />}
         center={center}
         zoom={zoom}
+        defaultCenter={defaultCenter}
+        defaultZoom={defaultZoom}
         showZoomControls={false}
         renderObject={({ item }) => <MapItemWidget item={item} />}
         navigationWidget={

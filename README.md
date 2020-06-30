@@ -40,6 +40,8 @@ Optional _centerLat_ and _centerLng_ parameters define the default coordinates t
 
 Optional _canAdd_ allows to hide UI elements for adding objects from this view. If you need to add them your own way, hide them and use the [API](#API).
 
+See also this [example](/examples/embed)
+
 ```
 <iframe
   src="https://communitymap.online/embed?appId=Test42&filterOrigin=Test42&centerLat=43.123&centerLng=24.122&canAdd=false"

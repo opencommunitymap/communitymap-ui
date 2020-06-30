@@ -45,10 +45,15 @@ export type RenderObjectCallback = (
 ) => JSX.Element | boolean | null;
 
 export interface CommunityMapProps {
-  // Initial coordinates
+  // Center coordinates for controlled component
   center?: Loc;
-
+  // Zoom for controlled component
   zoom?: number;
+
+  // Initial coordinates
+  defaultCenter?: Loc;
+  // Initial zoom
+  defaultZoom?: number;
 
   // Google Maps style, https://mapstyle.withgoogle.com/
   mapStyles?: MapTypeStyle[];
@@ -93,6 +98,8 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   centerPin,
   center,
   zoom,
+  defaultCenter,
+  defaultZoom,
   renderObject,
   renderAuthor,
   showZoomControls,
@@ -170,6 +177,8 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
         centerPin={centerPin}
         center={autodetectedCenter || center}
         zoom={zoom}
+        defaultCenter={defaultCenter}
+        defaultZoom={defaultZoom}
         showZoomControls={showZoomControls}
         onChange={(center, bounds, zoom) => {
           setMapParams({ center, bounds });

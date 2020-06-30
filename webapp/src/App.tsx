@@ -18,6 +18,9 @@ import {
   NewContentWidget,
   DirectMessageModal,
   DirectMessageDialogs,
+  TermsOfService,
+  PrivacyPolicy,
+  CookieConsentBanner,
 } from './components';
 import {
   CommunityMap,
@@ -100,7 +103,7 @@ const Home: React.FC = () => {
   return (
     <div id="home">
       <CommunityMap
-        center={defaultCenter}
+        defaultCenter={defaultCenter}
         onChange={(center) => setCurrentLocation(center)}
         mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
@@ -111,6 +114,7 @@ const Home: React.FC = () => {
         onObjectModalClose={() => router.push('/')}
         centerPin={<Pin color="#2185d0" />}
         autolocate={initialParams?.autolocate}
+        filterOrigin={initialParams?.filterOrigin}
         profileWidget={<ProfileWidgetPlus />}
         renderAuthor={renderAuthor}
         // renderObject={({ item }) => (item.type === 'story' ? true : null)}
@@ -140,6 +144,22 @@ const Home: React.FC = () => {
             <Modal.Header>Messages</Modal.Header>
             <Modal.Content scrolling>
               <DirectMessageDialogs />
+            </Modal.Content>
+          </Modal>
+        </Route>
+        <Route path="/terms">
+          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
+            <Modal.Header>Terms of Service</Modal.Header>
+            <Modal.Content scrolling>
+              <TermsOfService />
+            </Modal.Content>
+          </Modal>
+        </Route>
+        <Route path="/privacy">
+          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
+            <Modal.Header>Privacy and Cookie Policy</Modal.Header>
+            <Modal.Content scrolling>
+              <PrivacyPolicy />
             </Modal.Content>
           </Modal>
         </Route>
@@ -177,6 +197,7 @@ export default () => (
     <AuthProvider>
       <Router basename={isEmbed ? embedBasename : undefined}>
         <App />
+        <CookieConsentBanner />
       </Router>
     </AuthProvider>
   </FirebaseInitializer>
