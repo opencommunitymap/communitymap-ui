@@ -46,6 +46,8 @@ export const PrivacyPolicy = () => {
         <a href="https://github.com/opencommunitymap/communitymap-ui">
           our github repository
         </a>
+        or by sending us an email to{' '}
+        <a href="mailto:info@opencommunitymap.org">info@opencommunitymap.org</a>
         .
       </p>
 
