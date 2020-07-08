@@ -5,7 +5,7 @@ Open Community Map is a platform intended to gather various local community and 
 It can be used from:
 
 - https://communitymap.online
-- Partner 3rd party website with the map embedded with `<iframe>` or with [React SDK](#React%20SDK)
+- Partner 3rd party website with the map embedded with `<iframe>` or with [React SDK](#React-SDK)
 - Self-hosted solution
 
 More details about project ideas and structure can be found in the [Wiki](https://github.com/opencommunitymap/communitymap-ui/wiki)
