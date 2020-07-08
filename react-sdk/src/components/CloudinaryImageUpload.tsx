@@ -26,7 +26,7 @@ const CloudinaryImageUpload: React.FC<UploadWidgetProps> = ({
       (error: Error, result: any) => {
         if (!error && result && result.event === 'success') {
           console.debug('Done! Here is the image info: ', result.info);
-          onChangeCb.current(result.info.url);
+          onChangeCb.current(result.info.secure_url);
         }
         if (error) console.error(error);
       }
