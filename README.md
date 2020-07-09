@@ -16,7 +16,7 @@ Feel free to [join our Slack space](https://join.slack.com/t/opencommunitymap/sh
 
 ## Embedding into 3rd party site
 
-It's possible to embed the map into 3rd party site. You need to use the _appId_ we'll provide you.
+It's possible to embed the map into 3rd party site. You need to use the `appId` we'll provide you.
 
 ```
 https://communitymap.online/embed/?appId=<your-app-id>
@@ -34,17 +34,23 @@ Example:
 ></iframe>
 ```
 
-Currently you can filter to show only your objects on the map using optional _filterOrigin_ query parameter. If it's missing, all types of objects are shown.
+### Options
 
-Optional _centerLat_ and _centerLng_ parameters define the default coordinates to the map.
+Currently you can filter to show only your objects on the map using optional `filterOrigin` query parameter. If it's missing, all types of objects are shown.
 
-Optional _canAdd_ allows to hide UI elements for adding objects from this view. If you need to add them your own way, hide them and use the [API](#API).
+Optional `centerLat` and `centerLng` parameters define the default coordinates to the map.
+
+Optional `autolocate` parameter allows to detect client's location automatically. User's permission will be requested the first time. Default value: `false`.
+
+Optional `canAdd` allows to hide UI elements for adding objects from this view. If you need to add them your own way, hide them and use the [API](#API).
+
+NOTE that you may use them in non-embed URLs as well - they work in the same manner.
 
 See also this [example](/examples/embed)
 
 ```
 <iframe
-  src="https://communitymap.online/embed?appId=Test42&filterOrigin=Test42&centerLat=43.123&centerLng=24.122&canAdd=false"
+  src="https://communitymap.online/embed?appId=Test42&filterOrigin=Test42&centerLat=43.123&centerLng=24.122&canAdd=false&autolocate=true"
   allow="geolocation"
   style="border-width: 0;"
   width="100%"
