@@ -219,8 +219,10 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
           )}
         </Modal.Content>
       </Modal>
-      {profileWidget || <ProfileWidget />}
-      {navigationWidget || (
+      {profileWidget !== undefined ? profileWidget : <ProfileWidget />}
+      {navigationWidget !== undefined ? (
+        navigationWidget
+      ) : (
         <NavigationWidget
           onChangePosition={(loc) => setAutodetectedCenter(loc)}
         />
