@@ -61,14 +61,14 @@ export interface ObjectItem extends ObjectItemInput {
   author: string;
   loc: Loc;
   created: string;
+  comments?: ObjectComment[];
+  userVoted: boolean;
+  votesCount: number;
 }
 
 export interface ObjectItemComponentProps {
   item: ObjectItem;
   user: firebase.User | null;
-  userVoted: boolean;
-  votes: number;
-  comments?: ObjectComment[];
   expanded?: boolean;
   onClick?: () => void;
   onVote: () => Promise<any>;
