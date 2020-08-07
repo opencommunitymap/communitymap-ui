@@ -46,6 +46,9 @@ export interface CommunityMapProps {
   // Zoom for controlled component
   zoom?: number;
 
+  // Provide loaded objects instead of relying on loading them automatically
+  data?: ObjectItem[];
+
   // Initial coordinates
   defaultCenter?: Loc;
   // Initial zoom
@@ -93,6 +96,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   onChange,
   centerPin,
   center,
+  data,
   zoom,
   defaultCenter,
   defaultZoom,
@@ -133,11 +137,13 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
     autolocate && doAutolocate();
   }, [doAutolocate]);
 
-  const objects = useLoadObjects(
+  const loadedObjects = useLoadObjects(
     mapParams?.bounds || null,
     user,
-    filterOrigin
+    filterOrigin,
+    !!data
   );
+  const objects = data || loadedObjects;
 
   const render: RenderObjectCallback = (props) => {
     const rend = renderObject || defaultObjectRender;
