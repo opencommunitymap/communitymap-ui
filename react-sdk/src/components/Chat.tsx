@@ -43,16 +43,22 @@ export const type2title = (type: ObjectItemInput['type']) => {
 export const Chat: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
-  userVoted,
-  votes,
-  comments,
   expanded,
   onClick,
   onVote,
   onComment,
   onClose,
 }) => {
-  const { type, author, title, description, created } = item;
+  const {
+    type,
+    author,
+    title,
+    description,
+    created,
+    userVoted,
+    votesCount: votes,
+    comments,
+  } = item;
 
   const [showCommentsWidget, setShowCommentsWidget] = useState(false);
 

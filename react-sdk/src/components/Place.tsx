@@ -21,15 +21,21 @@ const normalizeUrl = (url: string) =>
 export const Place: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
-  userVoted,
-  votes,
-  comments,
   expanded,
   onClick,
   onVote,
   onComment,
 }) => {
-  const { title, description, logoURL, short_description, url } = item;
+  const {
+    title,
+    description,
+    logoURL,
+    short_description,
+    url,
+    userVoted,
+    votesCount: votes,
+    comments,
+  } = item;
 
   const commentsCount = comments?.length || 0;
 

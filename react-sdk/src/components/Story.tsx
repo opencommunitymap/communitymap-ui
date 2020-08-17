@@ -16,16 +16,21 @@ import { LikeWidget } from './LikeWidget';
 export const Story: React.FC<ObjectItemComponentProps> = ({
   item,
   user,
-  userVoted,
-  votes,
-  comments,
   expanded,
   onClick,
   onVote,
   onComment,
   onClose,
 }) => {
-  const { author, title, description, created } = item;
+  const {
+    author,
+    title,
+    description,
+    created,
+    userVoted,
+    votesCount: votes,
+    comments,
+  } = item;
 
   const [showCommentsWidget, setShowCommentsWidget] = useState(false);
 

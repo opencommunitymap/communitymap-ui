@@ -42,7 +42,13 @@ Complex example - with autolocation, filtering content by origin (specific proje
 
 ```jsx
 import React, { useState } from 'react';
-import { CommunityMap, Pin, detectLocation } from '@opencommunitymap/react-sdk';
+import {
+  CommunityMap,
+  Pin,
+  detectLocation,
+  useLoadObjects,
+  useAuth,
+} from '@opencommunitymap/react-sdk';
 import mapStyles from './customGoogleMapsDarkStyle.json';
 const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
@@ -53,6 +59,11 @@ const defaultZoom = 18;
 const Map = () => {
   const [center, setCenter] = useState();
   const [zoom, setZoom] = useState();
+  const [bounds, setBounds] = useState();
+
+  const user = useAuth();
+
+  const objects = useLoadObjects(bounds, user || null);
 
   return (
     <>
@@ -64,6 +75,7 @@ const Map = () => {
         centerPin={<Pin color="#79CAB5" />}
         center={center}
         zoom={zoom}
+        data={objects || []}
         defaultCenter={defaultCenter}
         defaultZoom={defaultZoom}
         showZoomControls={false}
@@ -81,6 +93,7 @@ const Map = () => {
         }
         onChange={(center, bounds, zoom) => {
           setCenter(center);
+          setBounds(bounds);
           setZoom(zoom);
         }}
       />

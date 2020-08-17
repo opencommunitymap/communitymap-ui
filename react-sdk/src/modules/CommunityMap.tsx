@@ -6,7 +6,6 @@ import {
   MapParams,
   detectLocation,
   ObjectItem,
-  ObjectComment,
   ObjectItemComponentProps,
   Place,
   Story,
@@ -33,10 +32,7 @@ const isDEV_ENV = process.env.NODE_ENV === 'development';
 
 export interface RenderObjectCallbackProps {
   item: ObjectItem;
-  comments: ObjectComment[];
-  votesCount: number;
   currentUser: firebase.User | null;
-  userVoted: boolean;
   expanded: boolean;
   defaultOnClickHandler?: () => void;
 }
@@ -49,6 +45,9 @@ export interface CommunityMapProps {
   center?: Loc;
   // Zoom for controlled component
   zoom?: number;
+
+  // Provide loaded objects instead of relying on loading them automatically
+  data?: ObjectItem[];
 
   // Initial coordinates
   defaultCenter?: Loc;
@@ -97,6 +96,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   onChange,
   centerPin,
   center,
+  data,
   zoom,
   defaultCenter,
   defaultZoom,
@@ -137,11 +137,13 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
     autolocate && doAutolocate();
   }, [doAutolocate]);
 
-  const { objects, commentsObj, votesObj } = useLoadObjects(
+  const loadedObjects = useLoadObjects(
     mapParams?.bounds || null,
     user,
-    filterOrigin
+    filterOrigin,
+    !!data
   );
+  const objects = data || loadedObjects;
 
   const render: RenderObjectCallback = (props) => {
     const rend = renderObject || defaultObjectRender;
@@ -186,8 +188,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
           onChange?.(center, bounds, zoom);
         }}
       >
-        {commentsObj &&
-          votesObj &&
+        {!!objects &&
           objects.map((it) => {
             const defaultOnClickHandler = () => {
               if (onClickObject && !onClickObject(it)) return;
@@ -198,9 +199,6 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
               <MapItem key={it.id} lat={it.loc.latitude} lng={it.loc.longitude}>
                 {render({
                   item: it,
-                  comments: commentsObj[it.id],
-                  userVoted: votesObj[it.id]?.userVoted,
-                  votesCount: votesObj[it.id]?.count,
                   defaultOnClickHandler,
                   expanded: false,
                   currentUser: user,
@@ -245,7 +243,7 @@ const ExpandedObjectView: React.FC<{
 }> = ({ objectId, renderObject }) => {
   const user = useAuth() || null;
 
-  const { object, comments, votesInfo } = useLoadSingleObject(objectId, user);
+  const object = useLoadSingleObject(objectId, user);
 
   if (object === undefined) return <Loader active />;
   if (object === null) return <div>Object not found :(</div>;
@@ -262,9 +260,6 @@ const ExpandedObjectView: React.FC<{
     <>
       {render({
         item: object,
-        comments: comments || [],
-        userVoted: votesInfo?.userVoted || false,
-        votesCount: votesInfo?.count || 0,
         expanded: true,
         currentUser: user,
       })}
@@ -274,10 +269,7 @@ const ExpandedObjectView: React.FC<{
 
 const defaultObjectRender: RenderObjectCallback = ({
   item,
-  comments,
-  votesCount,
   currentUser,
-  userVoted,
   expanded,
   defaultOnClickHandler,
 }) => {
@@ -297,9 +289,6 @@ const defaultObjectRender: RenderObjectCallback = ({
     <RealComponent
       item={item}
       user={currentUser}
-      userVoted={userVoted}
-      votes={votesCount}
-      comments={comments}
       onClick={defaultOnClickHandler}
       onComment={async (comment) => leaveComment(currentUser, item, comment)}
       onVote={async () => voteUp(currentUser, item)}
