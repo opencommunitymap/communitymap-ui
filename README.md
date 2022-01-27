@@ -148,7 +148,8 @@ export const firebaseConfig = {
 }
 ```
 
-[Firestore DB structure](docs/DB.md)
+And here's the description of [the DB structure](docs/DB.md)
+
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
