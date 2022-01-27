@@ -2,7 +2,7 @@ The database we currently use is Firebase Firestore.
 
 There are following collections:
 
-# object
+# objects
 Key: id
 - type: string, (chat|request|offer|donation|place)
 - title
