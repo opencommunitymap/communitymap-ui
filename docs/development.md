@@ -24,12 +24,12 @@ Yarn hoists all dependencies into the root `node_modules/` and symlinks
 `node_modules/@opencommunitymap/react-sdk` → `react-sdk/`. That symlink is how the
 webapp resolves the SDK.
 
-Then create the webapp environment file:
+Create the optional webapp environment file if you need to override Firebase or
+enable Cloudinary uploads:
 
 ```bash
 cd webapp
 cp .env.sample .env
-# fill in at least REACT_APP_GOOGLE_API_KEY
 ```
 
 ## Environment variables
@@ -40,13 +40,12 @@ They live in `webapp/.env` (git-ignored) locally, and in GitHub Secrets for CI.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `REACT_APP_GOOGLE_API_KEY` | yes | Google Maps JS API key. Without it the map tiles do not load. [How to get one](https://developers.google.com/maps/documentation/javascript/get-api-key). |
 | `REACT_APP_OCM_ENV` | no | Which baked-in Firebase project to use: `production` or `development`. Defaults to `NODE_ENV`, so `yarn start` → dev project, `yarn build` → production project. |
 | `REACT_APP_CLOUDINARY_CLOUD_NAME` | no | Enables the logo upload widget on the "Place" form. Without it the field is hidden. |
 | `REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO` | no | Unsigned Cloudinary upload preset — recommended, to cap image size. |
 
-In CI, `deploy.yml` and `verify.yml` pick the Google key per branch from
-`MASTER_…` / `NEXT_…` / `PROD_…`-prefixed secrets.
+CI uses the development Firebase project for pull requests, `master`, and `next`;
+only the `prod` deployment builds against production.
 
 ## The build order that matters
 
@@ -99,9 +98,9 @@ every object posted through that embed.
 
 ## Verifying a change
 
-There is no working automated test suite in this repo. `react-sdk`'s `test` script
-runs `jest`, but there are no test files and no jest configuration; the webapp has
-no test command.
+There is no unit-test suite in this repo. `react-sdk`'s `test` script runs `jest`,
+but there are no test files and no jest configuration. The webapp has one
+Playwright Chromium smoke test for the map and client-side routing.
 
 Until real tests exist, verify with types and builds:
 
@@ -109,7 +108,12 @@ Until real tests exist, verify with types and builds:
 cd react-sdk && yarn build                          # strict tsc + noUnusedLocals
 cd webapp   && npx tsc --noEmit -p tsconfig.json    # quick typecheck of the app
 cd webapp   && yarn build                           # typecheck + Vite production build
+yarn test:e2e                                       # from root; uses that build
 ```
+
+Install Chromium once before the first local smoke run with
+`yarn workspace community-map playwright install chromium`. CI installs Chromium
+and its system dependencies automatically.
 
 Then exercise the change in the browser — most of this codebase is realtime
 Firestore subscriptions and map interaction, which types alone cannot cover:
@@ -184,9 +188,9 @@ contains generated CSS that Lightning CSS rejects; this setting can be revisited
 when Semantic UI is replaced or upgraded.
 
 **Map is blank / grey**
-`REACT_APP_GOOGLE_API_KEY` missing or restricted. Also check the container has a
-size — the map fills its parent, and in development the SDK renders an explicit
-warning when the parent collapses to zero height.
+Check that the browser supports WebGL and can reach `tiles.openfreemap.org`. Also
+check the container has a size — the map fills its parent, and in development the
+SDK renders an explicit warning when the parent collapses to zero height.
 
 **Objects do not appear**
 Objects are filtered by `valid_until >= now`, so expired ones vanish. Also confirm

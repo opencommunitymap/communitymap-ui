@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { MapTypeStyle } from 'google-map-react';
 import {
   Loc,
   useAuth,
@@ -23,6 +22,7 @@ import {
   Maps,
   MapItem,
   AuthProvider,
+  MapStyle,
 } from '..';
 import { RenderAuthorProvider } from '../utils/renderAuthor';
 import { Modal, Loader } from 'semantic-ui-react';
@@ -54,11 +54,8 @@ export interface CommunityMapProps {
   // Initial zoom
   defaultZoom?: number;
 
-  // Google Maps style, https://mapstyle.withgoogle.com/
-  mapStyles?: MapTypeStyle[];
-
-  // Api Key for Google Maps
-  mapApiKey?: string;
+  // MapLibre style URL or style specification
+  mapStyle?: MapStyle;
 
   // Pin icon showing the center of the map
   centerPin?: JSX.Element | null;
@@ -107,8 +104,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   navigationWidget,
   autolocate,
   filterOrigin,
-  mapStyles,
-  mapApiKey,
+  mapStyle,
   onClickObject,
   showObjectId: extShowObjectId,
   onObjectModalClose,
@@ -174,8 +170,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   return (
     <RenderAuthorProvider value={renderAuthor}>
       <Maps
-        styles={mapStyles}
-        mapApiKey={mapApiKey}
+        mapStyle={mapStyle}
         centerPin={centerPin}
         center={autodetectedCenter || center}
         zoom={zoom}

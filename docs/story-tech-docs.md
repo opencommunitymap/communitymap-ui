@@ -36,7 +36,7 @@ Documentation that agents can actually use must be:
 
 - [x] **1.1 Installation & setup** — [react-sdk.md § Installation](react-sdk.md#installation),
       including the peer dependencies (`firebase`, `firebaseui`, `react`) that npm
-      will not install, and the Google Maps key requirement.
+      will not install, and the default MapLibre/OpenFreeMap basemap.
 - [x] **1.2 Component catalog** — every exported component with its props:
       `CommunityMap`, `Maps`/`MapItem`, the three object components, the three
       add-forms and the chrome widgets. The four components that are deliberately
@@ -78,12 +78,12 @@ actually writes:
 
 ## Next steps
 
-The gap that remains is **executable verification**, not prose:
+The remaining verification gap is unit-level coverage:
 
-1. There is no working test suite. `react-sdk`'s `yarn test` runs `jest` with no
-   test files and no config, and the webapp has no test command. Add a focused
-   browser smoke suite for the map and routing before broader refactors.
+1. The webapp now has a Playwright Chromium smoke test for its MapLibre map and
+   client-side routing, but `react-sdk`'s `yarn test` still runs `jest` with no
+   test files and no config.
 2. Add a lint step to CI once the codebase has a shared lint configuration.
-3. Keep the API reference honest as the SDK moves past `0.1.0-rc7`: a change to
+3. Keep the API reference honest as the SDK moves past `0.1.0-rc8`: a change to
    `react-sdk/src/index.ts` should come with a `CHANGELOG.md` entry and a matching
    edit in [react-sdk.md](react-sdk.md).

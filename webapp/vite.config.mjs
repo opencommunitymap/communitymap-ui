@@ -13,6 +13,17 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: 3000,
     },
+    optimizeDeps: {
+      // Semantic UI 0.88 pulls in packages that still expect Node's `global`.
+      // Rewrite it inside Vite's development-only dependency prebundle.
+      rolldownOptions: {
+        transform: {
+          define: {
+            global: 'globalThis',
+          },
+        },
+      },
+    },
     build: {
       // Firebase Hosting currently deploys webapp/build.
       outDir: 'build',
@@ -24,7 +35,6 @@ export default defineConfig(({ mode }) => {
       // server-only environment variables can leak into the browser bundle.
       'process.env': JSON.stringify({
         NODE_ENV: mode === 'production' ? 'production' : 'development',
-        REACT_APP_GOOGLE_API_KEY: env.REACT_APP_GOOGLE_API_KEY || '',
         REACT_APP_OCM_ENV: env.REACT_APP_OCM_ENV || '',
         REACT_APP_CLOUDINARY_CLOUD_NAME:
           env.REACT_APP_CLOUDINARY_CLOUD_NAME || '',

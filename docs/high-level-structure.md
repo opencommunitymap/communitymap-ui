@@ -16,9 +16,9 @@ How the pieces of this repository fit together. For the API surface of the SDK s
                     │  CommunityMap · hooks · object widgets  │
                     └──────┬──────────────────────┬───────────┘
                            │                      │
-                  google-map-react          firebase (web SDK)
+                  MapLibre GL JS            firebase (web SDK)
                            │                      │
-                    Google Maps JS         Firestore + Auth
+                 OpenFreeMap / OSM         Firestore + Auth
                                                   │
                                     (separate repo) Cloud Functions
                                     /api/v0/object, api-keys
@@ -54,7 +54,7 @@ react-sdk/src/
 │   ├── DB.tsx            # every Firestore read/write, exposed as hooks + functions
 │   └── Auth.tsx          # AuthProvider / useAuth over Firebase Auth
 ├── components/           # presentational widgets, one CSS file each
-│   ├── Maps.tsx          # google-map-react wrapper, Loc <-> Coords conversion
+│   ├── Maps.tsx          # MapLibre wrapper, markers, bounds + map style
 │   ├── Chat.tsx          # renders chat/request/offer/donation objects + add-form
 │   ├── Place.tsx         # renders place objects + add-form
 │   ├── Story.tsx         # renders story objects + add-form
@@ -142,20 +142,22 @@ data, and `firebase.app()` (the unnamed default) will not find this app at all.
 ## webapp
 
 ```
-webapp/src/
-├── index.tsx            # ReactDOM.render, service worker unregistered
-├── App.tsx              # FirebaseInitializer → AuthProvider → Router → Home
-├── types.d.ts           # InitialAppParams / EmbedParams (query-string shapes)
-├── firebaseConfig.ts    # legacy, unused (the import is commented out in App.tsx)
-└── components/
-    ├── index.tsx        # barrel
-    ├── NewContentWidget.tsx   # "I want to post" — picks the AddNew*Object form
-    ├── ProfileWidgetPlus.tsx  # ProfileWidget + profile editing + unread DM badge
-    ├── DirectMessage.tsx      # DM modal and dialog list
-    ├── UserPage.tsx           # public profile + "Direct message" button
-    ├── Login.tsx              # firebaseui, with tos/privacy links
-    ├── SplashScreen.tsx  TermsOfService.tsx  PrivacyPolicy.tsx
-    └── MapsGoogle{Dark,Silver}Style.json
+webapp/
+├── e2e/map.spec.ts      # Chromium smoke coverage for map + routing
+├── playwright.config.ts
+└── src/
+    ├── index.tsx            # ReactDOM.render entry point
+    ├── App.tsx              # FirebaseInitializer → AuthProvider → Router → Home
+    ├── types.d.ts           # InitialAppParams / EmbedParams (query-string shapes)
+    ├── firebaseConfig.ts    # legacy, unused
+    └── components/
+        ├── index.tsx        # barrel
+        ├── NewContentWidget.tsx   # "I want to post" — selects an add form
+        ├── ProfileWidgetPlus.tsx  # profile editing + unread DM badge
+        ├── DirectMessage.tsx      # DM modal and dialog list
+        ├── UserPage.tsx           # public profile + DM button
+        ├── Login.tsx              # firebaseui with tos/privacy links
+        └── SplashScreen.tsx  TermsOfService.tsx  PrivacyPolicy.tsx
 ```
 
 `App.tsx` boots in a fixed order — `FirebaseInitializer` (blocks on

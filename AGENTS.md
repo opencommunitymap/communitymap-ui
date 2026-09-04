@@ -40,19 +40,19 @@ yarn install                 # root only — workspaces hoist to root node_modul
 cd react-sdk && yarn build   # MUST run before/after touching SDK source
 cd react-sdk && yarn watch   # tsc -w + CSS sync, for iterative work
 
-cd webapp && yarn start      # dev server on :3000 (needs REACT_APP_GOOGLE_API_KEY)
+cd webapp && yarn start      # dev server on :3000
 cd webapp && yarn build      # production bundle into webapp/build/
 
 yarn build                   # from root: builds both workspaces in order
+yarn test:e2e                # Playwright Chromium smoke test; build first
 ```
 
 Full setup, environment variables and troubleshooting: [docs/development.md](docs/development.md).
 
 ### How to verify a change
 
-There is **no usable test suite** — do not claim tests pass. `react-sdk`'s
-`yarn test` runs `jest` with no test files and no jest config, and the webapp has
-no test command.
+There is no unit-test suite. `react-sdk`'s `yarn test` runs `jest` with no test
+files and no jest config. The webapp has a small Playwright Chromium smoke test.
 
 Verify with the type checker and the build instead:
 
@@ -60,10 +60,11 @@ Verify with the type checker and the build instead:
 cd react-sdk && yarn build                    # tsc, strict + noUnusedLocals
 cd webapp   && npx tsc --noEmit -p tsconfig.json   # fast typecheck, no bundling
 cd webapp   && yarn build                     # typecheck + full Vite build (what CI runs)
+yarn test:e2e                                # requires the production build
 ```
 
-CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs exactly
-`yarn install --frozen-lockfile` + `yarn build`. If root `yarn build` passes, CI passes.
+CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs the frozen
+install, root build, and Playwright smoke test.
 
 ## Traps that will bite you
 
@@ -92,7 +93,10 @@ CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs exactly
    `REACT_APP_` variables and `webapp/build/` output path. It also uses esbuild
    for CSS minification because Lightning CSS rejects a generated selector in
    Semantic UI 2.4. Keep these until the corresponding dependencies are upgraded.
-7. **Never commit** `webapp/.env`, `react-sdk/dist/`, or Google/Cloudinary keys.
+7. **MapLibre GL JS is pinned to v5 deliberately.** V6 requires every bundler
+   consuming the published SDK to configure its worker URL and drops WebGL 1.
+   Revisit that major separately instead of allowing it through casually.
+8. **Never commit** `webapp/.env`, `react-sdk/dist/`, or Cloudinary keys.
    `.env` and `dist/` are already git-ignored; keep it that way.
 
 ## Code conventions
@@ -137,7 +141,7 @@ CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs exactly
 
 Changing the SDK's public API also means: bump `version` in
 [react-sdk/package.json](react-sdk/package.json) and add an entry to
-[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc7`).
+[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc8`).
 
 ## Known limitations (already in the code — don't "fix" by accident)
 

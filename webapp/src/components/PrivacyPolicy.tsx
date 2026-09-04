@@ -36,6 +36,16 @@ export const PrivacyPolicy = () => {
       </p>
 
       <p>
+        Map tiles come from OpenFreeMap using OpenStreetMap data. OpenFreeMap
+        does not use cookies and does not retain IP addresses in its regular
+        logs, although requests may be processed by Cloudflare. See the{' '}
+        <a href="https://openfreemap.org/privacy/">
+          OpenFreeMap privacy policy
+        </a>{' '}
+        for current details.
+      </p>
+
+      <p>
         We’re currently a team of volunteers not having a formal legal
         structure. The best way to get in touch with us is by either joining our
         Slack workspace using{' '}
@@ -73,8 +83,8 @@ export const PrivacyPolicy = () => {
         performance is altered.
       </p>
       <p>
-        We use Firebase Analytics and Google Maps that need cookies and local
-        storage for the purpose of their operation.
+        Firebase Authentication and Analytics use cookies and local storage for
+        the purpose of their operation.
       </p>
     </div>
   );

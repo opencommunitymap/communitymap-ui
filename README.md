@@ -117,7 +117,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.
 
-You will also see any lint errors in the console.
+Vite reports compilation errors in the console as you edit.
 
 You will use pre-configured _Community Map Dev_ firebase project.
 
@@ -125,11 +125,10 @@ Read also about [the DB structure](docs/DB.md) and the fuller
 [development guide](docs/development.md), which covers environment variables,
 verifying changes and the SDK build order in more detail.
 
-### Google Maps for Development purposes only
+### Map tiles
 
-The maps with show 'For development purposes only' watermark all over the map.
-
-To fix that create _.env_ file and fill in your Google Maps Key.
+The default basemap uses OpenFreeMap with OpenStreetMap data and needs no API key.
+SDK consumers can select another MapLibre-compatible provider through `mapStyle`.
 
 ### Uploading images
 

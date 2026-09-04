@@ -1,3 +1,13 @@
+## 0.1.0-rc8
+
+- Replace Google Maps with MapLibre GL JS and the keyless OpenFreeMap basemap.
+- Replace the Google-specific `mapApiKey` and `mapStyles` props with the
+  provider-neutral `mapStyle` prop and export `OPEN_FREE_MAP_STYLES`.
+- Use Firebase's default ESM export so Firestore and Auth services remain
+  available at runtime in Vite bundles.
+- Let MapLibre own interactive camera state to avoid re-entrant renders when
+  panning or zooming under React 16.
+
 ## 0.1.0-rc7
 
 - Build the SDK with TypeScript 5.9 and type `detectLocation()` as `Loc`, matching

@@ -28,18 +28,16 @@ import {
   useAuth,
   AuthProvider,
   RenderAuthorCallback,
+  OPEN_FREE_MAP_STYLES,
   postObject,
   initFirebase,
 } from '@opencommunitymap/react-sdk';
 import { InitialAppParams, EmbedParams } from './types';
-import MapsGoogleDarkStyle from './components/MapsGoogleDarkStyle.json';
-import MapsGoogleSilverStyle from './components/MapsGoogleSilverStyle.json';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
 import { Modal } from 'semantic-ui-react';
 
-const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 const OCM_ENV = process.env.REACT_APP_OCM_ENV || process.env.NODE_ENV;
 
 const __initFirebase = async () => {
@@ -96,12 +94,7 @@ const defaultCenter =
       }
     : { latitude: 42.69, longitude: 23.32 };
 
-const mapStyles =
-  initialParams?.theme === 'dark'
-    ? MapsGoogleDarkStyle
-    : initialParams?.theme === 'silver'
-    ? MapsGoogleSilverStyle
-    : undefined;
+const mapStyle = OPEN_FREE_MAP_STYLES[initialParams?.theme || 'standard'];
 
 const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
   <Link to={`/users/${userId}`}>{authorInfo?.name || 'Anonymous'}</Link>
@@ -120,9 +113,8 @@ const Home: React.FC = () => {
     <div id="home">
       <CommunityMap
         defaultCenter={defaultCenter}
-        mapStyles={mapStyles}
+        mapStyle={mapStyle}
         onChange={(center) => setCurrentLocation(center)}
-        mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
         onClickObject={(obj) => {
           router.push(`/object/${obj.id}`);

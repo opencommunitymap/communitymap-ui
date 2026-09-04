@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import { getFirebaseApp } from '../utils/firebase';
 import 'firebase/auth';
 import * as firebaseui from 'firebaseui';

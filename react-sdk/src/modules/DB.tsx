@@ -10,7 +10,7 @@ import {
   MapBounds,
   Loc,
 } from '../';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import { getFirebaseApp } from '../utils/firebase';
 import 'firebase/auth';
 import 'firebase/firestore';

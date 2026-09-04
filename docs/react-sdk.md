@@ -2,7 +2,7 @@
 
 Generated from the source of truth,
 [react-sdk/src/index.ts](../react-sdk/src/index.ts) and the modules it re-exports.
-Version `0.1.0-rc7`. The package is in early alpha; the interface still changes
+Version `0.1.0-rc8`. The package is in early alpha; the interface still changes
 between release candidates — check [CHANGELOG.md](../react-sdk/CHANGELOG.md).
 
 For a task-oriented overview see [high-level-structure.md](high-level-structure.md);
@@ -28,12 +28,12 @@ yarn add @opencommunitymap/react-sdk firebase firebaseui
 
 `firebase@^7`, `firebaseui@^4`, `react@^16` and `react-dom@^16` are **peer**
 dependencies — the SDK will not install them for you. `semantic-ui-react`,
-`semantic-ui-css`, `google-map-react`, `dayjs` and `classnames` come bundled as
-regular dependencies, and `semantic-ui-css/semantic.min.css` is imported by the SDK
-itself.
+`semantic-ui-css`, `maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` come
+bundled as regular dependencies, and the required Semantic UI and MapLibre CSS is
+imported by the SDK itself.
 
-You also need a [Google Maps JS API key](https://developers.google.com/maps/documentation/javascript/get-api-key),
-passed as `mapApiKey`.
+The default basemap uses OpenFreeMap and needs no API key. Pass `mapStyle` to use
+another MapLibre-compatible style URL or an inline `StyleSpecification`.
 
 The package targets browser applications and expects a bundler that understands ES
 modules and CSS imports. It is not directly loadable with Node.js `require()`.
@@ -48,7 +48,7 @@ import { CommunityMap } from '@opencommunitymap/react-sdk';
 
 export const App = () => (
   <div style={{ width: '100%', height: 500 }}>
-    <CommunityMap mapApiKey={process.env.REACT_APP_GOOGLE_API_KEY} autolocate />
+    <CommunityMap autolocate />
   </div>
 );
 ```
@@ -76,17 +76,16 @@ modal, and the default profile/navigation chrome.
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `mapApiKey` | `string` | Google Maps JS API key. |
 | `center` | `Loc` | Controlled centre. Pair with `onChange` to drive the map yourself. |
 | `zoom` | `number` | Controlled zoom. |
 | `defaultCenter` | `Loc` | Initial centre (uncontrolled). Falls back to `42.69, 23.32`. |
 | `defaultZoom` | `number` | Initial zoom (uncontrolled). Falls back to `18`. |
 | `data` | `ObjectItem[]` | Supply objects yourself; when present the SDK skips its own Firestore subscription entirely. |
-| `mapStyles` | `MapTypeStyle[]` | Google Maps styling, e.g. from [mapstyle.withgoogle.com](https://mapstyle.withgoogle.com/). Default style only hides POI labels. |
+| `mapStyle` | `MapStyle` | MapLibre style URL or inline `StyleSpecification`. Defaults to OpenFreeMap Liberty. |
 | `centerPin` | `JSX.Element \| null` | Element drawn at the map centre. `null` hides it. |
 | `profileWidget` | `JSX.Element \| null` | Replaces the built-in `ProfileWidget`. `null` hides it. |
 | `navigationWidget` | `JSX.Element \| null` | Replaces the built-in `NavigationWidget`. `null` hides it. |
-| `showZoomControls` | `boolean` | Google's zoom buttons. Default `true`. |
+| `showZoomControls` | `boolean` | MapLibre zoom buttons. Default `true`; the compass remains available. |
 | `autolocate` | `boolean` | Ask the browser for the user's location on mount. Failures are swallowed. |
 | `filterOrigin` | `string` | Only load objects whose `origin` matches — i.e. one 3rd-party app's content. |
 | `renderObject` | `RenderObjectCallback` | Custom object rendering, see below. |
@@ -112,19 +111,22 @@ wrapped in a `PointingSegment` speech bubble.
 
 ### `Maps` / `MapItem`
 
-Thin wrapper over `google-map-react` and the marker placeholder it recognises.
-Useful only if you are building your own map instead of using `CommunityMap`.
+Thin React wrapper over MapLibre GL JS and its marker component. Useful only if
+you are building your own map instead of using `CommunityMap`.
 
 ```tsx
-<Maps mapApiKey={key} defaultCenter={{ latitude, longitude }} onChange={…}>
+<Maps mapStyle={OPEN_FREE_MAP_STYLES.dark} defaultCenter={{ latitude, longitude }} onChange={…}>
   <MapItem lat={item.loc.latitude} lng={item.loc.longitude}>{…}</MapItem>
 </Maps>
 ```
 
-`MapsProps`: `center`, `zoom`, `defaultCenter`, `defaultZoom`, `styles`, `centerPin`,
-`showZoomControls`, `mapApiKey`, `onChange`. `MapItem` takes `lat`/`lng` numbers —
-`google-map-react` reads them off the child element, so the props look unused inside
-the component but are required.
+`MapsProps`: `center`, `zoom`, `defaultCenter`, `defaultZoom`, `mapStyle`,
+`centerPin`, `showZoomControls`, `onChange`. `MapItem` takes `lat`/`lng` numbers and
+renders its children in a MapLibre marker.
+
+`OPEN_FREE_MAP_STYLES` exports the `standard` (Liberty), `silver` (Positron), and
+`dark` OpenFreeMap style URLs used by the hosted webapp. `MapStyle` is exported as
+`string | StyleSpecification`.
 
 ### Object components
 
@@ -299,8 +301,8 @@ interface MapBounds { minLat: number; maxLat: number; minLng: number; maxLng: nu
 interface MapParams { center: Loc; bounds: MapBounds }
 ```
 
-App code always uses `Loc`; the Firestore `GeoPoint` conversion happens inside the
-SDK, as does the `{lat, lng}` conversion for Google Maps.
+App code always uses `Loc`; Firestore `GeoPoint` and MapLibre `[longitude, latitude]`
+conversions happen inside the SDK.
 
 ### `ObjectItemInput` / `ObjectItem`
 
@@ -392,9 +394,8 @@ const MapContent = () => {
 
   return (
     <CommunityMap
-      mapApiKey={GOOGLE_API_KEY}
       autolocate
-      mapStyles={mapStyles}
+      mapStyle={OPEN_FREE_MAP_STYLES.dark}
       centerPin={<Pin color="#79CAB5" />}
       center={center}
       zoom={zoom}
