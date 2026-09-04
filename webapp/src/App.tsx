@@ -32,6 +32,8 @@ import {
   initFirebase,
 } from '@opencommunitymap/react-sdk';
 import { InitialAppParams, EmbedParams } from './types';
+import MapsGoogleDarkStyle from './components/MapsGoogleDarkStyle.json';
+import MapsGoogleSilverStyle from './components/MapsGoogleSilverStyle.json';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -85,7 +87,21 @@ const embedParams: EmbedParams | null = isEmbed
     }
   : null;
 
-const defaultCenter = { latitude: 42.69, longitude: 23.32 };
+const defaultCenter =
+  typeof initialParams?.centerLat === 'number' &&
+  typeof initialParams?.centerLng === 'number'
+    ? {
+        latitude: initialParams.centerLat,
+        longitude: initialParams.centerLng,
+      }
+    : { latitude: 42.69, longitude: 23.32 };
+
+const mapStyles =
+  initialParams?.theme === 'dark'
+    ? MapsGoogleDarkStyle
+    : initialParams?.theme === 'silver'
+    ? MapsGoogleSilverStyle
+    : undefined;
 
 const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
   <Link to={`/users/${userId}`}>{authorInfo?.name || 'Anonymous'}</Link>
@@ -104,6 +120,7 @@ const Home: React.FC = () => {
     <div id="home">
       <CommunityMap
         defaultCenter={defaultCenter}
+        mapStyles={mapStyles}
         onChange={(center) => setCurrentLocation(center)}
         mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
