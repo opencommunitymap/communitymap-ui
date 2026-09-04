@@ -349,6 +349,11 @@ export const useUserPublicInfo = (userId: string, subscribe = false) => {
     }
 
     ref.get().then((doc) => {
+      if (!doc.exists) {
+        setObject(null);
+        console.log('user not found');
+        return;
+      }
       const objectInfo = { id: doc.id, ...doc.data() } as UserProfile;
       console.debug('Resolved once', objectInfo);
       setObject(objectInfo);
