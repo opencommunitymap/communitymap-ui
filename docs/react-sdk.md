@@ -2,7 +2,7 @@
 
 Generated from the source of truth,
 [react-sdk/src/index.ts](../react-sdk/src/index.ts) and the modules it re-exports.
-Version `0.1.0-rc6`. The package is in early alpha; the interface still changes
+Version `0.1.0-rc7`. The package is in early alpha; the interface still changes
 between release candidates — check [CHANGELOG.md](../react-sdk/CHANGELOG.md).
 
 For a task-oriented overview see [high-level-structure.md](high-level-structure.md);

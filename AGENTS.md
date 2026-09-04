@@ -23,7 +23,7 @@ Yarn v1 **workspaces monorepo** (`react-sdk` + `webapp`, declared in the root
 | Path | What it is |
 | --- | --- |
 | [react-sdk/](react-sdk/) | `@opencommunitymap/react-sdk` — the publishable library. All map, data and UI logic lives here. |
-| [webapp/](webapp/) | `community-map` — the Create React App site (communitymap.online), a thin shell around the SDK. |
+| [webapp/](webapp/) | `community-map` — the Vite site (communitymap.online), a thin shell around the SDK. |
 | [docs/](docs/) | Architecture, data model and SDK API reference. |
 | [examples/](examples/) | `embed/` — iframe embedding example. |
 | [firestore.rules](firestore.rules), [firestore.indexes.json](firestore.indexes.json) | Firestore security rules and composite indexes (deployed from here). |
@@ -50,17 +50,16 @@ Full setup, environment variables and troubleshooting: [docs/development.md](doc
 
 ### How to verify a change
 
-There is **no usable test suite** — do not claim tests pass.
-`react-sdk`'s `yarn test` runs `jest` with no test files and no jest config, and
-[webapp/src/App.test.tsx](webapp/src/App.test.tsx) is the untouched CRA
-boilerplate asserting a "learn react" link that the app has never rendered.
+There is **no usable test suite** — do not claim tests pass. `react-sdk`'s
+`yarn test` runs `jest` with no test files and no jest config, and the webapp has
+no test command.
 
 Verify with the type checker and the build instead:
 
 ```bash
 cd react-sdk && yarn build                    # tsc, strict + noUnusedLocals
 cd webapp   && npx tsc --noEmit -p tsconfig.json   # fast typecheck, no bundling
-cd webapp   && yarn build                     # full CRA build (slow, but what CI runs)
+cd webapp   && yarn build                     # typecheck + full Vite build (what CI runs)
 ```
 
 CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs exactly
@@ -88,9 +87,11 @@ CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs exactly
    `node_modules/@opencommunitymap/react-sdk` workspace symlink, which makes *every*
    webapp file fail to resolve the SDK. Run `yarn install` at the root before
    concluding that something is wrong with the code.
-6. **Node 22 vs `react-scripts` 3.4.1 (webpack 4).** If a webapp build or dev
-   server dies with `error:0308010C:digital envelope routines::unsupported`,
-   prefix with `NODE_OPTIONS=--openssl-legacy-provider`. CI pins Node 12.
+6. **The Vite compatibility settings are deliberate.**
+   [webapp/vite.config.mjs](webapp/vite.config.mjs) preserves the legacy
+   `REACT_APP_` variables and `webapp/build/` output path. It also uses esbuild
+   for CSS minification because Lightning CSS rejects a generated selector in
+   Semantic UI 2.4. Keep these until the corresponding dependencies are upgraded.
 7. **Never commit** `webapp/.env`, `react-sdk/dist/`, or Google/Cloudinary keys.
    `.env` and `dist/` are already git-ignored; keep it that way.
 
@@ -136,7 +137,7 @@ CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs exactly
 
 Changing the SDK's public API also means: bump `version` in
 [react-sdk/package.json](react-sdk/package.json) and add an entry to
-[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc6`).
+[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc7`).
 
 ## Known limitations (already in the code — don't "fix" by accident)
 

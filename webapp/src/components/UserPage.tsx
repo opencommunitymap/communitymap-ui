@@ -9,7 +9,7 @@ import { Loader, Button } from 'semantic-ui-react';
 
 export const UserPage = () => {
   const me = useAuth();
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId: string }>();
 
   const userInfo = useUserPublicInfo(userId || '', true);
   if (userInfo === undefined) return <Loader active />;

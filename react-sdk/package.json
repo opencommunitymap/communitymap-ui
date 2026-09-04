@@ -1,6 +1,6 @@
 {
   "name": "@opencommunitymap/react-sdk",
-  "version": "0.1.0-rc6",
+  "version": "0.1.0-rc7",
   "license": "Apache-2.0",
   "author": "Open Community Map team",
   "homepage": "https://github.com/opencommunitymap/communitymap-ui",
@@ -47,15 +47,11 @@
     "firebase-ci": "^0.13.0",
     "firebase-tools": "^8.4.1",
     "jest": "^24.9.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "regenerator-runtime": "^0.13.5",
     "sync-glob": "^1.4.0",
-    "typescript": "^3.8.3"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "typescript": "~5.9.3"
   },
   "browserslist": {
     "production": [

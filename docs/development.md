@@ -7,7 +7,7 @@ For the condensed version aimed at AI agents, see [AGENTS.md](../AGENTS.md).
 
 | Tool | Version | Notes |
 | --- | --- | --- |
-| Node.js | 12 in CI; 14–16 recommended locally | Newer Node works but needs an OpenSSL flag, see [Troubleshooting](#troubleshooting) |
+| Node.js | 24 | Pinned in [`.nvmrc`](../.nvmrc); use the current LTS release. |
 | Yarn | 1.x (classic) | Required — the repo uses Yarn v1 **workspaces**. `packageManager` pins `yarn@1.22.21`. npm will not link the workspaces correctly. |
 | Firebase CLI | 8.x (`firebase-tools`) | Only needed for deploying or editing rules/indexes. Installed as a devDependency. |
 
@@ -34,7 +34,8 @@ cp .env.sample .env
 
 ## Environment variables
 
-All are read by CRA at **build time** and must be prefixed `REACT_APP_`.
+All are read by Vite at **build time**. The compatibility layer in
+`webapp/vite.config.mjs` intentionally retains the existing `REACT_APP_` names.
 They live in `webapp/.env` (git-ignored) locally, and in GitHub Secrets for CI.
 
 | Variable | Required | Purpose |
@@ -98,19 +99,16 @@ every object posted through that embed.
 
 ## Verifying a change
 
-There is no working automated test suite in this repo:
-
-- `react-sdk`'s `test` script runs `jest`, but there are no test files and no jest
-  configuration.
-- `webapp/src/App.test.tsx` is unmodified Create React App boilerplate — it asserts
-  a "learn react" link that this app does not render, so it fails by design.
+There is no working automated test suite in this repo. `react-sdk`'s `test` script
+runs `jest`, but there are no test files and no jest configuration; the webapp has
+no test command.
 
 Until real tests exist, verify with types and builds:
 
 ```bash
 cd react-sdk && yarn build                          # strict tsc + noUnusedLocals
 cd webapp   && npx tsc --noEmit -p tsconfig.json    # quick typecheck of the app
-cd webapp   && yarn build                           # what CI actually runs
+cd webapp   && yarn build                           # typecheck + Vite production build
 ```
 
 Then exercise the change in the browser — most of this codebase is realtime
@@ -177,31 +175,13 @@ a backup or created by a different package manager. Re-run `yarn install` at the
 root. As a one-off workaround the compiler can be invoked directly:
 `node ../node_modules/typescript/bin/tsc`.
 
-**`error:0308010C:digital envelope routines::unsupported`** (`ERR_OSSL_EVP_UNSUPPORTED`)
-Node 17+ with webpack 4 (`react-scripts` 3.4.1). Confirmed on Node 22. Use Node 16, or:
-
-```bash
-NODE_OPTIONS=--openssl-legacy-provider yarn start
-NODE_OPTIONS=--openssl-legacy-provider yarn build
-```
-
-Do **not** hard-code that flag into `webapp/package.json` — CI runs on Node 12,
-which rejects the unknown option and would fail every build. Export it in your
-shell, or pin Node 16 with `nvm`.
-
-**`react-scripts start` prints the banner then exits with code 0 after ~0.5s**
-CRA shuts the dev server down when stdin reaches EOF, which is what happens when it
-is launched from a non-interactive shell (CI, a background job, an agent tool call).
-Hold stdin open or tell CRA it is in CI:
-
-```bash
-tail -f /dev/null | PORT=3099 BROWSER=none yarn start   # keeps running
-CI=true yarn start                                       # skips the stdin handler
-```
-
 **`Something is already running on port 3000.`**
-In a non-interactive shell CRA cannot ask to pick another port, so it exits. Use
-`PORT=3099 yarn start`.
+Choose a different Vite port: `yarn start --port 3099`.
+
+**Vite reports an invalid Semantic UI CSS selector during minification**
+Keep `build.cssMinify: 'esbuild'` in `webapp/vite.config.mjs`. Semantic UI 2.4
+contains generated CSS that Lightning CSS rejects; this setting can be revisited
+when Semantic UI is replaced or upgraded.
 
 **Map is blank / grey**
 `REACT_APP_GOOGLE_API_KEY` missing or restricted. Also check the container has a

@@ -15,7 +15,7 @@ export const NavigationWidget: React.FC<{
       onChangePosition(pos);
     } catch (err) {
       console.log('Error getting location', err);
-      alert(err.message);
+      alert(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }

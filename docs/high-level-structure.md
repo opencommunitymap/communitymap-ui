@@ -7,7 +7,7 @@ How the pieces of this repository fit together. For the API surface of the SDK s
 
 ```
                     ┌─────────────────────────────────────────┐
-   browser          │  webapp  (CRA, communitymap.online)     │
+   browser          │  webapp  (Vite, communitymap.online)    │
                     │  routing · modals · profile · DMs · legal│
                     └───────────────────┬─────────────────────┘
                                         │ imports from dist/
@@ -37,7 +37,7 @@ Yarn v1 workspaces, declared in the root [package.json](../package.json):
 - **`react-sdk/`** — `@opencommunitymap/react-sdk`, the library that holds
   essentially all of the product logic. Published to npm; also consumed locally by
   the webapp through the workspace symlink.
-- **`webapp/`** — `community-map`, a Create React App shell: routing, modals, and
+- **`webapp/`** — `community-map`, a Vite shell: routing, modals, and
   the few features that only make sense on the hosted site.
 
 The webapp depends on the SDK's **compiled output** (`react-sdk/dist/index.js`), so

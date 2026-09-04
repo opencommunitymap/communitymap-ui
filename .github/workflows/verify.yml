@@ -2,31 +2,25 @@ name: Verify
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     name: Verify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v7
         with:
-          node-version: 12
-
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v1
-        with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          node-version-file: .nvmrc
+          cache: yarn
 
       - name: Install Dependencies
-        run: |
-          yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
       - name: Expose Application Environment Variables
         if: github.event.pull_request.head.repo.full_name == github.repository
@@ -42,41 +36,35 @@ jobs:
           REACT_APP_CLOUDINARY_CLOUD_NAME: ${{ secrets.REACT_APP_CLOUDINARY_CLOUD_NAME }}
           REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO: ${{ secrets.REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO }}
         run: |
-          # Get branch name from last section of ref
-          gitBranch=${GITHUB_REF##*/}
-          # Uppercase branch name and replace "-" with "_"
-          branchPrefix=$(echo $gitBranch | tr a-z A-Z | tr - _)
-          # Create env variable name including branch
-          branchApiKeyName="${branchPrefix}_REACT_APP_GOOGLE_API_KEY"
-          branchOcmEnvName="${branchPrefix}_REACT_APP_OCM_ENV"
-          # Evaluate name variable to get variables value
-          branchApiKey=$(eval echo \$${branchApiKeyName})
-          branchOcmEnv=$(eval echo \$${branchOcmEnvName})
-          # Set value if it exists, otherwise fallback to default
-          if [[ ! -z "${branchApiKey}" ]]; then
-            echo Using Google API Key for branch \"$gitBranch\"
-            googleApiKey=$branchApiKey
-          else
-            echo Falling back to default Google API Key
-            googleApiKey=$REACT_APP_GOOGLE_API_KEY
-          fi
-          if [[ ! -z "${branchOcmEnv}" ]]; then
-            echo Using special OCM env for branch \"$gitBranch\"
-            echo "::set-env name=REACT_APP_OCM_ENV::$branchOcmEnv"
-          fi
-          # Expose variable to environment for later steps
-          echo "::set-env name=REACT_APP_GOOGLE_API_KEY::$googleApiKey"
-          echo "::set-env name=REACT_APP_CLOUDINARY_CLOUD_NAME::$REACT_APP_CLOUDINARY_CLOUD_NAME"
-          echo "::set-env name=REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO::$REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO"
+          git_branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          branch_prefix="$(printf '%s' "$git_branch" | tr '[:lower:]-/' '[:upper:]__')"
+          branch_api_key_name="${branch_prefix}_REACT_APP_GOOGLE_API_KEY"
+          branch_ocm_env_name="${branch_prefix}_REACT_APP_OCM_ENV"
+          branch_api_key="$(printenv "$branch_api_key_name" || true)"
+          branch_ocm_env="$(printenv "$branch_ocm_env_name" || true)"
 
-        # NOTE: This stage runs if build is a fork (since secrets do not exist)
+          if [[ -n "$branch_api_key" ]]; then
+            echo "Using Google API key for branch '$git_branch'"
+            google_api_key="$branch_api_key"
+          else
+            echo "Falling back to the default Google API key"
+            google_api_key="$REACT_APP_GOOGLE_API_KEY"
+          fi
+
+          if [[ -n "$branch_ocm_env" ]]; then
+            echo "Using the OCM environment for branch '$git_branch'"
+            echo "REACT_APP_OCM_ENV=$branch_ocm_env" >> "$GITHUB_ENV"
+          fi
+
+          echo "REACT_APP_GOOGLE_API_KEY=$google_api_key" >> "$GITHUB_ENV"
+          echo "REACT_APP_CLOUDINARY_CLOUD_NAME=$REACT_APP_CLOUDINARY_CLOUD_NAME" >> "$GITHUB_ENV"
+          echo "REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO=$REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO" >> "$GITHUB_ENV"
+
+      # Secrets are unavailable to pull requests from forks. The placeholder lets
+      # the compile-only verification complete; it cannot access a Google API.
       - name: Expose Application Environment Variables (for fork)
         if: github.event.pull_request.head.repo.full_name != github.repository
-        run: |
-            # Expose variable to environment for later steps
-            echo "::set-env name=REACT_APP_GOOGLE_API_KEY::asdf"
+        run: echo "REACT_APP_GOOGLE_API_KEY=not-a-real-key" >> "$GITHUB_ENV"
 
       - name: Verify App
-        # TODO: Add calling of lint command once it exists
-        run: |
-          yarn build
+        run: yarn build

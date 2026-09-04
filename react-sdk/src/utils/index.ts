@@ -1,3 +1,5 @@
+import type { Loc } from '..';
+
 export * from './firebase';
 
 export const reportError = (err: Error, silent = false) => {
@@ -9,7 +11,7 @@ export const directMessageId = (me: string, other: string) => {
   return me < other ? `${me}-${other}` : `${other}-${me}`;
 };
 
-export const detectLocation = (): Promise<Coordinates> => {
+export const detectLocation = (): Promise<Loc> => {
   return new Promise((resolve, reject) => {
     const geo = window.navigator.geolocation;
     if (!geo) {

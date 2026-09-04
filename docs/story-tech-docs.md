@@ -81,12 +81,9 @@ actually writes:
 The gap that remains is **executable verification**, not prose:
 
 1. There is no working test suite. `react-sdk`'s `yarn test` runs `jest` with no
-   test files and no config, and `webapp/src/App.test.tsx` is CRA boilerplate that
-   asserts a "learn react" link the app never renders. Either wire up a real jest
-   config with a first `CommunityMap` render test, or delete the stale test so the
-   suite stops lying about its own state.
-2. Add a lint step — CI's `verify.yml` still carries a
-   `TODO: Add calling of lint command once it exists`.
-3. Keep the API reference honest as the SDK moves past `0.1.0-rc6`: a change to
+   test files and no config, and the webapp has no test command. Add a focused
+   browser smoke suite for the map and routing before broader refactors.
+2. Add a lint step to CI once the codebase has a shared lint configuration.
+3. Keep the API reference honest as the SDK moves past `0.1.0-rc7`: a change to
    `react-sdk/src/index.ts` should come with a `CHANGELOG.md` entry and a matching
    edit in [react-sdk.md](react-sdk.md).
