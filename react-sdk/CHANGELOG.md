@@ -1,3 +1,8 @@
+## 0.1.0-rc10
+
+- Support React and React DOM 19. The peer range is now `^18.0.0 || ^19.0.0`
+  and the workspace builds and tests on React 19.2.
+
 ## 0.1.0-rc9
 
 - Replace Semantic UI with MUI 9.4 and Emotion. Refresh map controls, post forms,

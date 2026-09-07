@@ -26,7 +26,7 @@ yarn add @opencommunitymap/react-sdk firebase firebaseui
 # or: npm i @opencommunitymap/react-sdk firebase firebaseui
 ```
 
-`firebase@^7`, `firebaseui@^4`, and React / React DOM 18 are **peer**
+`firebase@^7`, `firebaseui@^4`, and React / React DOM 18 or 19 are **peer**
 dependencies — the SDK will not install them for you. MUI 9, Emotion,
 `maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` are regular dependencies.
 MapLibre CSS is imported by the SDK; Semantic UI is no longer needed.
@@ -40,8 +40,9 @@ and `disableEnforceFocus?` (for external modals such as image uploaders).
 Global CSS resets are left to the host application (for example, MUI's
 `CssBaseline`).
 
-For React 18, set Yarn's `resolutions` (or npm's `overrides`) for `react-is` to
-match your React version, as required by MUI. This workspace uses `18.3.1`.
+If your app uses React 18, set Yarn's `resolutions` (or npm's `overrides`) for
+`react-is` to match your React version, as required by MUI. This workspace runs
+on React 19, so it needs no override.
 `type2icon(type)` now returns an SVG icon component: render it as
 `const Icon = type2icon(type); <Icon />`.
 

@@ -146,7 +146,7 @@ webapp/
 ├── e2e/map.spec.ts      # Chromium smoke coverage for map + routing
 ├── playwright.config.ts
 └── src/
-    ├── index.tsx            # React 18 createRoot entry point
+    ├── index.tsx            # React 19 createRoot entry point
     ├── App.tsx              # FirebaseInitializer → AuthProvider → Router → Home
     ├── types.d.ts           # InitialAppParams / EmbedParams (query-string shapes)
     ├── firebaseConfig.ts    # legacy, unused

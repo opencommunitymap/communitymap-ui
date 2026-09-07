@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 export * from './components/CommunityMapTheme';
 export * from './components/CommunityDialog';
 export * from './components/AuthorWidget';

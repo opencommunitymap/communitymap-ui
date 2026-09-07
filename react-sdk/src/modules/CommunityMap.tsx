@@ -39,7 +39,7 @@ export interface RenderObjectCallbackProps {
 }
 export type RenderObjectCallback = (
   props: RenderObjectCallbackProps
-) => JSX.Element | boolean | null;
+) => React.JSX.Element | boolean | null;
 
 export interface CommunityMapProps {
   // Center coordinates for controlled component
@@ -59,11 +59,11 @@ export interface CommunityMapProps {
   mapStyle?: MapStyle;
 
   // Pin icon showing the center of the map
-  centerPin?: JSX.Element | null;
+  centerPin?: React.JSX.Element | null;
 
-  profileWidget?: JSX.Element | null;
+  profileWidget?: React.JSX.Element | null;
 
-  navigationWidget?: JSX.Element | null;
+  navigationWidget?: React.JSX.Element | null;
 
   // Called initially and after moving the map or changing the zoom
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
