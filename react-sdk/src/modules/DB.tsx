@@ -43,11 +43,20 @@ export const useLoadObjects = (
     setVotesObj(null);
 
     const { minLat, maxLat, minLng, maxLng } = mapBounds;
-    if (!minLat || !maxLat || !minLng || !maxLng) {
+    if (
+      ![minLat, maxLat, minLng, maxLng].every(Number.isFinite) ||
+      minLat < -90 ||
+      maxLat > 90 ||
+      minLat > maxLat
+    ) {
       console.log('Invalid map bounds:', mapBounds);
       return;
     }
     console.debug('Load by', mapBounds);
+
+    // MapLibre bounds can extend beyond +/-180 when showing wrapped worlds.
+    // Use the full longitude range for these views in this latitude-first query.
+    const wrapsLongitude = minLng < -180 || maxLng > 180 || minLng > maxLng;
 
     const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
@@ -55,8 +64,16 @@ export const useLoadObjects = (
       .firestore()
       .collection('objects')
       // .where('valid_until', '>=', now)
-      .where('loc', '>', new firebase.firestore.GeoPoint(minLat, minLng))
-      .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng));
+      .where(
+        'loc',
+        '>',
+        new firebase.firestore.GeoPoint(minLat, wrapsLongitude ? -180 : minLng)
+      )
+      .where(
+        'loc',
+        '<',
+        new firebase.firestore.GeoPoint(maxLat, wrapsLongitude ? 180 : maxLng)
+      );
 
     if (filterOrigin) {
       ref = ref.where('origin', '==', filterOrigin);
