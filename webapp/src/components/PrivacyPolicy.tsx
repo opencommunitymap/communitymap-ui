@@ -103,6 +103,7 @@ export const CookieConsentBanner: React.FC = () => {
       open={open}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       sx={{
+        zIndex: (theme) => theme.zIndex.modal - 1,
         maxWidth: 560,
         width: { sm: 'calc(100% - 48px)' },
         bottom: { xs: 112, sm: 24 },
@@ -130,6 +131,7 @@ export const CookieConsentBanner: React.FC = () => {
         <Button
           size="small"
           variant="contained"
+          sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
           onClick={() => {
             document.cookie =
               '__ocm_cookie_consent=true; Max-Age=31536000; Path=/; SameSite=Lax';

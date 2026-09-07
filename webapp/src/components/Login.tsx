@@ -29,16 +29,15 @@ const SignInWidget: React.FC = () => {
       // }
     };
 
-    // Initialize the FirebaseUI Widget using Firebase.
-    const ui = new firebaseui.auth.AuthUI(
-      getFirebaseApp().auth(),
-      getFirebaseApp().name
-    );
-    // The start method will wait until the DOM is loaded.
+    const app = getFirebaseApp();
+    const ui =
+      firebaseui.auth.AuthUI.getInstance(app.name) ||
+      new firebaseui.auth.AuthUI(app.auth(), app.name);
     ui.start(container.current!, uiConfig);
 
     return () => {
-      ui.delete();
+      // Reset synchronously so StrictMode can replay the effect on this instance.
+      ui.reset();
     };
   }, []);
 

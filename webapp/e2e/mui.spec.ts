@@ -1,5 +1,60 @@
 import { expect, test } from '@playwright/test';
 
+test('cookie notice stays behind mobile dialogs and remains dismissible', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/?canAdd=false');
+  await expect(page.getByRole('button', { name: 'Account menu' })).toBeVisible({
+    timeout: 15_000,
+  });
+  const notice = page.getByRole('region', { name: 'Cookie notice' });
+  const privacyLink = notice.getByRole('link', {
+    name: 'Privacy and Cookie Policy',
+  });
+  await privacyLink.click();
+  const dialog = page.getByRole('dialog', {
+    name: 'Privacy and Cookie Policy',
+  });
+  await expect(dialog).toBeVisible();
+
+  // Check the actual element receiving input where the notice and dialog overlap.
+  await expect
+    .poll(() =>
+      dialog.evaluate((element) => {
+        const noticeBounds = document
+          .querySelector('[aria-label="Cookie notice"]')!
+          .getBoundingClientRect();
+        const dialogBounds = element.getBoundingClientRect();
+        const left = Math.max(noticeBounds.left, dialogBounds.left);
+        const right = Math.min(noticeBounds.right, dialogBounds.right);
+        const top = Math.max(noticeBounds.top, dialogBounds.top);
+        const bottom = Math.min(noticeBounds.bottom, dialogBounds.bottom);
+        return (
+          right > left &&
+          bottom > top &&
+          element.contains(
+            document.elementFromPoint((left + right) / 2, (top + bottom) / 2)
+          )
+        );
+      })
+    )
+    .toBe(true);
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await privacyLink.focus();
+  await page.keyboard.press('Tab');
+  await expect(notice.getByRole('button', { name: 'Got it' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(notice).toBeHidden();
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Account menu' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(notice).toBeHidden();
+});
+
 test('account menu, routed dialogs, and sign-in remain accessible', async ({
   page,
 }) => {
