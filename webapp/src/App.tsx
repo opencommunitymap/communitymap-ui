@@ -7,7 +7,6 @@ import {
   useRouteMatch,
   Link,
 } from 'react-router-dom';
-import 'semantic-ui-css/semantic.min.css';
 import queryString from 'query-string';
 import './App.css';
 
@@ -31,12 +30,15 @@ import {
   OPEN_FREE_MAP_STYLES,
   postObject,
   initFirebase,
+  CommunityMapTheme,
+  CommunityDialog,
 } from '@opencommunitymap/react-sdk';
 import { InitialAppParams, EmbedParams } from './types';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-import { Modal } from 'semantic-ui-react';
+import { CssBaseline, Paper, Typography } from '@mui/material';
+import PublicRounded from '@mui/icons-material/PublicRounded';
 
 const OCM_ENV = process.env.REACT_APP_OCM_ENV || process.env.NODE_ENV;
 
@@ -54,7 +56,9 @@ const __initFirebase = async () => {
   // }
 };
 
-const FirebaseInitializer: React.FC = ({ children }) => {
+const FirebaseInitializer: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -111,6 +115,27 @@ const Home: React.FC = () => {
 
   return (
     <div id="home">
+      <Paper component="header" className="map-brand">
+        <span className="brand-mark">
+          <PublicRounded />
+        </span>
+        <div>
+          <Typography
+            component="h1"
+            variant="subtitle1"
+            sx={{ fontWeight: 750, lineHeight: 1.2 }}
+          >
+            Open Community Map
+          </Typography>
+          <Typography
+            className="brand-tagline"
+            variant="caption"
+            color="text.secondary"
+          >
+            A little closer to your community
+          </Typography>
+        </div>
+      </Paper>
       <CommunityMap
         defaultCenter={defaultCenter}
         mapStyle={mapStyle}
@@ -121,7 +146,7 @@ const Home: React.FC = () => {
           return true;
         }}
         onObjectModalClose={() => router.push('/')}
-        centerPin={<Pin color="#2185d0" />}
+        centerPin={<Pin color="#147d70" />}
         autolocate={initialParams?.autolocate}
         filterOrigin={initialParams?.filterOrigin}
         profileWidget={<ProfileWidgetPlus />}
@@ -142,35 +167,43 @@ const Home: React.FC = () => {
           <DirectMessageModal onClose={() => router.push('/')} />
         </Route>
         <Route path="/users/:userId">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Content scrolling>
-              <UserPage />
-            </Modal.Content>
-          </Modal>
+          <CommunityDialog
+            open
+            onClose={() => router.push('/')}
+            title="Community profile"
+          >
+            <UserPage />
+          </CommunityDialog>
         </Route>
         <Route path="/my-messages">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Header>Messages</Modal.Header>
-            <Modal.Content scrolling>
-              <DirectMessageDialogs />
-            </Modal.Content>
-          </Modal>
+          <CommunityDialog
+            open
+            onClose={() => router.push('/')}
+            maxWidth="sm"
+            title="Messages"
+          >
+            <DirectMessageDialogs />
+          </CommunityDialog>
         </Route>
         <Route path="/terms">
-          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
-            <Modal.Header>Terms of Service</Modal.Header>
-            <Modal.Content scrolling>
-              <TermsOfService />
-            </Modal.Content>
-          </Modal>
+          <CommunityDialog
+            open
+            onClose={() => router.push('/')}
+            maxWidth="lg"
+            title="Terms of Service"
+          >
+            <TermsOfService />
+          </CommunityDialog>
         </Route>
         <Route path="/privacy">
-          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
-            <Modal.Header>Privacy and Cookie Policy</Modal.Header>
-            <Modal.Content scrolling>
-              <PrivacyPolicy />
-            </Modal.Content>
-          </Modal>
+          <CommunityDialog
+            open
+            onClose={() => router.push('/')}
+            maxWidth="lg"
+            title="Privacy and Cookie Policy"
+          >
+            <PrivacyPolicy />
+          </CommunityDialog>
         </Route>
       </Switch>
     </div>
@@ -202,12 +235,15 @@ function App() {
 }
 
 export default () => (
-  <FirebaseInitializer>
-    <AuthProvider>
-      <Router basename={isEmbed ? embedBasename : undefined}>
-        <App />
-        <CookieConsentBanner />
-      </Router>
-    </AuthProvider>
-  </FirebaseInitializer>
+  <CommunityMapTheme>
+    <CssBaseline />
+    <FirebaseInitializer>
+      <AuthProvider>
+        <Router basename={isEmbed ? embedBasename : undefined}>
+          <App />
+          <CookieConsentBanner />
+        </Router>
+      </AuthProvider>
+    </FirebaseInitializer>
+  </CommunityMapTheme>
 );

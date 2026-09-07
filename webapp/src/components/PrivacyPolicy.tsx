@@ -1,5 +1,6 @@
-import React from 'react';
-import ReactCookieConsent from 'react-cookie-consent';
+import React, { useState } from 'react';
+import { Snackbar, Paper, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export const PrivacyPolicy = () => {
   return (
@@ -90,10 +91,54 @@ export const PrivacyPolicy = () => {
   );
 };
 
-export const CookieConsentBanner = () => (
-  <ReactCookieConsent cookieName="__ocm_cookie_consent">
-    This website or its third-party tools use cookies, which are necessary to
-    its functioning. Read more in our{' '}
-    <a href={window.location.origin + '/privacy'}>Privacy and Cookie Policy</a>
-  </ReactCookieConsent>
-);
+export const CookieConsentBanner: React.FC = () => {
+  const [open, setOpen] = useState(
+    () =>
+      !document.cookie
+        .split(';')
+        .some((cookie) => cookie.trim() === '__ocm_cookie_consent=true')
+  );
+  return (
+    <Snackbar
+      open={open}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      sx={{
+        maxWidth: 560,
+        width: { sm: 'calc(100% - 48px)' },
+        bottom: { xs: 112, sm: 24 },
+      }}
+    >
+      <Paper
+        role="region"
+        aria-label="Cookie notice"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          p: 2,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 3,
+          boxShadow: '0 8px 40px #203c3826',
+        }}
+      >
+        <Typography variant="caption" color="text.secondary">
+          This website or its third-party tools use cookies, which are necessary
+          to its functioning. Read more in our{' '}
+          <Link to="/privacy">Privacy and Cookie Policy</Link>.
+        </Typography>
+        <Button
+          size="small"
+          variant="contained"
+          onClick={() => {
+            document.cookie =
+              '__ocm_cookie_consent=true; Max-Age=31536000; Path=/; SameSite=Lax';
+            setOpen(false);
+          }}
+        >
+          Got it
+        </Button>
+      </Paper>
+    </Snackbar>
+  );
+};

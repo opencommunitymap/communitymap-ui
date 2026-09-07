@@ -90,9 +90,7 @@ install, root build, and Playwright smoke test.
    concluding that something is wrong with the code.
 6. **The Vite compatibility settings are deliberate.**
    [webapp/vite.config.mjs](webapp/vite.config.mjs) preserves the legacy
-   `REACT_APP_` variables and `webapp/build/` output path. It also uses esbuild
-   for CSS minification because Lightning CSS rejects a generated selector in
-   Semantic UI 2.4. Keep these until the corresponding dependencies are upgraded.
+   `REACT_APP_` variables and `webapp/build/` output path. Keep these compatibility settings when updating Vite.
 7. **MapLibre GL JS is pinned to v5 deliberately.** V6 requires every bundler
    consuming the published SDK to configure its worker URL and drops WebGL 1.
    Revisit that major separately instead of allowing it through casually.
@@ -114,7 +112,7 @@ install, root build, and Playwright smoke test.
 - **One CSS file per component**, imported by that component (`import './Story.css'`).
   `commonStyles.css` holds shared bits. `sync-glob` copies CSS into `dist/` at build —
   a new CSS file needs no config change, but it *does* need a rebuild.
-- **UI kit is `semantic-ui-react`**; dates via `dayjs`; class names via `classnames` (`cx`).
+- **UI kit is MUI 9 (`@mui/material`) with Emotion**; dates via `dayjs`; class names via `classnames` (`cx`).
 - **Timestamps are ISO strings** (`new Date().toISOString()`), never Firestore
   `Timestamp`. Locations are Firestore `GeoPoint` on write, `{latitude, longitude}`
   (`Loc`) in app code.
@@ -141,7 +139,7 @@ install, root build, and Playwright smoke test.
 
 Changing the SDK's public API also means: bump `version` in
 [react-sdk/package.json](react-sdk/package.json) and add an entry to
-[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc8`).
+[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc9`).
 
 ## Known limitations (already in the code — don't "fix" by accident)
 

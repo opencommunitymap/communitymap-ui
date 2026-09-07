@@ -2,7 +2,7 @@
 
 Generated from the source of truth,
 [react-sdk/src/index.ts](../react-sdk/src/index.ts) and the modules it re-exports.
-Version `0.1.0-rc8`. The package is in early alpha; the interface still changes
+Version `0.1.0-rc9`. The package is in early alpha; the interface still changes
 between release candidates — check [CHANGELOG.md](../react-sdk/CHANGELOG.md).
 
 For a task-oriented overview see [high-level-structure.md](high-level-structure.md);
@@ -26,11 +26,24 @@ yarn add @opencommunitymap/react-sdk firebase firebaseui
 # or: npm i @opencommunitymap/react-sdk firebase firebaseui
 ```
 
-`firebase@^7`, `firebaseui@^4`, `react@^16` and `react-dom@^16` are **peer**
-dependencies — the SDK will not install them for you. `semantic-ui-react`,
-`semantic-ui-css`, `maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` come
-bundled as regular dependencies, and the required Semantic UI and MapLibre CSS is
-imported by the SDK itself.
+`firebase@^7`, `firebaseui@^4`, and React / React DOM 18 are **peer**
+dependencies — the SDK will not install them for you. MUI 9, Emotion,
+`maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` are regular dependencies.
+MapLibre CSS is imported by the SDK; Semantic UI is no longer needed.
+
+`CommunityMap` applies the shared MUI theme to its own UI. Wrap standalone SDK
+widgets and your app in `<CommunityMapTheme>` to use the same styling. The
+exported `communityMapTheme` can also be used with MUI's `ThemeProvider`.
+`CommunityDialog` provides a titled MUI dialog with an optional close button;
+its props are `open`, `title`, `onClose?`, `maxWidth?`, `children?`, `actions?`,
+and `disableEnforceFocus?` (for external modals such as image uploaders).
+Global CSS resets are left to the host application (for example, MUI's
+`CssBaseline`).
+
+For React 18, set Yarn's `resolutions` (or npm's `overrides`) for `react-is` to
+match your React version, as required by MUI. This workspace uses `18.3.1`.
+`type2icon(type)` now returns an SVG icon component: render it as
+`const Icon = type2icon(type); <Icon />`.
 
 The default basemap uses OpenFreeMap and needs no API key. Pass `mapStyle` to use
 another MapLibre-compatible style URL or an inline `StyleSpecification`.
@@ -140,7 +153,7 @@ for the owner. Each renders collapsed by default and fuller when `expanded`.
 
 `AddNewChatObject`, `AddNewPlaceObject`, `AddNewStoryObject` — each takes
 `{ type: ObjectItemInput['type']; onPost: (data: ObjectItemInput) => void }` and
-renders a Semantic UI form. They only build the `ObjectItemInput`; **persisting is
+renders a MUI form. They only build the `ObjectItemInput`; **persisting is
 the caller's job** via `postObject`:
 
 ```tsx
@@ -164,9 +177,9 @@ at build time.
 | `Pin` | `{ color?: string }` | The map pin SVG. |
 | `PointingSegment` | — | Speech-bubble wrapper used for collapsed map items. |
 
-`type2icon(type)` and `type2title(type)` map an object type to its Semantic UI icon
-name and human label (`request → 'hand paper' / 'Ask Help'`, etc.) — use them when
-building your own post UI so it matches.
+`type2icon(type)` and `type2title(type)` map an object type to a MUI SVG icon
+component and human label (for example, `request` maps to `WavingHandRounded`
+and `Ask Help`). Render the icon with `const Icon = type2icon(type); <Icon />`.
 
 **Not exported** (internal to the SDK): `CommentsList`, `PostCommentWidget`,
 `LikeWidget`, `CloudinaryImageUpload`.

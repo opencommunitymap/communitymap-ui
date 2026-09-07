@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from 'semantic-ui-react';
+import { IconButton, CircularProgress, Tooltip } from '@mui/material';
+import MyLocationRounded from '@mui/icons-material/MyLocationRounded';
 import { detectLocation, Loc } from '..';
 import './commonStyles.css';
 
@@ -23,12 +24,18 @@ export const NavigationWidget: React.FC<{
 
   return (
     <div id="navigation-widget">
-      <Button
-        loading={loading}
-        primary
-        icon="location arrow"
-        onClick={locate}
-      ></Button>
+      <Tooltip title="Find my location">
+        <span>
+          <IconButton
+            aria-label="Find my location"
+            disabled={loading}
+            onClick={locate}
+            color="primary"
+          >
+            {loading ? <CircularProgress size={22} /> : <MyLocationRounded />}
+          </IconButton>
+        </span>
+      </Tooltip>
     </div>
   );
 };

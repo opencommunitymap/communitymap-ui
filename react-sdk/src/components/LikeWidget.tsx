@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react';
+import { IconButton } from '@mui/material';
+import ThumbUpOutlined from '@mui/icons-material/ThumbUpOutlined';
 import './LikeWidget.css';
 import { reportError } from '..';
 
@@ -16,16 +17,18 @@ export const LikeWidget: React.FC<LikeWidgetProps> = ({
 }) => {
   return (
     <div className="like-widget">
-      <Button
-        icon
+      <IconButton
+        aria-label={userVoted ? 'Already liked' : 'Like this post'}
+        aria-pressed={userVoted}
+        color="primary"
         disabled={userVoted}
         onClick={(e) => {
           e.stopPropagation();
           onVote().catch(reportError);
         }}
       >
-        <Icon size="big" name="thumbs up outline" />
-      </Button>
+        <ThumbUpOutlined fontSize="small" />
+      </IconButton>
       {!!votes && <div className="votes-count">{votes}</div>}
     </div>
   );

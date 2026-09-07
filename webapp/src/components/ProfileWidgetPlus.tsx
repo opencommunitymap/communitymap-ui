@@ -6,22 +6,29 @@ import {
   useAsyncStatus,
   saveUserPublicInfo,
   getFirebaseApp,
+  CommunityDialog,
 } from '@opencommunitymap/react-sdk';
 import firebase from 'firebase';
 import {
-  Modal,
-  Dropdown,
+  Menu,
+  MenuItem,
   Button,
-  Icon,
-  Label,
-  Form,
-  Loader,
-  Message,
-  Card,
-  Image,
-  Grid,
-} from 'semantic-ui-react';
-import './ProfileWidgetPlus.css';
+  IconButton,
+  Badge,
+  TextField,
+  CircularProgress,
+  Alert,
+  Avatar,
+  Stack,
+  Typography,
+  Divider,
+  ListItemIcon,
+} from '@mui/material';
+import MenuRounded from '@mui/icons-material/MenuRounded';
+import PersonOutlineRounded from '@mui/icons-material/PersonOutlineRounded';
+import MailOutlineRounded from '@mui/icons-material/MailOutlineRounded';
+import LogoutRounded from '@mui/icons-material/LogoutRounded';
+import LoginRounded from '@mui/icons-material/LoginRounded';
 import { Link } from 'react-router-dom';
 import { Login } from './Login';
 
@@ -31,200 +38,179 @@ export const ProfileWidgetPlus: React.FC = () => {
   const unreadDialogs =
     dialogs?.filter((dlg) => dlg.lastMsgId !== dlg.lastReadBy[user?.uid || ''])
       .length || 0;
-
   const [login, setLogin] = useState(false);
-  useEffect(() => {
-    if (user && login) {
-      setLogin(false);
-    }
-  }, [user, login]);
-
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [showProfile, setShowProfile] = useState(false);
-
-  const signOut = () => getFirebaseApp().auth().signOut();
+  useEffect(() => {
+    if (user && login) setLogin(false);
+  }, [user, login]);
+  const closeMenu = () => setAnchor(null);
 
   return (
     <div id="profile-widget">
-      {login && <Login title="" onClose={() => setLogin(false)} />}
-      {showProfile && !!user && (
-        <Modal open closeIcon onClose={() => setShowProfile(false)}>
-          <Modal.Header>Your profile</Modal.Header>
-          <Modal.Content>
-            <EditUserProfile user={user} />
-          </Modal.Content>
-        </Modal>
+      {login && (
+        <Login
+          title="Welcome to your community"
+          onClose={() => setLogin(false)}
+        />
       )}
-      {user ? (
-        <Dropdown
-          trigger={
-            <Button className="profile-button" icon size="large">
-              <Icon.Group>
-                <Icon name="user outline" />
-                {unreadDialogs > 0 && (
-                  <Icon
-                    corner="top right"
-                    className="has-unread-messages"
-                    name="mail"
-                    color="red"
-                  />
-                )}
-              </Icon.Group>
-            </Button>
-          }
-          pointing="top right"
-          icon={null}
+      {showProfile && user && (
+        <CommunityDialog
+          open
+          onClose={() => setShowProfile(false)}
+          title="Your profile"
         >
-          <Dropdown.Menu>
-            <Dropdown.Item disabled>{user.email}</Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={() => setShowProfile(true)}>
-              <Icon name="user" />
-              Profile
-            </Dropdown.Item>
-            <Dropdown.Item as={Link} to="/my-messages">
-              <Icon name="mail" />
-              Messages
-              {unreadDialogs > 0 && (
-                <Label className="user-menu-label" color="blue">
-                  {unreadDialogs}
-                </Label>
-              )}
-            </Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item as={Link} to="/terms">
-              Terms of Service
-            </Dropdown.Item>
-            <Dropdown.Item as={Link} to="/privacy">
-              Privacy Policy
-            </Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={signOut}>
-              <Icon name="log out" />
-              Log out
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      ) : (
-        // <Button primary size="large" onClick={() => setLogin(true)}>
-        //   Sign in
-        // </Button>
-        <Dropdown
-          trigger={
-            <Button className="profile-button" icon size="large">
-              <Icon name="bars" />
-            </Button>
-          }
-          pointing="top right"
-          icon={null}
-        >
-          <Dropdown.Menu>
-            <Dropdown.Item as={Link} to="/terms">
-              Terms of Service
-            </Dropdown.Item>
-            <Dropdown.Item as={Link} to="/privacy">
-              Privacy Policy
-            </Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={() => setLogin(true)}>
-              <Icon name="sign in" />
-              Sign in
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+          <EditUserProfile user={user} />
+        </CommunityDialog>
       )}
+      {!user && (
+        <Button
+          className="sign-in-button"
+          variant="contained"
+          onClick={() => setLogin(true)}
+        >
+          Sign in
+        </Button>
+      )}
+      <IconButton
+        className="profile-button"
+        aria-label="Account menu"
+        aria-haspopup="menu"
+        aria-expanded={!!anchor}
+        aria-controls={anchor ? 'account-menu' : undefined}
+        onClick={(e) => setAnchor(e.currentTarget)}
+      >
+        <Badge badgeContent={unreadDialogs} color="secondary">
+          {user ? <PersonOutlineRounded /> : <MenuRounded />}
+        </Badge>
+      </IconButton>
+      <Menu
+        id="account-menu"
+        anchorEl={anchor}
+        open={!!anchor}
+        onClose={closeMenu}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        {user && <MenuItem disabled>{user.email}</MenuItem>}
+        {user && (
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              setShowProfile(true);
+            }}
+          >
+            <ListItemIcon>
+              <PersonOutlineRounded fontSize="small" />
+            </ListItemIcon>
+            Profile
+          </MenuItem>
+        )}
+        {user && (
+          <MenuItem component={Link} to="/my-messages" onClick={closeMenu}>
+            <ListItemIcon>
+              <Badge badgeContent={unreadDialogs} color="secondary">
+                <MailOutlineRounded fontSize="small" />
+              </Badge>
+            </ListItemIcon>
+            Messages
+          </MenuItem>
+        )}
+        {user && <Divider />}
+        <MenuItem component={Link} to="/terms" onClick={closeMenu}>
+          Terms of Service
+        </MenuItem>
+        <MenuItem component={Link} to="/privacy" onClick={closeMenu}>
+          Privacy Policy
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => {
+            closeMenu();
+            user ? getFirebaseApp().auth().signOut() : setLogin(true);
+          }}
+        >
+          <ListItemIcon>
+            {user ? (
+              <LogoutRounded fontSize="small" />
+            ) : (
+              <LoginRounded fontSize="small" />
+            )}
+          </ListItemIcon>
+          {user ? 'Log out' : 'Sign in'}
+        </MenuItem>
+      </Menu>
     </div>
   );
 };
 
 const EditUserProfile: React.FC<{ user: firebase.User }> = ({ user }) => {
-  const [toggled, setToggle] = useState(false);
   const info = useUserPublicInfo(user.uid, true);
   const [changed, setChanged] = useState<{ name: string } | null>(null);
-
-  const { status, func: saveInfo } = useAsyncStatus(async () => {
-    return saveUserPublicInfo({
+  const { status, func: saveInfo } = useAsyncStatus(async () =>
+    saveUserPublicInfo({
       ...(info || { id: user.uid }),
       ...(changed || { name: '' }),
-    });
-  });
-
-  if (info === undefined) return <Loader active />;
-  // if (info === null) return <div>User not found :(</div>;
-  const UserForm = () => (
-    <Form
-      onSubmit={() => saveInfo()}
-      loading={status.pending}
-      error={!!status.error}
-      success={status.success}
-    >
-      <Form.Input
-        label="Name/Nickname"
-        required
-        value={changed?.name || info?.name || ''}
-        onChange={(e, { value }) => setChanged({ ...changed, name: value })}
-      />
-      {/* <Form.Input label="Gender"/> */}
-
-      <Message error>{status.error}</Message>
-      <Message success>Successfully saved</Message>
-
-      <Form.Group>
-        <Form.Button primary disabled={!changed}>
-          Save
-        </Form.Button>
-        <Form.Button
-          type="button"
-          disabled={!changed}
-          onClick={() => setChanged(null)}
-        >
-          Clear changes
-        </Form.Button>
-      </Form.Group>
-    </Form>
+    })
   );
-  const BtnSettings = () => (
-    <Button
-      circular
-      icon="settings"
-      onClick={() => setToggle((toggled) => !toggled)}
-    />
-  );
+  if (info === undefined)
+    return <CircularProgress aria-label="Loading profile" />;
 
   return (
-    <Card>
-      <Image
-        src="http://dwinery.com/ocm/wp-content/uploads/elementor/thumbs/avatar-ookvknm0adkt2o1cwyctxzbsfccgeo4fo00qr8xhao.png"
-        wrapped
-        ui={false}
-      />
-      <Card.Content>
-        <Card.Header>
-          <Grid>
-            <Grid.Column floated="left" width={8}>
-              {info?.name}
-            </Grid.Column>
-            <Grid.Column floated="right" width={3}>
-              {BtnSettings()}
-            </Grid.Column>
-          </Grid>
-        </Card.Header>
-        <Card.Meta>
-          <span className="date">Joined in: {info?.created}</span>
-        </Card.Meta>
-        <Card.Description>{toggled && <>{UserForm()}</>}</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Grid columns={2} divided>
-          <Grid.Row>
-            <Grid.Column>
-              <Icon name="handshake" /> 11 People
-            </Grid.Column>
-            <Grid.Column>
-              <Icon name="globe" /> 12 Places
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Card.Content>
-    </Card>
+    <Stack spacing={3}>
+      <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+        <Avatar
+          src={user.photoURL || undefined}
+          sx={{ width: 64, height: 64, bgcolor: 'primary.main' }}
+        >
+          {(info?.name || user.email || '?')[0].toUpperCase()}
+        </Avatar>
+        <div>
+          <Typography variant="h6">
+            {info?.name || 'Your community profile'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {info?.created
+              ? `Joined ${new Date(info.created).toLocaleDateString()}`
+              : 'Make yourself at home'}
+          </Typography>
+        </div>
+      </Stack>
+      <Stack
+        component="form"
+        spacing={2.5}
+        onSubmit={(e) => {
+          e.preventDefault();
+          saveInfo();
+        }}
+      >
+        <TextField
+          label="Name / nickname"
+          required
+          value={changed?.name ?? info?.name ?? ''}
+          disabled={status.pending}
+          onChange={(e) => setChanged({ name: e.target.value })}
+        />
+        {status.error && <Alert severity="error">{String(status.error)}</Alert>}
+        {status.success && <Alert severity="success">Profile saved.</Alert>}
+        <Stack direction="row" spacing={1}>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!changed || status.pending}
+            loading={status.pending}
+          >
+            Save changes
+          </Button>
+          <Button
+            type="button"
+            disabled={!changed || status.pending}
+            onClick={() => setChanged(null)}
+          >
+            Reset
+          </Button>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 };

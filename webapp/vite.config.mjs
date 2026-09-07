@@ -13,22 +13,9 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: 3000,
     },
-    optimizeDeps: {
-      // Semantic UI 0.88 pulls in packages that still expect Node's `global`.
-      // Rewrite it inside Vite's development-only dependency prebundle.
-      rolldownOptions: {
-        transform: {
-          define: {
-            global: 'globalThis',
-          },
-        },
-      },
-    },
     build: {
       // Firebase Hosting currently deploys webapp/build.
       outDir: 'build',
-      // Semantic UI 2.4 contains selectors rejected by Lightning CSS.
-      cssMinify: 'esbuild',
     },
     define: {
       // Compatibility for the existing app and SDK. Keep this explicit so no

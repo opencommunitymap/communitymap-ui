@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Button, Icon, Form } from 'semantic-ui-react';
+import { Button, TextField, Stack } from '@mui/material';
+import EditNoteRounded from '@mui/icons-material/EditNoteRounded';
+import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import {
   ObjectItemInput,
   ObjectItemComponentProps,
@@ -41,15 +43,13 @@ export const Story: React.FC<ObjectItemComponentProps> = ({
     return comments.sort((l, r) => (l.created < r.created ? -1 : 1));
   }, [comments]);
 
-  const icon = 'edit outline';
-
   return (
     <div
       className={cx({ item: true, 'story-item': true, expanded })}
       onClick={onClick}
     >
       <div className="title">
-        <Icon name={icon} />
+        <EditNoteRounded />
         {title}
       </div>
       {expanded && (
@@ -59,7 +59,7 @@ export const Story: React.FC<ObjectItemComponentProps> = ({
           {new Date(created).toLocaleString()}
         </div>
       )}
-      <br />
+
       {expanded && description !== title && (
         <section className="description">{description}</section>
       )}
@@ -72,18 +72,20 @@ export const Story: React.FC<ObjectItemComponentProps> = ({
         <div>
           {expanded && user?.uid === author && (
             <Button
-              icon="close"
-              content="Delete"
-              basic
+              startIcon={<DeleteOutlineRounded />}
+              color="error"
+              variant="outlined"
               onClick={() => {
                 if (window.confirm('Are you sure you want to close it?'))
                   onClose().catch(reportError);
               }}
-            />
+            >
+              Delete
+            </Button>
           )}
           {!showCommentsWidget && !expanded && (
             <Button
-              basic
+              variant="outlined"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowCommentsWidget(true);
@@ -116,7 +118,11 @@ export const AddNewStoryObject: React.FC<{
   type: ObjectItemInput['type'];
   onPost: (data: ObjectItemInput) => void;
 }> = ({ type, onPost }) => {
-  const [state, setState] = useState({ valid_until: 12 * 60 } as any);
+  const [state, setState] = useState({
+    topic: '',
+    message: '',
+    valid_until: 12 * 60,
+  });
   const onChange = (e: any) => {
     const { name, value } = e.target;
     console.debug(e.target.name, e.target.value);
@@ -125,9 +131,11 @@ export const AddNewStoryObject: React.FC<{
   return (
     <div className="add-new-story">
       <h4>
-        <Icon name="edit outline" /> Create story
+        <EditNoteRounded /> Create story
       </h4>
-      <Form
+      <Stack
+        component="form"
+        spacing={2.5}
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
@@ -141,21 +149,26 @@ export const AddNewStoryObject: React.FC<{
           });
         }}
       >
-        <Form.Input
+        <TextField
           autoComplete="off"
           label="Subject"
           name="topic"
           onChange={onChange}
         />
-        <Form.TextArea
+        <TextField
+          multiline
+          minRows={7}
           autoFocus
+          required
           label="Story"
           name="message"
           onChange={onChange}
         />
 
-        <Form.Button primary>Post</Form.Button>
-      </Form>
+        <Button type="submit" variant="contained">
+          Post
+        </Button>
+      </Stack>
     </div>
   );
 };

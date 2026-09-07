@@ -5,38 +5,62 @@ import {
   useAuth,
   directMessageId,
 } from '@opencommunitymap/react-sdk';
-import { Loader, Button } from 'semantic-ui-react';
+import {
+  CircularProgress,
+  Button,
+  Avatar,
+  Stack,
+  Typography,
+} from '@mui/material';
+import SendRounded from '@mui/icons-material/SendRounded';
 
-export const UserPage = () => {
+export const UserPage: React.FC = () => {
   const me = useAuth();
   const { userId } = useParams<{ userId: string }>();
-
   const userInfo = useUserPublicInfo(userId || '', true);
-  if (userInfo === undefined) return <Loader active />;
-
+  if (userInfo === undefined)
+    return <CircularProgress aria-label="Loading profile" />;
   return (
-    <div style={{ lineHeight: '2em' }}>
+    <Stack
+      spacing={2}
+      sx={{ alignItems: 'center', py: 2, textAlign: 'center' }}
+    >
+      <Avatar
+        sx={{ width: 72, height: 72, bgcolor: 'primary.main', fontSize: 30 }}
+      >
+        {(userInfo?.name || '?')[0].toUpperCase()}
+      </Avatar>
+      <Typography variant="h5">
+        {userInfo?.name || 'Community member'}
+      </Typography>
       {userInfo === null ? (
-        <div>The user has't filled his/her details yet</div>
+        <Typography color="text.secondary">
+          This member hasn't added their details yet.
+        </Typography>
       ) : (
         <>
-          <h3>Name/Nickname: {userInfo?.name}</h3>
-          <div>Registered on {userInfo.created}</div>
-          <div>Last updated on {userInfo.updated}</div>
+          {userInfo.created && (
+            <Typography variant="body2" color="text.secondary">
+              Joined {new Date(userInfo.created).toLocaleDateString()}
+            </Typography>
+          )}
+          {userInfo.updated && (
+            <Typography variant="caption" color="text.secondary">
+              Updated {new Date(userInfo.updated).toLocaleDateString()}
+            </Typography>
+          )}
         </>
       )}
-      <div style={{ marginTop: 30 }}>
-        {!!me && !!userId && me.uid !== userId && (
-          <Button
-            basic
-            color="blue"
-            icon="send"
-            content="Direct message"
-            as={Link}
-            to={`/direct-messages/${directMessageId(me.uid, userId)}`}
-          />
-        )}
-      </div>
-    </div>
+      {me && userId && me.uid !== userId && (
+        <Button
+          variant="contained"
+          startIcon={<SendRounded />}
+          component={Link}
+          to={`/direct-messages/${directMessageId(me.uid, userId)}`}
+        >
+          Direct message
+        </Button>
+      )}
+    </Stack>
   );
 };

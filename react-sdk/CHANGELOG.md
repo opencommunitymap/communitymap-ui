@@ -1,3 +1,14 @@
+## 0.1.0-rc9
+
+- Replace Semantic UI with MUI 9.4 and Emotion. Refresh map controls, post forms,
+  cards, comments, and sign-in dialogs with a shared teal theme.
+- Require React and React DOM 18; React 16 is no longer supported.
+- Export `CommunityMapTheme`, `communityMapTheme`, and `CommunityDialog` for
+  consistent styling in consuming applications. `CommunityMap` applies the theme
+  to its own UI without resetting the host page's CSS.
+- `type2icon` now returns a MUI SVG icon component instead of a Semantic UI icon
+  name. Render it with `const Icon = type2icon(type); <Icon />`.
+
 ## 0.1.0-rc8
 
 - Replace Google Maps with MapLibre GL JS and the keyless OpenFreeMap basemap.

@@ -1,13 +1,47 @@
-/* Main elements positioning */
-
 #home {
   height: 100vh;
+  height: 100dvh;
   width: 100%;
+  position: relative;
 }
-#new-content-widget {
-  position: fixed;
-  left: 10px;
-  top: 10px;
+.map-brand {
+  position: absolute;
+  top: 24px;
+  left: 24px;
   z-index: 2;
-  margin-top: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 12px 12px;
+  border: 1px solid #e2e9e5;
+  border-radius: 18px !important;
+  box-shadow: 0 6px 28px #203c3814;
+}
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: #147d70;
+  color: white;
+  border-radius: 13px;
+}
+@media (max-width: 600px) {
+  .map-brand {
+    top: 12px;
+    left: 12px;
+    gap: 8px;
+    padding: 8px 12px 8px 8px;
+  }
+  .map-brand h1 {
+    font-size: 13px;
+  }
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .brand-tagline {
+    display: none;
+  }
 }

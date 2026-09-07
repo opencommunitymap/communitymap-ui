@@ -99,10 +99,11 @@ every object posted through that embed.
 ## Verifying a change
 
 There is no unit-test suite in this repo. `react-sdk`'s `test` script runs `jest`,
-but there are no test files and no jest configuration. The webapp has one
-Playwright Chromium smoke test for the map and client-side routing.
+but there are no test files and no jest configuration. The webapp has Playwright Chromium checks for the map, client-side routing,
+MUI dialogs, mobile posting controls, and form payloads. The form fixture uses
+local callbacks and does not write to Firebase.
 
-Until real tests exist, verify with types and builds:
+Verify with types, builds, and browser checks:
 
 ```bash
 cd react-sdk && yarn build                          # strict tsc + noUnusedLocals
@@ -181,11 +182,6 @@ root. As a one-off workaround the compiler can be invoked directly:
 
 **`Something is already running on port 3000.`**
 Choose a different Vite port: `yarn start --port 3099`.
-
-**Vite reports an invalid Semantic UI CSS selector during minification**
-Keep `build.cssMinify: 'esbuild'` in `webapp/vite.config.mjs`. Semantic UI 2.4
-contains generated CSS that Lightning CSS rejects; this setting can be revisited
-when Semantic UI is replaced or upgraded.
 
 **Map is blank / grey**
 Check that the browser supports WebGL and can reach `tiles.openfreemap.org`. Also

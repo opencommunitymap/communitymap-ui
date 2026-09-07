@@ -5,7 +5,9 @@ import 'firebase/auth';
 
 const AuthContext = React.createContext<AuthUser>(undefined);
 
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   const [user, setUser] = useState<firebase.User | null | undefined>();
 
   useEffect(() => {

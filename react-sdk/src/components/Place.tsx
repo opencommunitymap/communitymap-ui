@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { ObjectItemInput, ObjectItemComponentProps } from '..';
-import { Icon, Image, Form } from 'semantic-ui-react';
+import { Button, TextField, Stack } from '@mui/material';
+import StorefrontRounded from '@mui/icons-material/StorefrontRounded';
+import OpenInNewRounded from '@mui/icons-material/OpenInNewRounded';
 import { CommentsList, PostCommentWidget } from './Comments';
 import './Place.css';
 import './commonStyles.css';
@@ -44,15 +46,13 @@ export const Place: React.FC<ObjectItemComponentProps> = ({
     return comments.sort((l, r) => (l.created < r.created ? -1 : 1));
   }, [comments]);
 
-  const icon = 'building outline';
-
   return (
     <div
       className={cx({ item: true, 'place-item': true, expanded })}
       onClick={onClick}
     >
       <div className="title">
-        {logoURL ? <Image src={logoURL} /> : <Icon name={icon} />}
+        {logoURL ? <img src={logoURL} alt="" /> : <StorefrontRounded />}
         {title}
       </div>
 
@@ -62,7 +62,7 @@ export const Place: React.FC<ObjectItemComponentProps> = ({
       {expanded && !!url && (
         <p className="external-url">
           <a href={normalizeUrl(url)} title={url}>
-            <Icon name="external" /> {url}
+            <OpenInNewRounded fontSize="small" /> {url}
           </a>
         </p>
       )}
@@ -108,9 +108,11 @@ export const AddNewPlaceObject: React.FC<{
   return (
     <div className="add-new-place">
       <h4>
-        <Icon name="building outline" /> New place
+        <StorefrontRounded /> New place
       </h4>
-      <Form
+      <Stack
+        component="form"
+        spacing={2.5}
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
@@ -134,18 +136,18 @@ export const AddNewPlaceObject: React.FC<{
         }}
       >
         {REACT_APP_CLOUDINARY_CLOUD_NAME && (
-          <Form.Field>
+          <div>
             <label>Logo</label>
             <CloudinaryImageUpload
               cloudName={REACT_APP_CLOUDINARY_CLOUD_NAME}
               uploadPreset={REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO}
               onChange={(logoURL) => setState({ ...state, logoURL })}
             >
-              {state.logoURL && <Image src={state.logoURL} alt="logo" />}
+              {state.logoURL && <img src={state.logoURL} alt="Place logo" />}
             </CloudinaryImageUpload>
-          </Form.Field>
+          </div>
         )}
-        <Form.Input
+        <TextField
           autoComplete="off"
           label="Name"
           placeholder="e.g. Annie's Bakery"
@@ -153,7 +155,7 @@ export const AddNewPlaceObject: React.FC<{
           required
           onChange={onChange}
         />
-        <Form.Input
+        <TextField
           autoComplete="off"
           label="Very brief description"
           name="short_description"
@@ -161,13 +163,15 @@ export const AddNewPlaceObject: React.FC<{
           required
           onChange={onChange}
         />
-        <Form.Input
+        <TextField
           autoComplete="off"
           label="Website URL"
           name="url"
           onChange={onChange}
         />
-        <Form.TextArea
+        <TextField
+          multiline
+          minRows={4}
           autoFocus
           required
           label="Description"
@@ -175,8 +179,10 @@ export const AddNewPlaceObject: React.FC<{
           onChange={onChange}
         />
 
-        <Form.Button primary>Add</Form.Button>
-      </Form>
+        <Button type="submit" variant="contained">
+          Add
+        </Button>
+      </Stack>
     </div>
   );
 };

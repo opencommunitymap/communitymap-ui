@@ -15,17 +15,16 @@ export const OPEN_FREE_MAP_STYLES = {
 
 export type MapStyle = string | StyleSpecification;
 
-export const MapItem: React.FC<{ lat: number; lng: number }> = ({
-  children,
-  lat,
-  lng,
-}) => (
+export const MapItem: React.FC<
+  React.PropsWithChildren<{ lat: number; lng: number }>
+> = ({ children, lat, lng }) => (
   <Marker latitude={lat} longitude={lng} anchor="center">
     <div className="map-item">{children}</div>
   </Marker>
 );
 
 export interface MapsProps {
+  children?: React.ReactNode;
   center?: Loc;
   zoom?: number;
   defaultCenter?: Loc;

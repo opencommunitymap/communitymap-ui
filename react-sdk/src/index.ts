@@ -1,3 +1,5 @@
+export * from './components/CommunityMapTheme';
+export * from './components/CommunityDialog';
 export * from './components/AuthorWidget';
 export * from './components/PointingSegment';
 export * from './components/Pin';

@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import firebase from 'firebase/app';
 import { getFirebaseApp } from '../utils/firebase';
 import 'firebase/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
-import { Modal } from 'semantic-ui-react';
+import { CommunityDialog } from './CommunityDialog';
 
-export const Login: React.FC<{ title?: string; onClose?: () => void }> = ({
-  title = 'You need to sign in to continue',
-  onClose,
-}) => {
+const SignInWidget: React.FC = () => {
+  const container = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const uiConfig = {
       signInFlow: 'popup',
@@ -36,21 +34,28 @@ export const Login: React.FC<{ title?: string; onClose?: () => void }> = ({
       getFirebaseApp().name
     );
     // The start method will wait until the DOM is loaded.
-    ui.start('#firebaseui-auth-container', uiConfig);
+    ui.start(container.current!, uiConfig);
 
     return () => {
       ui.delete();
     };
   }, []);
 
-  return (
-    <Modal closeIcon size="mini" open onClose={onClose}>
-      <Modal.Header>{title}</Modal.Header>
-      <Modal.Content>
-        <div style={{ margin: '3em 1.5em' }}>
-          <div id="firebaseui-auth-container"></div>
-        </div>
-      </Modal.Content>
-    </Modal>
-  );
+  return <div ref={container} />;
 };
+
+export const Login: React.FC<{ title?: string; onClose?: () => void }> = ({
+  title = 'You need to sign in to continue',
+  onClose,
+}) => (
+  <CommunityDialog
+    open
+    onClose={onClose}
+    maxWidth="xs"
+    title={title || 'Welcome to your community'}
+  >
+    <div style={{ margin: '24px 0' }}>
+      <SignInWidget />
+    </div>
+  </CommunityDialog>
+);

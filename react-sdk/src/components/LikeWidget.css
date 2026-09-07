@@ -1,17 +1,14 @@
 .like-widget {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
 }
-
-.like-widget button {
-  background: none !important;
-  padding: 5px !important;
-}
-
 .like-widget > .votes-count {
-  font-size: 1.5em;
+  font-size: 13px;
+  font-weight: 600;
+  color: #147d70;
 }
-
-.like-widget button.disabled {
-  color: red;
+.like-widget .MuiIconButton-root.Mui-disabled {
+  color: #147d70;
+  background: #e8f3ee;
 }

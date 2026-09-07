@@ -25,8 +25,9 @@ import {
   MapStyle,
 } from '..';
 import { RenderAuthorProvider } from '../utils/renderAuthor';
-import { Modal, Loader } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
+import { CircularProgress } from '@mui/material';
+import { CommunityDialog } from '../components/CommunityDialog';
+import { CommunityMapTheme } from '../components/CommunityMapTheme';
 
 const isDEV_ENV = process.env.NODE_ENV === 'development';
 
@@ -202,16 +203,18 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
             );
           })}
       </Maps>
-      <Modal open={!!showObjectId} onClose={onModalClose} closeIcon>
-        <Modal.Content scrolling>
-          {!!showObjectId && (
-            <ExpandedObjectView
-              objectId={showObjectId}
-              renderObject={renderObject}
-            />
-          )}
-        </Modal.Content>
-      </Modal>
+      <CommunityDialog
+        open={!!showObjectId}
+        onClose={onModalClose}
+        title="Around your community"
+      >
+        {!!showObjectId && (
+          <ExpandedObjectView
+            objectId={showObjectId}
+            renderObject={renderObject}
+          />
+        )}
+      </CommunityDialog>
       {profileWidget !== undefined ? profileWidget : <ProfileWidget />}
       {navigationWidget !== undefined ? (
         navigationWidget
@@ -226,9 +229,11 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
 
 export const CommunityMap: React.FC<CommunityMapProps> = (props) => {
   return (
-    <AuthProvider>
-      <CommunityMapImpl {...props} />
-    </AuthProvider>
+    <CommunityMapTheme>
+      <AuthProvider>
+        <CommunityMapImpl {...props} />
+      </AuthProvider>
+    </CommunityMapTheme>
   );
 };
 
@@ -240,7 +245,8 @@ const ExpandedObjectView: React.FC<{
 
   const object = useLoadSingleObject(objectId, user);
 
-  if (object === undefined) return <Loader active />;
+  if (object === undefined)
+    return <CircularProgress aria-label="Loading post" />;
   if (object === null) return <div>Object not found :(</div>;
 
   const render: RenderObjectCallback = (props) => {
