@@ -18,7 +18,7 @@ export default defineConfig({
   ],
   webServer: {
     // Exercise Vite's dependency optimizer as well as the browser application.
-    command: 'yarn start --host 127.0.0.1',
+    command: 'pnpm start --host 127.0.0.1',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
   },

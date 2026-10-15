@@ -22,7 +22,7 @@ for the stored shapes behind these types see [DB.md](DB.md).
 ## Installation
 
 ```bash
-yarn add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
+pnpm add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 # or: npm i @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
 

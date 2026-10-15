@@ -8,7 +8,7 @@ For the condensed version aimed at AI agents, see [AGENTS.md](../AGENTS.md).
 | Tool | Version | Notes |
 | --- | --- | --- |
 | Node.js | 24 | Pinned in [`.nvmrc`](../.nvmrc); use the current LTS release. |
-| Yarn | 1.x (classic) | Required — the repo uses Yarn v1 **workspaces**. `packageManager` pins `yarn@1.22.21`. npm will not link the workspaces correctly. |
+| pnpm | 12.11.2 | Required — `packageManager` in the root `package.json` pins the version. Workspaces are declared in `pnpm-workspace.yaml`. |
 | Firebase CLI | 15.x (`firebase-tools`) | Only needed for deploying or editing rules/indexes. Installed as a devDependency. |
 
 ## First-time setup
@@ -17,12 +17,22 @@ For the condensed version aimed at AI agents, see [AGENTS.md](../AGENTS.md).
 git clone git@github.com:<YOUR_GITHUB_USER>/communitymap-ui.git
 cd communitymap-ui
 
-yarn install            # run at the ROOT — never inside a workspace
+corepack enable
+pnpm install            # run at the ROOT — installs both workspaces
 ```
 
-Yarn hoists all dependencies into the root `node_modules/` and symlinks
-`node_modules/@opencommunitymap/react-sdk` → `react-sdk/`. That symlink is how the
-webapp resolves the SDK.
+pnpm gives each workspace access to its declared dependencies and symlinks
+`webapp/node_modules/@opencommunitymap/react-sdk` → `react-sdk/`. The webapp's
+`workspace:^` dependency guarantees it uses the local SDK. Keep `pnpm-lock.yaml`
+committed; CI installs it with `pnpm install --frozen-lockfile`.
+
+When switching an existing checkout from Yarn, remove the old dependency trees
+before installing:
+
+```bash
+rm -rf node_modules react-sdk/node_modules webapp/node_modules
+pnpm install
+```
 
 Create the optional webapp environment file if you need to override Firebase or
 enable Cloudinary uploads:
@@ -40,7 +50,7 @@ They live in `webapp/.env` (git-ignored) locally, and in GitHub Secrets for CI.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `REACT_APP_OCM_ENV` | no | Which baked-in Firebase project to use: `production` or `development`. Defaults to `NODE_ENV`, so `yarn start` → dev project, `yarn build` → production project. |
+| `REACT_APP_OCM_ENV` | no | Which baked-in Firebase project to use: `production` or `development`. Defaults to `NODE_ENV`, so `pnpm start` → dev project, `pnpm build` → production project. |
 | `REACT_APP_CLOUDINARY_CLOUD_NAME` | no | Enables the logo upload widget on the "Place" form. Without it the field is hidden. |
 | `REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO` | no | Unsigned Cloudinary upload preset — recommended, to cap image size. |
 
@@ -54,30 +64,30 @@ The webapp imports `@opencommunitymap/react-sdk`, whose `main` is
 
 ```bash
 cd react-sdk
-yarn build      # rm -rf dist && tsc && sync-glob src/components/*.css -> dist/components/
+pnpm build      # rm -rf dist && tsc && sync-glob src/components/*.css -> dist/components/
 ```
 
 must run before the webapp can see any SDK change. While working on both at once:
 
 ```bash
-cd react-sdk && yarn watch     # tsc -w plus a CSS watcher, via concurrently
+cd react-sdk && pnpm watch     # tsc -w plus a CSS watcher, via concurrently
 # ...in a second terminal:
-cd webapp && yarn start
+cd webapp && pnpm start
 ```
 
-Note that `yarn build` **deletes `dist/` first**. If the TypeScript compile fails,
+Note that `pnpm build` **deletes `dist/` first**. If the TypeScript compile fails,
 you are left with no `dist/` at all and the webapp will report that
 `@opencommunitymap/react-sdk` cannot be found. Fix the compile error and rebuild;
 nothing else is wrong.
 
-From the repo root, `yarn build` runs `yarn workspaces run build`, which builds
-`react-sdk` then `webapp` in workspace order.
+From the repo root, `pnpm build` runs `pnpm -r run build`. pnpm follows workspace
+dependencies, so it builds `react-sdk` before `webapp`.
 
 ## Running the webapp
 
 ```bash
 cd webapp
-yarn start        # http://localhost:3000
+pnpm start        # http://localhost:3000
 ```
 
 Useful URLs while developing:
@@ -116,14 +126,14 @@ contract and verification checklist.
 Verify with types, builds, and browser checks:
 
 ```bash
-cd react-sdk && yarn build                          # strict tsc + noUnusedLocals
-cd webapp   && npx tsc --noEmit -p tsconfig.json    # quick typecheck of the app
-cd webapp   && yarn build                           # typecheck + Vite production build
-yarn test:e2e                                       # from root; uses that build
+cd react-sdk && pnpm build                          # strict tsc + noUnusedLocals
+cd webapp   && pnpm exec tsc --noEmit -p tsconfig.json    # quick typecheck of the app
+cd webapp   && pnpm build                           # typecheck + Vite production build
+pnpm test:e2e                                       # from root; uses that build
 ```
 
 Install Chromium once before the first local smoke run with
-`yarn workspace community-map playwright install chromium`. CI installs Chromium
+`pnpm --filter community-map exec playwright install chromium`. CI installs Chromium
 and its system dependencies automatically.
 
 Then exercise the change in the browser — most of this codebase is realtime
@@ -149,8 +159,8 @@ major CLI release. Manual deployment, if you have access:
 
 ```bash
 cd webapp
-yarn deploy                # build + firebase deploy (everything)
-yarn deploy_hosting        # build + hosting only
+pnpm run deploy            # build + firebase deploy (everything)
+pnpm run deploy_hosting    # build + hosting only
 ```
 
 Firestore rules and indexes are deployed from the repo root
@@ -159,7 +169,7 @@ and [firestore.indexes.json](../firestore.indexes.json)). After changing indexes
 the Firebase console, sync them back with:
 
 ```bash
-cd webapp && yarn index_sync
+cd webapp && pnpm index_sync
 ```
 
 Hosting also rewrites `/api/v0/object/**` and `/hello/**` to Cloud Functions that
@@ -184,17 +194,17 @@ by the app — the code that imported it is commented out in `webapp/src/App.tsx
 
 **`Cannot find module '@opencommunitymap/react-sdk'`**
 The SDK's `dist/` is missing (failed/interrupted build) or the workspace symlink is
-absent. Run `cd react-sdk && yarn build`; if that is not enough, `yarn install` at
+absent. Run `cd react-sdk && pnpm build`; if that is not enough, `pnpm install` at
 the root.
 
-**`Cannot find module '../lib/tsc.js'` when running `yarn build`**
+**`Cannot find module '../lib/tsc.js'` when running `pnpm build`**
 The `node_modules/.bin` shims are broken — typical of a `node_modules` restored from
-a backup or created by a different package manager. Re-run `yarn install` at the
-root. As a one-off workaround the compiler can be invoked directly:
-`node ../node_modules/typescript/bin/tsc`.
+a backup or created by a different package manager. Re-run `pnpm install` at the
+root. To invoke the workspace's installed compiler directly, use `pnpm exec tsc`
+inside that workspace.
 
 **`Something is already running on port 3000.`**
-Choose a different Vite port: `yarn start --port 3099`.
+Choose a different Vite port: `pnpm start --port 3099`.
 
 **Map is blank / grey**
 Check that the browser supports WebGL and can reach `tiles.openfreemap.org`. Also

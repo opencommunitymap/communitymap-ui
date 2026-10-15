@@ -8,12 +8,12 @@
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "deploy": "yarn build && firebase deploy",
-    "deploy_hosting": "yarn build && firebase deploy --only hosting:communitymap",
+    "deploy": "pnpm run build && firebase deploy",
+    "deploy_hosting": "pnpm run build && firebase deploy --only hosting:communitymap",
     "index_sync": "firebase firestore:indexes > ../firestore.indexes.json"
   },
   "dependencies": {
-    "@opencommunitymap/react-sdk": "^0.1.0-rc11",
+    "@opencommunitymap/react-sdk": "workspace:^",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.23",
     "firebase": "^12.18.0",
@@ -33,8 +33,6 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "firebase-ci": "^0.15.1",
-    "firebase-tools": "^15.29.0",
     "typescript": "~7.0.2",
     "vite": "^8.2.2"
   },

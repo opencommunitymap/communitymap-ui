@@ -20,14 +20,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: yarn
+          cache: pnpm
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Expose Application Environment Variables
         env:
@@ -44,7 +47,7 @@ jobs:
           echo "REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO=$REACT_APP_CLOUDINARY_UPLOAD_PRESET_LOGO" >> "$GITHUB_ENV"
 
       - name: Verify App
-        run: yarn build
+        run: pnpm build
 
       - name: Deploy to Firebase
         env:
@@ -52,7 +55,7 @@ jobs:
           GITHUB_REF: ${{ github.ref }}
           GITHUB_HEAD_REF: ${{ github.head_ref }}
         run: |
-          $(yarn bin)/firebase-ci deploy -s
+          pnpm exec firebase-ci deploy -s
 
       - name: Check SDK release
         if: github.ref_name == 'prod'

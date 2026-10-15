@@ -149,7 +149,7 @@ deleted through the client — expiry via `valid_until` is the only removal mech
 ## Composite indexes
 
 [firestore.indexes.json](../firestore.indexes.json) — keep it in sync with the
-console using `cd webapp && yarn index_sync`.
+console using `cd webapp && pnpm index_sync`.
 
 All indexes use the `COLLECTION` query scope.
 

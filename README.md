@@ -88,9 +88,10 @@ Fork the project and then clone your fork. [Read more about Fork & PR strategy](
 ```
 git clone git@github.com:<YOUR_GITHUB_USER>/communitymap-ui.git
 
-cd community-map/
+cd communitymap-ui/
 
-yarn install
+corepack enable
+pnpm install
 ```
 
 Build the _react-sdk_ library, that is part of the repo.
@@ -98,17 +99,17 @@ Build the _react-sdk_ library, that is part of the repo.
 ```
 cd react-sdk/
 
-yarn build
+pnpm build
 ```
 
-Use `yarn watch` to make the build process monitor continuosly file changes.
+Use `pnpm watch` to make the build process monitor continuosly file changes.
 
 Now you can run the web app in another console:
 
 ```
 cd webapp/
 
-yarn start
+pnpm start
 ```
 
 It runs the app in the development mode.

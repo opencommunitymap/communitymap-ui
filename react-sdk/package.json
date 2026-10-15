@@ -6,8 +6,8 @@
   "homepage": "https://github.com/opencommunitymap/communitymap-ui",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rm -rf dist && tsc && yarn sync-css",
-    "watch": "rm -rf dist && concurrently 'tsc -w' 'yarn sync-css -w'",
+    "build": "rm -rf dist && tsc && pnpm run sync-css",
+    "watch": "rm -rf dist && concurrently 'tsc -w' 'pnpm run sync-css -w'",
     "sync-css": "sync-glob -d false src/components/*.css dist/components/"
   },
   "peerDependencies": {

@@ -2,17 +2,17 @@
   "name": "communitymap-ui",
   "private": true,
   "license": "Apache-2.0",
-  "workspaces": [
-    "react-sdk",
-    "webapp"
-  ],
   "scripts": {
-    "build": "yarn workspaces run build",
-    "test:e2e": "yarn workspace community-map test:e2e"
+    "build": "pnpm -r run build",
+    "test:e2e": "pnpm --filter community-map run test:e2e"
+  },
+  "devDependencies": {
+    "firebase-ci": "^0.15.1",
+    "firebase-tools": "^15.29.0"
   },
   "engines": {
     "node": ">=24",
-    "yarn": "1.x"
+    "pnpm": "12.x"
   },
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  "packageManager": "pnpm@12.11.2"
 }
