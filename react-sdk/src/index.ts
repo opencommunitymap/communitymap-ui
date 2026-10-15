@@ -1,4 +1,5 @@
 import type { JSX } from 'react';
+import type firebase from 'firebase/compat/app';
 
 export * from './components/CommunityMapTheme';
 export * from './components/CommunityDialog';

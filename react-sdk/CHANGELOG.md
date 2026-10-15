@@ -2,6 +2,13 @@
 
 - Support React and React DOM 19. The peer range is now `^18.0.0 || ^19.0.0`
   and the workspace builds and tests on React 19.2.
+- Move to the Firebase compat layer: peers are now `firebase` 9 through 12 and
+  `firebaseui@^6`. Firebase 7 and 8 and firebaseui 4 and 5 are no longer supported.
+  Type imports such as `firebase.User` come from `firebase/compat/app`.
+- Build with TypeScript 7 targeting ES2020 and the automatic JSX runtime. The
+  published `dist/` no longer contains ES5 helpers or `React.createElement`.
+- Drop the unused jest, Babel and testing-library dev tooling and the `test`
+  script.
 
 ## 0.1.0-rc9
 

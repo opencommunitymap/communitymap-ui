@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import type firebase from 'firebase/compat/app';
 import {
   Loc,
   useAuth,

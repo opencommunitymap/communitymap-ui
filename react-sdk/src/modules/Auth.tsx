@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthUser } from '..';
 import { getFirebaseApp } from '../utils/firebase';
-import 'firebase/auth';
+import 'firebase/compat/auth';
 
 const AuthContext = React.createContext<AuthUser>(undefined);
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const [user, setUser] = useState<firebase.User | null | undefined>();
+  const [user, setUser] = useState<AuthUser>();
 
   useEffect(() => {
     return getFirebaseApp()

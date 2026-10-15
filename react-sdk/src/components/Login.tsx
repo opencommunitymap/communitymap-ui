@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { getFirebaseApp } from '../utils/firebase';
-import 'firebase/auth';
+import 'firebase/compat/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 import { CommunityDialog } from './CommunityDialog';

@@ -81,8 +81,7 @@ actually writes:
 The remaining verification gap is unit-level coverage:
 
 1. The webapp now has a Playwright Chromium smoke test for its MapLibre map and
-   client-side routing, but `react-sdk`'s `yarn test` still runs `jest` with no
-   test files and no config.
+   client-side routing, but `react-sdk` still has no unit tests.
 2. Add a lint step to CI once the codebase has a shared lint configuration.
 3. Keep the API reference honest as the SDK moves past `0.1.0-rc8`: a change to
    `react-sdk/src/index.ts` should come with a `CHANGELOG.md` entry and a matching

@@ -51,8 +51,8 @@ Full setup, environment variables and troubleshooting: [docs/development.md](doc
 
 ### How to verify a change
 
-There is no unit-test suite. `react-sdk`'s `yarn test` runs `jest` with no test
-files and no jest config. The webapp has a small Playwright Chromium smoke test.
+There is no unit-test suite and `react-sdk` has no test script. The webapp has a
+small Playwright Chromium smoke test.
 
 Verify with the type checker and the build instead:
 

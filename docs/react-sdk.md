@@ -26,7 +26,8 @@ yarn add @opencommunitymap/react-sdk firebase firebaseui
 # or: npm i @opencommunitymap/react-sdk firebase firebaseui
 ```
 
-`firebase@^7`, `firebaseui@^4`, and React / React DOM 18 or 19 are **peer**
+`firebase` (9 through 12, used through its `firebase/compat/*` entry points),
+`firebaseui@^6`, and React / React DOM 18 or 19 are **peer**
 dependencies — the SDK will not install them for you. MUI 9, Emotion,
 `maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` are regular dependencies.
 MapLibre CSS is imported by the SDK; Semantic UI is no longer needed.

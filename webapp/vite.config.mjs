@@ -5,7 +5,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'REACT_APP_');
 
   return {
-    plugins: [react({ jsxRuntime: 'classic' })],
+    plugins: [react()],
     envPrefix: ['VITE_', 'REACT_APP_'],
     server: {
       port: 3000,

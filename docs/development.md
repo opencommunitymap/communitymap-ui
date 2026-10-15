@@ -9,7 +9,7 @@ For the condensed version aimed at AI agents, see [AGENTS.md](../AGENTS.md).
 | --- | --- | --- |
 | Node.js | 24 | Pinned in [`.nvmrc`](../.nvmrc); use the current LTS release. |
 | Yarn | 1.x (classic) | Required — the repo uses Yarn v1 **workspaces**. `packageManager` pins `yarn@1.22.21`. npm will not link the workspaces correctly. |
-| Firebase CLI | 8.x (`firebase-tools`) | Only needed for deploying or editing rules/indexes. Installed as a devDependency. |
+| Firebase CLI | 15.x (`firebase-tools`) | Only needed for deploying or editing rules/indexes. Installed as a devDependency. |
 
 ## First-time setup
 
@@ -98,8 +98,8 @@ every object posted through that embed.
 
 ## Verifying a change
 
-There is no unit-test suite in this repo. `react-sdk`'s `test` script runs `jest`,
-but there are no test files and no jest configuration. The webapp has Playwright Chromium checks for the map, client-side routing,
+There is no unit-test suite in this repo and `react-sdk` has no test script.
+The webapp has Playwright Chromium checks for the map, client-side routing,
 MUI dialogs, mobile posting controls, and form payloads. The form fixture uses
 local callbacks and does not write to Firebase.
 
@@ -132,7 +132,10 @@ Deployment is automatic via GitHub Actions
 | `prod` | `communitymap42` | explicit alias |
 
 Mapping lives in [.firebaserc](../.firebaserc), and `firebase-ci` picks the alias
-matching the branch name. Manual deployment, if you have access:
+matching the branch name. The workflow authenticates with the `FIREBASE_TOKEN`
+secret; `firebase-tools` marks that flow deprecated in favour of a service
+account (`GOOGLE_APPLICATION_CREDENTIALS`), so plan to switch before the next
+major CLI release. Manual deployment, if you have access:
 
 ```bash
 cd webapp

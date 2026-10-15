@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
-  useHistory,
-  useRouteMatch,
+  useNavigate,
+  useMatch,
   Link,
 } from 'react-router-dom';
 import queryString from 'query-string';
@@ -34,9 +34,9 @@ import {
   CommunityDialog,
 } from '@opencommunitymap/react-sdk';
 import { InitialAppParams, EmbedParams } from './types';
-import 'firebase/analytics';
-import 'firebase/auth';
-import 'firebase/firestore';
+import 'firebase/compat/analytics';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import { CssBaseline, Paper, Typography } from '@mui/material';
 import PublicRounded from '@mui/icons-material/PublicRounded';
 
@@ -107,11 +107,9 @@ const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
 const Home: React.FC = () => {
   const user = useAuth() || null;
   const [currentLocation, setCurrentLocation] = useState(defaultCenter);
-  const router = useHistory();
+  const navigate = useNavigate();
 
-  const objectRouteMatch = useRouteMatch<{ objectId: string }>(
-    '/object/:objectId'
-  );
+  const objectRouteMatch = useMatch('/object/:objectId');
 
   return (
     <div id="home">
@@ -142,10 +140,10 @@ const Home: React.FC = () => {
         onChange={(center) => setCurrentLocation(center)}
         showObjectId={objectRouteMatch?.params?.objectId}
         onClickObject={(obj) => {
-          router.push(`/object/${obj.id}`);
+          navigate(`/object/${obj.id}`);
           return true;
         }}
-        onObjectModalClose={() => router.push('/')}
+        onObjectModalClose={() => navigate('/')}
         centerPin={<Pin color="#147d70" />}
         autolocate={initialParams?.autolocate}
         filterOrigin={initialParams?.filterOrigin}
@@ -162,50 +160,65 @@ const Home: React.FC = () => {
         />
       )}
 
-      <Switch>
-        <Route path="/direct-messages/:dmKey">
-          <DirectMessageModal onClose={() => router.push('/')} />
-        </Route>
-        <Route path="/users/:userId">
-          <CommunityDialog
-            open
-            onClose={() => router.push('/')}
-            title="Community profile"
-          >
-            <UserPage />
-          </CommunityDialog>
-        </Route>
-        <Route path="/my-messages">
-          <CommunityDialog
-            open
-            onClose={() => router.push('/')}
-            maxWidth="sm"
-            title="Messages"
-          >
-            <DirectMessageDialogs />
-          </CommunityDialog>
-        </Route>
-        <Route path="/terms">
-          <CommunityDialog
-            open
-            onClose={() => router.push('/')}
-            maxWidth="lg"
-            title="Terms of Service"
-          >
-            <TermsOfService />
-          </CommunityDialog>
-        </Route>
-        <Route path="/privacy">
-          <CommunityDialog
-            open
-            onClose={() => router.push('/')}
-            maxWidth="lg"
-            title="Privacy and Cookie Policy"
-          >
-            <PrivacyPolicy />
-          </CommunityDialog>
-        </Route>
-      </Switch>
+      <Routes>
+        <Route
+          path="/direct-messages/:dmKey"
+          element={<DirectMessageModal onClose={() => navigate('/')} />}
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              title="Community profile"
+            >
+              <UserPage />
+            </CommunityDialog>
+          }
+        />
+        <Route
+          path="/my-messages"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              maxWidth="sm"
+              title="Messages"
+            >
+              <DirectMessageDialogs />
+            </CommunityDialog>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              maxWidth="lg"
+              title="Terms of Service"
+            >
+              <TermsOfService />
+            </CommunityDialog>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              maxWidth="lg"
+              title="Privacy and Cookie Policy"
+            >
+              <PrivacyPolicy />
+            </CommunityDialog>
+          }
+        />
+        {/* The map itself renders above; other paths open no dialog. */}
+        <Route path="*" element={null} />
+      </Routes>
     </div>
   );
 };
