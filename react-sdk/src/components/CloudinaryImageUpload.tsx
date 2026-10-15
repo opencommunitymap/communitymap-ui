@@ -1,8 +1,10 @@
 import React, { useMemo, useRef } from 'react';
-import { Icon } from 'semantic-ui-react';
+import { IconButton } from '@mui/material';
+import AddPhotoAlternateOutlined from '@mui/icons-material/AddPhotoAlternateOutlined';
 import './CloudinaryImageUpload.css';
 
 export interface UploadWidgetProps {
+  children?: React.ReactNode;
   cloudName: string;
   uploadPreset?: string;
   onChange: (value: string) => void;
@@ -36,9 +38,13 @@ const CloudinaryImageUpload: React.FC<UploadWidgetProps> = ({
   return (
     <div className="cloudinary-upload-widget">
       {children}
-      <div className="cloudinary-overlay-widget" onClick={() => widget.open()}>
-        <Icon size="tiny" name="edit outline" />
-      </div>
+      <IconButton
+        aria-label="Upload logo"
+        className="cloudinary-overlay-widget"
+        onClick={() => widget.open()}
+      >
+        <AddPhotoAlternateOutlined />
+      </IconButton>
     </div>
   );
 };

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
-  useHistory,
-  useRouteMatch,
+  useNavigate,
+  useMatch,
   Link,
 } from 'react-router-dom';
-import 'semantic-ui-css/semantic.min.css';
 import queryString from 'query-string';
 import './App.css';
 
@@ -28,16 +27,19 @@ import {
   useAuth,
   AuthProvider,
   RenderAuthorCallback,
+  OPEN_FREE_MAP_STYLES,
   postObject,
   initFirebase,
+  CommunityMapTheme,
+  CommunityDialog,
 } from '@opencommunitymap/react-sdk';
 import { InitialAppParams, EmbedParams } from './types';
-import 'firebase/analytics';
-import 'firebase/auth';
-import 'firebase/firestore';
-import { Modal } from 'semantic-ui-react';
+import 'firebase/compat/analytics';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import { CssBaseline, Paper, Typography } from '@mui/material';
+import PublicRounded from '@mui/icons-material/PublicRounded';
 
-const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 const OCM_ENV = process.env.REACT_APP_OCM_ENV || process.env.NODE_ENV;
 
 const __initFirebase = async () => {
@@ -54,7 +56,9 @@ const __initFirebase = async () => {
   // }
 };
 
-const FirebaseInitializer: React.FC = ({ children }) => {
+const FirebaseInitializer: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -85,7 +89,16 @@ const embedParams: EmbedParams | null = isEmbed
     }
   : null;
 
-const defaultCenter = { latitude: 42.69, longitude: 23.32 };
+const defaultCenter =
+  typeof initialParams?.centerLat === 'number' &&
+  typeof initialParams?.centerLng === 'number'
+    ? {
+        latitude: initialParams.centerLat,
+        longitude: initialParams.centerLng,
+      }
+    : { latitude: 42.69, longitude: 23.32 };
+
+const mapStyle = OPEN_FREE_MAP_STYLES[initialParams?.theme || 'standard'];
 
 const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
   <Link to={`/users/${userId}`}>{authorInfo?.name || 'Anonymous'}</Link>
@@ -94,25 +107,44 @@ const renderAuthor: RenderAuthorCallback = (userId, authorInfo) => (
 const Home: React.FC = () => {
   const user = useAuth() || null;
   const [currentLocation, setCurrentLocation] = useState(defaultCenter);
-  const router = useHistory();
+  const navigate = useNavigate();
 
-  const objectRouteMatch = useRouteMatch<{ objectId: string }>(
-    '/object/:objectId'
-  );
+  const objectRouteMatch = useMatch('/object/:objectId');
 
   return (
     <div id="home">
+      <Paper component="header" className="map-brand">
+        <span className="brand-mark">
+          <PublicRounded />
+        </span>
+        <div>
+          <Typography
+            component="h1"
+            variant="subtitle1"
+            sx={{ fontWeight: 750, lineHeight: 1.2 }}
+          >
+            Open Community Map
+          </Typography>
+          <Typography
+            className="brand-tagline"
+            variant="caption"
+            color="text.secondary"
+          >
+            A little closer to your community
+          </Typography>
+        </div>
+      </Paper>
       <CommunityMap
         defaultCenter={defaultCenter}
+        mapStyle={mapStyle}
         onChange={(center) => setCurrentLocation(center)}
-        mapApiKey={GOOGLE_API_KEY}
         showObjectId={objectRouteMatch?.params?.objectId}
         onClickObject={(obj) => {
-          router.push(`/object/${obj.id}`);
+          navigate(`/object/${obj.id}`);
           return true;
         }}
-        onObjectModalClose={() => router.push('/')}
-        centerPin={<Pin color="#2185d0" />}
+        onObjectModalClose={() => navigate('/')}
+        centerPin={<Pin color="#147d70" />}
         autolocate={initialParams?.autolocate}
         filterOrigin={initialParams?.filterOrigin}
         profileWidget={<ProfileWidgetPlus />}
@@ -128,42 +160,65 @@ const Home: React.FC = () => {
         />
       )}
 
-      <Switch>
-        <Route path="/direct-messages/:dmKey">
-          <DirectMessageModal onClose={() => router.push('/')} />
-        </Route>
-        <Route path="/users/:userId">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Content scrolling>
+      <Routes>
+        <Route
+          path="/direct-messages/:dmKey"
+          element={<DirectMessageModal onClose={() => navigate('/')} />}
+        />
+        <Route
+          path="/users/:userId"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              title="Community profile"
+            >
               <UserPage />
-            </Modal.Content>
-          </Modal>
-        </Route>
-        <Route path="/my-messages">
-          <Modal open closeIcon size="tiny" onClose={() => router.push('/')}>
-            <Modal.Header>Messages</Modal.Header>
-            <Modal.Content scrolling>
+            </CommunityDialog>
+          }
+        />
+        <Route
+          path="/my-messages"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              maxWidth="sm"
+              title="Messages"
+            >
               <DirectMessageDialogs />
-            </Modal.Content>
-          </Modal>
-        </Route>
-        <Route path="/terms">
-          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
-            <Modal.Header>Terms of Service</Modal.Header>
-            <Modal.Content scrolling>
+            </CommunityDialog>
+          }
+        />
+        <Route
+          path="/terms"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              maxWidth="lg"
+              title="Terms of Service"
+            >
               <TermsOfService />
-            </Modal.Content>
-          </Modal>
-        </Route>
-        <Route path="/privacy">
-          <Modal open closeIcon size="large" onClose={() => router.push('/')}>
-            <Modal.Header>Privacy and Cookie Policy</Modal.Header>
-            <Modal.Content scrolling>
+            </CommunityDialog>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <CommunityDialog
+              open
+              onClose={() => navigate('/')}
+              maxWidth="lg"
+              title="Privacy and Cookie Policy"
+            >
               <PrivacyPolicy />
-            </Modal.Content>
-          </Modal>
-        </Route>
-      </Switch>
+            </CommunityDialog>
+          }
+        />
+        {/* The map itself renders above; other paths open no dialog. */}
+        <Route path="*" element={null} />
+      </Routes>
     </div>
   );
 };
@@ -193,12 +248,15 @@ function App() {
 }
 
 export default () => (
-  <FirebaseInitializer>
-    <AuthProvider>
-      <Router basename={isEmbed ? embedBasename : undefined}>
-        <App />
-        <CookieConsentBanner />
-      </Router>
-    </AuthProvider>
-  </FirebaseInitializer>
+  <CommunityMapTheme>
+    <CssBaseline />
+    <FirebaseInitializer>
+      <AuthProvider>
+        <Router basename={isEmbed ? embedBasename : undefined}>
+          <App />
+          <CookieConsentBanner />
+        </Router>
+      </AuthProvider>
+    </FirebaseInitializer>
+  </CommunityMapTheme>
 );

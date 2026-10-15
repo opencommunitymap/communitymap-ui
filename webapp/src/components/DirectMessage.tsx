@@ -12,7 +12,22 @@ import {
   reportError,
   directMessageId,
 } from '@opencommunitymap/react-sdk';
-import { Loader, Form, Button, Modal, List } from 'semantic-ui-react';
+import {
+  CircularProgress,
+  TextField,
+  IconButton,
+  InputAdornment,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Avatar,
+  ListItemAvatar,
+  Typography,
+} from '@mui/material';
+import SendRounded from '@mui/icons-material/SendRounded';
+import { CommunityDialog } from '@opencommunitymap/react-sdk';
 import './DirectMessage.css';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,7 +40,7 @@ const SingleMessage: React.FC<{
 }> = ({ msg, isMe, peerProfile }) => {
   const { timestamp, content } = msg;
   return (
-    <div className="single-message">
+    <div className={`single-message ${isMe ? 'sent' : 'received'}`}>
       <span>
         <strong>{isMe ? 'Me' : peerProfile?.name}</strong>
         <span className="timestamp" title={timestamp}>
@@ -39,12 +54,8 @@ const SingleMessage: React.FC<{
 
 const useDirectMessageView = () => {
   const { dmKey = '' } = useParams<{ dmKey: string }>();
-  const {
-    info,
-    messages,
-    postMessage,
-    updateLastMessageReadByMe,
-  } = useDirectMessage(dmKey);
+  const { info, messages, postMessage, updateLastMessageReadByMe } =
+    useDirectMessage(dmKey);
   console.debug('DirectMessage', dmKey, { info, messages });
   const me = useAuth();
   const ids = dmKey.split('-');
@@ -80,7 +91,7 @@ const useDirectMessageView = () => {
   if (peerInfo === undefined)
     return {
       header: '',
-      content: <Loader active />,
+      content: <CircularProgress aria-label="Loading conversation" />,
       action: <span />,
     };
 
@@ -97,9 +108,7 @@ const useDirectMessageView = () => {
             peerProfile={peerInfo}
             isMe={msg.author === me.uid}
             key={msg.id}
-          >
-            {JSON.stringify(msg)}
-          </SingleMessage>
+          />
         ))}
         <div ref={refMessagesBottom} />
       </div>
@@ -109,14 +118,35 @@ const useDirectMessageView = () => {
   );
 
   const action = me ? (
-    <Form onSubmit={onSubmit}>
-      <Form.Input
+    <form
+      className="message-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+    >
+      <TextField
         value={message}
-        placeholder="Your message here"
-        action={<Button icon="send" />}
-        onChange={(e, { value }) => setMessage(value as string)}
+        label="Your message"
+        onChange={(e) => setMessage(e.target.value)}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  type="submit"
+                  color="primary"
+                  aria-label="Send message"
+                  disabled={!message.trim()}
+                >
+                  <SendRounded />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
       />
-    </Form>
+    </form>
   ) : (
     <span />
   );
@@ -129,17 +159,14 @@ export const DirectMessageModal: React.FC<{ onClose: () => void }> = ({
 }) => {
   const { header, content, action } = useDirectMessageView();
   return (
-    <Modal
+    <CommunityDialog
       open
-      closeIcon
-      size="tiny"
-      className="modal-direct-message"
       onClose={onClose}
+      title={header || 'Messages'}
+      actions={<DialogActions>{action}</DialogActions>}
     >
-      <Modal.Header>{header}</Modal.Header>
-      <Modal.Content scrolling>{content}</Modal.Content>
-      <Modal.Actions>{action}</Modal.Actions>
-    </Modal>
+      {content}
+    </CommunityDialog>
   );
 };
 
@@ -152,22 +179,28 @@ const DialogInfoItem: React.FC<{ info: DirectMessageInfo; me: AuthUser }> = ({
   const peer = useUserPublicInfo(peerId);
   const unread = lastMsgId !== lastReadBy?.[me?.uid || ''];
   return (
-    <List.Item className="direct-message-dialog">
-      <List.Content>
-        <List.Header>
-          <Link
-            to={`/direct-messages/${directMessageId(
-              me?.uid || '',
-              peer?.id || ''
-            )}`}
-            className={unread ? 'unread' : 'read'}
-          >
-            {peer?.name || 'Anonymous'}
-          </Link>
-        </List.Header>
-        {dayjs(updated).fromNow()}
-      </List.Content>
-    </List.Item>
+    <ListItem disablePadding divider className="direct-message-dialog">
+      <ListItemButton
+        component={Link}
+        to={`/direct-messages/${directMessageId(me?.uid || '', peerId)}`}
+      >
+        <ListItemAvatar>
+          <Avatar sx={{ bgcolor: unread ? 'primary.main' : 'action.disabled' }}>
+            {(peer?.name || '?')[0].toUpperCase()}
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          primary={peer?.name || 'Anonymous'}
+          secondary={dayjs(updated).fromNow()}
+          slotProps={{ primary: { sx: { fontWeight: unread ? 700 : 400 } } }}
+        />
+        {unread && (
+          <Typography variant="caption" color="primary">
+            New
+          </Typography>
+        )}
+      </ListItemButton>
+    </ListItem>
   );
 };
 
@@ -175,7 +208,12 @@ export const DirectMessageDialogs: React.FC = () => {
   const me = useAuth();
   const { dialogs } = useMyDirectMessages();
   return (
-    <List divided size="big">
+    <List disablePadding>
+      {dialogs?.length === 0 && (
+        <Typography color="text.secondary" sx={{ py: 3, textAlign: 'center' }}>
+          No messages yet. Visit a neighbor’s profile to start a conversation.
+        </Typography>
+      )}
       {dialogs?.map((dlg) => (
         <DialogInfoItem info={dlg} me={me} key={dlg.id} />
       ))}

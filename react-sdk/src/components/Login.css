@@ -1,0 +1,13 @@
+.community-login {
+  margin: 24px 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --fui-primary: #147d70;
+  --fui-primary-hover: #0f665c;
+  --fui-radius: 12px;
+}
+
+.community-login .fui-card {
+  width: 100%;
+  padding: 0;
+  border: 0;
+}

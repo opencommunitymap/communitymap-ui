@@ -1,27 +1,100 @@
 #profile-widget {
-  position: fixed;
-  top: 10px;
-  right: 10px;
+  position: absolute;
+  top: 24px;
+  right: 24px;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-
 #navigation-widget {
-  position: fixed;
-  bottom: 120px;
-  right: 8px;
+  position: absolute;
+  bottom: 40px;
+  right: 24px;
   z-index: 2;
 }
-
-/* Common classes */
+#navigation-widget .MuiIconButton-root,
+#profile-widget .profile-button {
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: 1px solid #e2e9e5;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px #203c381a;
+  color: #147d70;
+}
+#navigation-widget .MuiIconButton-root:hover,
+#profile-widget .profile-button:hover {
+  background: #edf5f1;
+}
+#navigation-widget .Mui-disabled {
+  color: #91a29d;
+}
+.item {
+  color: #203c38;
+  font:
+    14px/1.6 'Inter',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.item .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.4;
+}
+.item .title > svg {
+  flex-shrink: 0;
+  color: #147d70;
+}
+.item.expanded .title {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+.item section {
+  margin: 18px 0;
+}
+.item .description {
+  white-space: pre-wrap;
+}
 .replies-count {
-  font-size: 0.9em;
-  font-weight: 400;
+  font-size: 12px;
+  color: #627571;
   padding-top: 8px;
 }
-
 .pale-heading {
-  opacity: 0.7;
+  color: #627571;
+  font-weight: 600;
 }
-section {
-  margin: 1em 0;
+.add-new-chat h4,
+.add-new-story h4,
+.add-new-place h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  color: #203c38;
+  margin: 0 0 24px;
+}
+@media (max-width: 600px) {
+  #profile-widget {
+    top: 12px;
+    right: 12px;
+    gap: 6px;
+  }
+  #profile-widget .sign-in-button {
+    min-width: auto;
+    padding: 10px 12px;
+  }
+  #navigation-widget {
+    bottom: 122px;
+    right: 12px;
+  }
+}
+@media (max-width: 360px) {
+  #profile-widget .sign-in-button {
+    display: none;
+  }
 }

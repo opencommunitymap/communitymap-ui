@@ -9,20 +9,25 @@ This is the early beta version that may be subject to many changes, including th
 Install _react-sdk_ and firebase packages:
 
 ```
-npm i @opencommunitymap/react-sdk firebase firebaseui
+npm i @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
 
 or
 
 ```
-yarn add @opencommunitymap/react-sdk firebase firebaseui
+yarn add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
 
-### Google Maps API key
+The SDK requires Firebase 11 or 12 and React / React DOM 19. FirebaseUI v7 and its
+styles are installed by the SDK. Remove the old `firebaseui` package when upgrading
+from `0.1.0-rc10` or earlier. See the [SDK reference](../docs/react-sdk.md) for
+authentication setup and optional sign-in policy links.
 
-Currently you need to provide your Google Maps API key in `mapApiKey` argument of `<CommunityMap>`.
+### Basemap
 
-Follow the steps in [this Google Maps documentation](https://developers.google.com/maps/documentation/javascript/get-api-key) to create the key.
+The default basemap is OpenFreeMap's Liberty style and does not require an API
+key. Pass a MapLibre-compatible style URL or specification through `mapStyle` to
+use another map provider.
 
 ## Examples
 
@@ -31,10 +36,9 @@ Simple example - just showing Community Map at current location.
 ```jsx
 import React from 'react';
 import { CommunityMap } from '@opencommunitymap/react-sdk';
-const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY || '';
 
 <div style={{ width: '100%', height: 500 }}>
-  <CommunityMap mapApiKey={GOOGLE_API_KEY} autolocate />
+  <CommunityMap autolocate />
 </div>;
 ```
 
@@ -46,11 +50,10 @@ import {
   CommunityMap,
   Pin,
   detectLocation,
+  OPEN_FREE_MAP_STYLES,
   useLoadObjects,
   useAuth,
 } from '@opencommunitymap/react-sdk';
-import mapStyles from './customGoogleMapsDarkStyle.json';
-const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
 
 const defaultCenter = { latitude: 42.69, longitude: 23.32 };
 const defaultZoom = 18;
@@ -68,10 +71,9 @@ const Map = () => {
   return (
     <>
       <CommunityMap
-        mapApiKey={GOOGLE_API_KEY}
         autolocate
         filterOrigin="projectX"
-        mapStyles={mapStyles}
+        mapStyle={OPEN_FREE_MAP_STYLES.dark}
         centerPin={<Pin color="#79CAB5" />}
         center={center}
         zoom={zoom}

@@ -1,5 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Button, Icon, Form } from 'semantic-ui-react';
+import { Button, TextField, Stack, MenuItem } from '@mui/material';
+import ChatBubbleOutlineRounded from '@mui/icons-material/ChatBubbleOutlineRounded';
+import VolunteerActivismRounded from '@mui/icons-material/VolunteerActivismRounded';
+import WavingHandRounded from '@mui/icons-material/WavingHandRounded';
+import CloseRounded from '@mui/icons-material/CloseRounded';
 import {
   ObjectItemInput,
   ObjectItemComponentProps,
@@ -16,14 +20,14 @@ import { LikeWidget } from './LikeWidget';
 export const type2icon = (type: ObjectItemInput['type']) => {
   switch (type) {
     case 'request':
-      return 'hand paper';
+      return WavingHandRounded;
     case 'offer':
-      return 'heart';
+      return VolunteerActivismRounded;
     case 'donation':
-      return 'heart';
+      return VolunteerActivismRounded;
     case 'chat':
     default:
-      return 'chat';
+      return ChatBubbleOutlineRounded;
   }
 };
 export const type2title = (type: ObjectItemInput['type']) => {
@@ -69,7 +73,7 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
     return comments.sort((l, r) => (l.created < r.created ? -1 : 1));
   }, [comments]);
 
-  const icon: any = type2icon(type);
+  const TypeIcon = type2icon(type);
 
   return (
     <div
@@ -77,7 +81,7 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
       onClick={onClick}
     >
       <div className="title">
-        <Icon name={icon} />
+        <TypeIcon />
         {title}
       </div>
       {expanded && (
@@ -87,7 +91,7 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
           {new Date(created).toLocaleString()}
         </div>
       )}
-      <br />
+
       {expanded && description !== title && (
         <section className="description">{description}</section>
       )}
@@ -100,18 +104,19 @@ export const Chat: React.FC<ObjectItemComponentProps> = ({
         <div>
           {expanded && user?.uid === author && (
             <Button
-              icon="close"
-              content="Close"
-              basic
+              startIcon={<CloseRounded />}
+              variant="outlined"
               onClick={() => {
                 if (window.confirm('Are you sure you want to close it?'))
                   onClose().catch(reportError);
               }}
-            />
+            >
+              Close
+            </Button>
           )}
           {!showCommentsWidget && !expanded && (
             <Button
-              basic
+              variant="outlined"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowCommentsWidget(true);
@@ -166,7 +171,12 @@ export const AddNewChatObject: React.FC<{
   type: ObjectItemInput['type'];
   onPost: (data: ObjectItemInput) => void;
 }> = ({ type, onPost }) => {
-  const [state, setState] = useState({ valid_until: 12 * 60 } as any);
+  const [state, setState] = useState({
+    topic: '',
+    message: '',
+    valid_until: 12 * 60,
+  });
+  const TypeIcon = type2icon(type);
   const onChange = (e: any) => {
     const { name, value } = e.target;
     console.debug(e.target.name, e.target.value);
@@ -175,9 +185,11 @@ export const AddNewChatObject: React.FC<{
   return (
     <div className="add-new-chat">
       <h4>
-        <Icon name={type2icon(type)} /> {type2title(type)}
+        <TypeIcon /> {type2title(type)}
       </h4>
-      <Form
+      <Stack
+        component="form"
+        spacing={2.5}
         onSubmit={(e) => {
           e.preventDefault();
           console.debug('submit', state);
@@ -191,30 +203,40 @@ export const AddNewChatObject: React.FC<{
           });
         }}
       >
-        <Form.Input
+        <TextField
           autoComplete="off"
           label="Topic (optional)"
           name="topic"
           onChange={onChange}
         />
-        <Form.TextArea
+        <TextField
+          multiline
+          minRows={4}
           autoFocus
+          required
           label="Message"
           name="message"
           onChange={onChange}
         />
-        <Form.Dropdown
-          options={validUntilOptions}
-          label="Valid for next"
-          selection
-          defaultValue={state.valid_until}
-          onChange={(e, { value }) =>
-            setState({ ...state, valid_until: value })
+        <TextField
+          select
+          label="Visible for"
+          value={state.valid_until}
+          onChange={(e) =>
+            setState({ ...state, valid_until: Number(e.target.value) })
           }
-        />
+        >
+          {validUntilOptions.map((option) => (
+            <MenuItem key={option.key} value={option.value}>
+              {option.text}
+            </MenuItem>
+          ))}
+        </TextField>
 
-        <Form.Button primary>Post</Form.Button>
-      </Form>
+        <Button type="submit" variant="contained">
+          Post
+        </Button>
+      </Stack>
     </div>
   );
 };

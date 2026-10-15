@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { MapTypeStyle } from 'google-map-react';
+import type firebase from 'firebase/compat/app';
 import {
   Loc,
   useAuth,
@@ -23,10 +23,12 @@ import {
   Maps,
   MapItem,
   AuthProvider,
+  MapStyle,
 } from '..';
 import { RenderAuthorProvider } from '../utils/renderAuthor';
-import { Modal, Loader } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
+import { CircularProgress } from '@mui/material';
+import { CommunityDialog } from '../components/CommunityDialog';
+import { CommunityMapTheme } from '../components/CommunityMapTheme';
 
 const isDEV_ENV = process.env.NODE_ENV === 'development';
 
@@ -38,7 +40,7 @@ export interface RenderObjectCallbackProps {
 }
 export type RenderObjectCallback = (
   props: RenderObjectCallbackProps
-) => JSX.Element | boolean | null;
+) => React.JSX.Element | boolean | null;
 
 export interface CommunityMapProps {
   // Center coordinates for controlled component
@@ -54,18 +56,15 @@ export interface CommunityMapProps {
   // Initial zoom
   defaultZoom?: number;
 
-  // Google Maps style, https://mapstyle.withgoogle.com/
-  mapStyles?: MapTypeStyle[];
-
-  // Api Key for Google Maps
-  mapApiKey?: string;
+  // MapLibre style URL or style specification
+  mapStyle?: MapStyle;
 
   // Pin icon showing the center of the map
-  centerPin?: JSX.Element | null;
+  centerPin?: React.JSX.Element | null;
 
-  profileWidget?: JSX.Element | null;
+  profileWidget?: React.JSX.Element | null;
 
-  navigationWidget?: JSX.Element | null;
+  navigationWidget?: React.JSX.Element | null;
 
   // Called initially and after moving the map or changing the zoom
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
@@ -107,8 +106,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   navigationWidget,
   autolocate,
   filterOrigin,
-  mapStyles,
-  mapApiKey,
+  mapStyle,
   onClickObject,
   showObjectId: extShowObjectId,
   onObjectModalClose,
@@ -174,8 +172,7 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
   return (
     <RenderAuthorProvider value={renderAuthor}>
       <Maps
-        styles={mapStyles}
-        mapApiKey={mapApiKey}
+        mapStyle={mapStyle}
         centerPin={centerPin}
         center={autodetectedCenter || center}
         zoom={zoom}
@@ -207,16 +204,18 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
             );
           })}
       </Maps>
-      <Modal open={!!showObjectId} onClose={onModalClose} closeIcon>
-        <Modal.Content scrolling>
-          {!!showObjectId && (
-            <ExpandedObjectView
-              objectId={showObjectId}
-              renderObject={renderObject}
-            />
-          )}
-        </Modal.Content>
-      </Modal>
+      <CommunityDialog
+        open={!!showObjectId}
+        onClose={onModalClose}
+        title="Around your community"
+      >
+        {!!showObjectId && (
+          <ExpandedObjectView
+            objectId={showObjectId}
+            renderObject={renderObject}
+          />
+        )}
+      </CommunityDialog>
       {profileWidget !== undefined ? profileWidget : <ProfileWidget />}
       {navigationWidget !== undefined ? (
         navigationWidget
@@ -231,9 +230,11 @@ const CommunityMapImpl: React.FC<CommunityMapProps> = ({
 
 export const CommunityMap: React.FC<CommunityMapProps> = (props) => {
   return (
-    <AuthProvider>
-      <CommunityMapImpl {...props} />
-    </AuthProvider>
+    <CommunityMapTheme>
+      <AuthProvider>
+        <CommunityMapImpl {...props} />
+      </AuthProvider>
+    </CommunityMapTheme>
   );
 };
 
@@ -245,7 +246,8 @@ const ExpandedObjectView: React.FC<{
 
   const object = useLoadSingleObject(objectId, user);
 
-  if (object === undefined) return <Loader active />;
+  if (object === undefined)
+    return <CircularProgress aria-label="Loading post" />;
   if (object === null) return <div>Object not found :(</div>;
 
   const render: RenderObjectCallback = (props) => {

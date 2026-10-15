@@ -10,10 +10,10 @@ import {
   MapBounds,
   Loc,
 } from '../';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { getFirebaseApp } from '../utils/firebase';
-import 'firebase/auth';
-import 'firebase/firestore';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import dayjs from 'dayjs';
 import { useAuth } from './Auth';
 
@@ -43,11 +43,20 @@ export const useLoadObjects = (
     setVotesObj(null);
 
     const { minLat, maxLat, minLng, maxLng } = mapBounds;
-    if (!minLat || !maxLat || !minLng || !maxLng) {
+    if (
+      ![minLat, maxLat, minLng, maxLng].every(Number.isFinite) ||
+      minLat < -90 ||
+      maxLat > 90 ||
+      minLat > maxLat
+    ) {
       console.log('Invalid map bounds:', mapBounds);
       return;
     }
     console.debug('Load by', mapBounds);
+
+    // MapLibre bounds can extend beyond +/-180 when showing wrapped worlds.
+    // Use the full longitude range for these views in this latitude-first query.
+    const wrapsLongitude = minLng < -180 || maxLng > 180 || minLng > maxLng;
 
     const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
@@ -55,8 +64,16 @@ export const useLoadObjects = (
       .firestore()
       .collection('objects')
       // .where('valid_until', '>=', now)
-      .where('loc', '>', new firebase.firestore.GeoPoint(minLat, minLng))
-      .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng));
+      .where(
+        'loc',
+        '>',
+        new firebase.firestore.GeoPoint(minLat, wrapsLongitude ? -180 : minLng)
+      )
+      .where(
+        'loc',
+        '<',
+        new firebase.firestore.GeoPoint(maxLat, wrapsLongitude ? 180 : maxLng)
+      );
 
     if (filterOrigin) {
       ref = ref.where('origin', '==', filterOrigin);
@@ -349,6 +366,11 @@ export const useUserPublicInfo = (userId: string, subscribe = false) => {
     }
 
     ref.get().then((doc) => {
+      if (!doc.exists) {
+        setObject(null);
+        console.log('user not found');
+        return;
+      }
       const objectInfo = { id: doc.id, ...doc.data() } as UserProfile;
       console.debug('Resolved once', objectInfo);
       setObject(objectInfo);
