@@ -10,28 +10,53 @@ import {
   MapBounds,
   Loc,
 } from '../';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { getFirebaseApp } from '../utils/firebase';
-import 'firebase/auth';
-import 'firebase/firestore';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import dayjs from 'dayjs';
 import { useAuth } from './Auth';
 
 export const useLoadObjects = (
   mapBounds: MapBounds | null,
   user: firebase.User | null,
-  filterOrigin?: string
+  filterOrigin?: string,
+  skip?: boolean
 ) => {
-  const [objects, setObjects] = useState<ObjectItem[]>([]);
+  const [objects, setObjects] = useState<ObjectItem[] | undefined | null>();
+
+  const [commentsObj, setCommentsObj] = useState<{
+    [k: string]: ObjectComment[];
+  } | null>(null);
+  const [votesObj, setVotesObj] = useState<{
+    [k: string]: { votesCount: number; userVoted: boolean };
+  } | null>(null);
 
   useEffect(() => {
-    if (!mapBounds) return;
+    if (!mapBounds || skip) {
+      setObjects(null);
+      return;
+    }
+
+    setObjects(undefined);
+    setCommentsObj(null);
+    setVotesObj(null);
+
     const { minLat, maxLat, minLng, maxLng } = mapBounds;
-    if (!minLat || !maxLat || !minLng || !maxLng) {
+    if (
+      ![minLat, maxLat, minLng, maxLng].every(Number.isFinite) ||
+      minLat < -90 ||
+      maxLat > 90 ||
+      minLat > maxLat
+    ) {
       console.log('Invalid map bounds:', mapBounds);
       return;
     }
     console.debug('Load by', mapBounds);
+
+    // MapLibre bounds can extend beyond +/-180 when showing wrapped worlds.
+    // Use the full longitude range for these views in this latitude-first query.
+    const wrapsLongitude = minLng < -180 || maxLng > 180 || minLng > maxLng;
 
     const now = new Date().toISOString();
     // todo use geofirestore-js as it doesn't filter by longitude right now
@@ -39,8 +64,16 @@ export const useLoadObjects = (
       .firestore()
       .collection('objects')
       // .where('valid_until', '>=', now)
-      .where('loc', '>', new firebase.firestore.GeoPoint(minLat, minLng))
-      .where('loc', '<', new firebase.firestore.GeoPoint(maxLat, maxLng));
+      .where(
+        'loc',
+        '>',
+        new firebase.firestore.GeoPoint(minLat, wrapsLongitude ? -180 : minLng)
+      )
+      .where(
+        'loc',
+        '<',
+        new firebase.firestore.GeoPoint(maxLat, wrapsLongitude ? 180 : maxLng)
+      );
 
     if (filterOrigin) {
       ref = ref.where('origin', '==', filterOrigin);
@@ -59,15 +92,8 @@ export const useLoadObjects = (
     return unsub;
   }, [mapBounds, filterOrigin]);
 
-  const [commentsObj, setCommentsObj] = useState<{
-    [k: string]: ObjectComment[];
-  } | null>(null);
-  const [votesObj, setVotesObj] = useState<{
-    [k: string]: { count: number; userVoted: boolean };
-  } | null>(null);
-
   useEffect(() => {
-    if (!mapBounds) return;
+    if (!objects) return;
 
     const objectIds = objects.map((o) => o.id).slice(0, 10); // TODO fix!!!
     console.debug('Load comments for', objectIds);
@@ -95,14 +121,16 @@ export const useLoadObjects = (
       .collection('votes')
       .where('object_id', 'in', objectIds)
       .onSnapshot((snap) => {
-        const objs: { [k: string]: { count: number; userVoted: boolean } } = {};
+        const objs: {
+          [k: string]: { votesCount: number; userVoted: boolean };
+        } = {};
         snap.forEach((doc) => {
           const vote = doc.data() as ObjectVote;
           const objectVotingInfo = objs[vote.object_id] || {
-            count: 0,
+            votesCount: 0,
             userVoted: false,
           };
-          objectVotingInfo.count += vote.value;
+          objectVotingInfo.votesCount += vote.value;
           if (user?.uid === vote.author) {
             objectVotingInfo.userVoted = true;
           }
@@ -117,11 +145,14 @@ export const useLoadObjects = (
     };
   }, [mapBounds, objects, user]);
 
-  const data = useMemo(() => ({ objects, commentsObj, votesObj }), [
-    objects,
-    commentsObj,
-    votesObj,
-  ]);
+  const data = useMemo(() => {
+    if (!objects || !commentsObj || !votesObj) return undefined;
+    return objects.map((obj) => ({
+      ...obj,
+      comments: commentsObj[obj.id] || [],
+      ...(votesObj[obj.id] || { userVoted: false, votesCount: 0 }),
+    }));
+  }, [objects, commentsObj, votesObj]);
   return data;
 };
 
@@ -129,12 +160,16 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
   const [object, setObject] = useState<ObjectItem | null | undefined>();
   const [comments, setComments] = useState<ObjectComment[] | null>(null);
   const [votesInfo, setVotesInfo] = useState<{
-    count: number;
+    votesCount: number;
     userVoted: boolean;
   } | null>(null);
 
   useEffect(() => {
     console.debug('Load by id', id);
+
+    setObject(undefined);
+    setComments(null);
+    setVotesInfo(null);
 
     const unsub = getFirebaseApp()
       .firestore()
@@ -175,12 +210,12 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
       .where('object_id', '==', id)
       .onSnapshot((snap) => {
         const objectVotingInfo = {
-          count: 0,
+          votesCount: 0,
           userVoted: false,
         };
         snap.forEach((doc) => {
           const vote = doc.data() as ObjectVote;
-          objectVotingInfo.count += vote.value;
+          objectVotingInfo.votesCount += vote.value;
           if (user?.uid === vote.author) {
             objectVotingInfo.userVoted = true;
           }
@@ -194,11 +229,10 @@ export const useLoadSingleObject = (id: string, user: firebase.User | null) => {
     };
   }, [id, user]);
 
-  const data = useMemo(() => ({ object, comments, votesInfo }), [
-    object,
-    comments,
-    votesInfo,
-  ]);
+  const data = useMemo(() => {
+    if (!object || !comments || !votesInfo) return undefined;
+    return { ...object, comments, ...votesInfo };
+  }, [object, comments, votesInfo]);
   return data;
 };
 
@@ -332,6 +366,11 @@ export const useUserPublicInfo = (userId: string, subscribe = false) => {
     }
 
     ref.get().then((doc) => {
+      if (!doc.exists) {
+        setObject(null);
+        console.log('user not found');
+        return;
+      }
       const objectInfo = { id: doc.id, ...doc.data() } as UserProfile;
       console.debug('Resolved once', objectInfo);
       setObject(objectInfo);

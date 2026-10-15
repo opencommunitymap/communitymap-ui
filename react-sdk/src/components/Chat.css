@@ -1,37 +1,19 @@
-.add-new-chat form label {
-  opacity: 0.7;
-}
-.add-new-chat form textarea {
-  min-height: 150px;
-}
-
 .chat-item:not(.expanded) {
   cursor: pointer;
 }
-
 .chat-item .title {
-  font-weight: 600;
-  font-size: 1.2em;
-}
-
-.chat-item .actions {
-  margin-bottom: 3px;
-}
-.chat-item.expanded .actions {
-  margin-bottom: 1em;
-}
-
-.chat-item .description {
-  white-space: pre-wrap;
+  font-weight: 650;
+  font-size: 16px;
 }
 .chat-item .author-created {
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin: 0.5em 0;
+  font-size: 12px;
+  color: #627571;
+  margin: 10px 0;
 }
 .chat-item .actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.5em;
+  gap: 8px;
+  margin: 12px 0;
 }

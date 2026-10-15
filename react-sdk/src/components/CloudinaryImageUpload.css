@@ -1,25 +1,26 @@
 .cloudinary-upload-widget {
   position: relative;
-  width: 6.5em;
-  height: 6.5em;
-  border: 2px grey solid;
-  border-radius: 5px;
+  width: 96px;
+  height: 96px;
+  border: 1px dashed #91a29d;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f5f8f6;
 }
-.cloudinary-overlay-widget:hover {
-  opacity: 1;
-  cursor: pointer;
-}
-.cloudinary-overlay-widget {
-  opacity: 0.25;
-  z-index: 2;
+.cloudinary-upload-widget img {
   width: 100%;
   height: 100%;
-  font-size: 4em;
-  color: darkgrey;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: contain;
+}
+.cloudinary-upload-widget .cloudinary-overlay-widget {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  color: #147d70;
+  background: #ffffff66;
+}
+.cloudinary-upload-widget .cloudinary-overlay-widget:hover {
+  background: #ffffffbb;
 }

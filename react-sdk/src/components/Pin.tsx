@@ -3,7 +3,7 @@ import React from 'react';
 export interface PinProps {
   color?: string;
 }
-export const Pin: React.FC<PinProps> = ({ color = '#4556b7' }) => (
+export const Pin: React.FC<PinProps> = ({ color = '#147d70' }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"

@@ -1,5 +1,6 @@
-import React from 'react';
-import ReactCookieConsent from 'react-cookie-consent';
+import React, { useState } from 'react';
+import { Snackbar, Paper, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export const PrivacyPolicy = () => {
   return (
@@ -33,6 +34,16 @@ export const PrivacyPolicy = () => {
         store the direct messages with other users within our platform - they
         are private and only you, the recipient and administrator of the
         platform may have access to it.
+      </p>
+
+      <p>
+        Map tiles come from OpenFreeMap using OpenStreetMap data. OpenFreeMap
+        does not use cookies and does not retain IP addresses in its regular
+        logs, although requests may be processed by Cloudflare. See the{' '}
+        <a href="https://openfreemap.org/privacy/">
+          OpenFreeMap privacy policy
+        </a>{' '}
+        for current details.
       </p>
 
       <p>
@@ -73,17 +84,63 @@ export const PrivacyPolicy = () => {
         performance is altered.
       </p>
       <p>
-        We use Firebase Analytics and Google Maps that need cookies and local
-        storage for the purpose of their operation.
+        Firebase Authentication and Analytics use cookies and local storage for
+        the purpose of their operation.
       </p>
     </div>
   );
 };
 
-export const CookieConsentBanner = () => (
-  <ReactCookieConsent cookieName="__ocm_cookie_consent">
-    This website or its third-party tools use cookies, which are necessary to
-    its functioning. Read more in our{' '}
-    <a href={window.location.origin + '/privacy'}>Privacy and Cookie Policy</a>
-  </ReactCookieConsent>
-);
+export const CookieConsentBanner: React.FC = () => {
+  const [open, setOpen] = useState(
+    () =>
+      !document.cookie
+        .split(';')
+        .some((cookie) => cookie.trim() === '__ocm_cookie_consent=true')
+  );
+  return (
+    <Snackbar
+      open={open}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      sx={{
+        zIndex: (theme) => theme.zIndex.modal - 1,
+        maxWidth: 560,
+        width: { sm: 'calc(100% - 48px)' },
+        bottom: { xs: 112, sm: 24 },
+      }}
+    >
+      <Paper
+        role="region"
+        aria-label="Cookie notice"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          p: 2,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 3,
+          boxShadow: '0 8px 40px #203c3826',
+        }}
+      >
+        <Typography variant="caption" color="text.secondary">
+          This website or its third-party tools use cookies, which are necessary
+          to its functioning. Read more in our{' '}
+          <Link to="/privacy">Privacy and Cookie Policy</Link>.
+        </Typography>
+        <Button
+          size="small"
+          variant="contained"
+          sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+          onClick={() => {
+            document.cookie =
+              '__ocm_cookie_consent=true; Max-Age=31536000; Path=/; SameSite=Lax';
+            setOpen(false);
+          }}
+        >
+          Got it
+        </Button>
+      </Paper>
+    </Snackbar>
+  );
+};

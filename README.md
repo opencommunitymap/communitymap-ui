@@ -40,6 +40,9 @@ Currently you can filter to show only your objects on the map using optional `fi
 
 Optional `centerLat` and `centerLng` parameters define the default coordinates to the map.
 
+Optional `theme` selects the map style: `standard`, `silver` or `dark`. The default
+is `standard`.
+
 Optional `autolocate` parameter allows to detect client's location automatically. User's permission will be requested the first time. Default value: `false`.
 
 Optional `canAdd` allows to hide UI elements for adding objects from this view. If you need to add them your own way, hide them and use the [API](#API).
@@ -70,6 +73,14 @@ It's in early alpha and could be subject for many changes.
 
 Check out the [API documentation](https://github.com/opencommunitymap/communitymap-cloud-functions/blob/master/docs/API.md)
 
+## Documentation
+
+- [Development guide](docs/development.md) — setup, environment variables, running, deploying, troubleshooting
+- [Architecture](docs/high-level-structure.md) — how the SDK and the webapp fit together
+- [React SDK API reference](docs/react-sdk.md) — components, hooks, types
+- [Database structure](docs/DB.md) — Firestore collections, security rules, indexes
+- [AGENTS.md](AGENTS.md) — conventions and pitfalls, for AI coding agents and new contributors alike
+
 ## Collaborators needed!
 
 Fork the project and then clone your fork. [Read more about Fork & PR strategy](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/working-with-forks)
@@ -77,9 +88,10 @@ Fork the project and then clone your fork. [Read more about Fork & PR strategy](
 ```
 git clone git@github.com:<YOUR_GITHUB_USER>/communitymap-ui.git
 
-cd community-map/
+cd communitymap-ui/
 
-yarn install
+corepack enable
+pnpm install
 ```
 
 Build the _react-sdk_ library, that is part of the repo.
@@ -87,17 +99,17 @@ Build the _react-sdk_ library, that is part of the repo.
 ```
 cd react-sdk/
 
-yarn build
+pnpm build
 ```
 
-Use `yarn watch` to make the build process monitor continuosly file changes.
+Use `pnpm watch` to make the build process monitor continuosly file changes.
 
 Now you can run the web app in another console:
 
 ```
 cd webapp/
 
-yarn start
+pnpm start
 ```
 
 It runs the app in the development mode.
@@ -106,17 +118,18 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.
 
-You will also see any lint errors in the console.
+Vite reports compilation errors in the console as you edit.
 
 You will use pre-configured _Community Map Dev_ firebase project.
 
-Read also about [the DB structure](docs/DB.md)
+Read also about [the DB structure](docs/DB.md) and the fuller
+[development guide](docs/development.md), which covers environment variables,
+verifying changes and the SDK build order in more detail.
 
-### Google Maps for Development purposes only
+### Map tiles
 
-The maps with show 'For development purposes only' watermark all over the map.
-
-To fix that create _.env_ file and fill in your Google Maps Key.
+The default basemap uses OpenFreeMap with OpenStreetMap data and needs no API key.
+SDK consumers can select another MapLibre-compatible provider through `mapStyle`.
 
 ### Uploading images
 
@@ -126,7 +139,7 @@ It's also recommended to create presets for image uploads. Currently Place logo 
 
 Fill them in your _.env_ for development and github secrets if using them for build and deploy.
 
-## Configure with different Firebase project
+## Self-hosted with different Firebase project
 
 For self-hosted installation you need to configure different Firebase project.
 
@@ -140,14 +153,24 @@ Init firebase and choose your firebase project
 firebase init
 ```
 
-Copy web app firebase config from **Firebase Project Settings -> General -> Your Apps -> Web apps -> (\*) Config** and store it in _src/firebaseConfig.ts_ like this:
+Copy the web app config from **Firebase Project Settings -> General -> Your Apps ->
+Web apps -> (\*) Config** into
+`react-sdk/src/utils/.fb-conf-dev.js` and
+`react-sdk/src/utils/.fb-conf-prod.js`:
 
-```
-export const firebaseConfig = {
+```js
+export default {
   ...
-}
+};
 ```
+
+Alternatively, a host application can pass its config directly to
+`initFirebase({ ... })`. `webapp/src/firebaseConfig.ts` is legacy and is not used.
+See the [development guide](docs/development.md#self-hosting-with-a-different-firebase-project)
+for details.
+
+And here's the description of [the DB structure](docs/DB.md)
 
 ---
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The hosted webapp is built with [Vite](https://vite.dev/).

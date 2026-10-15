@@ -4,4 +4,31 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -100%);
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px #203c3840);
+}
+.map-item {
+  position: relative;
+}
+.maplibregl-ctrl-top-right {
+  top: 86px;
+  right: 14px;
+}
+.maplibregl-ctrl-group {
+  border-radius: 14px;
+  overflow: hidden;
+}
+.maplibregl-ctrl-group:not(:empty) {
+  box-shadow: 0 4px 20px #203c381a;
+  border: 1px solid #e2e9e5;
+}
+.maplibregl-ctrl-group button {
+  width: 42px;
+  height: 42px;
+}
+@media (max-width: 600px) {
+  .maplibregl-ctrl-top-right {
+    top: 72px;
+    right: 2px;
+  }
 }
