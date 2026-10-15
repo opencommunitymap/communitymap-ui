@@ -1,60 +1,43 @@
-import React, { useEffect, useRef } from 'react';
-import firebase from 'firebase/compat/app';
+import React, { useState } from 'react';
+import { $config, initializeUI } from '@firebase-oss/ui-core';
+import {
+  FirebaseUIProvider,
+  GoogleSignInButton,
+  OAuthScreen,
+} from '@firebase-oss/ui-react';
+import { getApp } from 'firebase/app';
 import { getFirebaseApp } from '../utils/firebase';
-import 'firebase/compat/auth';
-import * as firebaseui from 'firebaseui';
-import 'firebaseui/dist/firebaseui.css';
 import { CommunityDialog } from './CommunityDialog';
+import '@firebase-oss/ui-styles/dist.min.css';
+import './Login.css';
 
-const SignInWidget: React.FC = () => {
-  const container = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const uiConfig = {
-      signInFlow: 'popup',
-      // signInSuccessUrl: window.location.origin,
-      signInSuccessUrl: window.location.href,
-      signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-      ],
-      // tosUrl and privacyPolicyUrl accept either url string or a callback
-      // function.
-      // Terms of service url/callback.
-      // tosUrl: '<your-tos-url>',
-      // Privacy policy url/callback.
-      // privacyPolicyUrl: function() {
-      //   window.location.assign('<your-privacy-policy-url>');
-      // }
-    };
+const returnToCurrentUrl = () => window.location.reload();
 
-    const app = getFirebaseApp();
-    const ui =
-      firebaseui.auth.AuthUI.getInstance(app.name) ||
-      new firebaseui.auth.AuthUI(app.auth(), app.name);
-    ui.start(container.current!, uiConfig);
+export const Login: React.FC<{
+  title?: string;
+  onClose?: () => void;
+  policies?: { termsOfServiceUrl: string; privacyPolicyUrl: string };
+}> = ({ title = 'You need to sign in to continue', onClose, policies }) => {
+  const [ui] = useState(() => {
+    const app = getApp(getFirebaseApp().name);
+    // initializeUI replaces stores; reuse the named store on StrictMode/reopen.
+    return $config.get()[app.name] || initializeUI({ app }, app.name);
+  });
 
-    return () => {
-      // Reset synchronously so StrictMode can replay the effect on this instance.
-      ui.reset();
-    };
-  }, []);
-
-  return <div ref={container} />;
+  return (
+    <CommunityDialog
+      open
+      onClose={onClose}
+      maxWidth="xs"
+      title={title || 'Welcome to your community'}
+    >
+      <div className="community-login">
+        <FirebaseUIProvider ui={ui} policies={policies}>
+          <OAuthScreen onSignIn={returnToCurrentUrl}>
+            <GoogleSignInButton />
+          </OAuthScreen>
+        </FirebaseUIProvider>
+      </div>
+    </CommunityDialog>
+  );
 };
-
-export const Login: React.FC<{ title?: string; onClose?: () => void }> = ({
-  title = 'You need to sign in to continue',
-  onClose,
-}) => (
-  <CommunityDialog
-    open
-    onClose={onClose}
-    maxWidth="xs"
-    title={title || 'Welcome to your community'}
-  >
-    <div style={{ margin: '24px 0' }}>
-      <SignInWidget />
-    </div>
-  </CommunityDialog>
-);

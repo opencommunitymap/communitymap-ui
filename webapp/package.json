@@ -13,11 +13,10 @@
     "index_sync": "firebase firestore:indexes > ../firestore.indexes.json"
   },
   "dependencies": {
-    "@opencommunitymap/react-sdk": "^0.1.0-rc10",
+    "@opencommunitymap/react-sdk": "^0.1.0-rc11",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.23",
     "firebase": "^12.18.0",
-    "firebaseui": "^6.1.0",
     "query-string": "^9.5.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -28,6 +27,7 @@
     "@emotion/styled": "^11.14.0"
   },
   "devDependencies": {
+    "@firebase-oss/ui-core": "^7.1.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",

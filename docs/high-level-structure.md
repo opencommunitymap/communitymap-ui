@@ -139,6 +139,11 @@ initialises with the **production** config if no one did it first. Consequence: 
 host that forgets `initFirebase('development')` silently reads and writes production
 data, and `firebase.app()` (the unnamed default) will not find this app at all.
 
+The shared SDK `Login` uses FirebaseUI v7's React provider and Google OAuth button.
+It resolves the modular Firebase app with `getApp(getFirebaseApp().name)`, so
+FirebaseUI signs in to the same app observed by the existing compat `AuthProvider`.
+Firestore, public user types, and the `getFirebaseApp()` API remain on compat.
+
 ## webapp
 
 ```
@@ -156,7 +161,7 @@ webapp/
         ├── ProfileWidgetPlus.tsx  # profile editing + unread DM badge
         ├── DirectMessage.tsx      # DM modal and dialog list
         ├── UserPage.tsx           # public profile + DM button
-        ├── Login.tsx              # firebaseui with tos/privacy links
+        ├── Login.tsx              # SDK Login with tos/privacy links
         └── SplashScreen.tsx  TermsOfService.tsx  PrivacyPolicy.tsx
 ```
 

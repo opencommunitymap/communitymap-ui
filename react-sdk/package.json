@@ -1,6 +1,6 @@
 {
   "name": "@opencommunitymap/react-sdk",
-  "version": "0.1.0-rc10",
+  "version": "0.1.0-rc11",
   "license": "Apache-2.0",
   "author": "Open Community Map team",
   "homepage": "https://github.com/opencommunitymap/communitymap-ui",
@@ -11,12 +11,14 @@
     "sync-css": "sync-glob -d false src/components/*.css dist/components/"
   },
   "peerDependencies": {
-    "firebase": "^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0",
-    "firebaseui": "^6.0.0",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "firebase": "^11.0.0 || ^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
+    "@firebase-oss/ui-core": "^7.1.0",
+    "@firebase-oss/ui-react": "^7.1.0",
+    "@firebase-oss/ui-styles": "^7.1.0",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.23",
     "maplibre-gl": "^5.24.0",
@@ -32,7 +34,6 @@
     "@types/react-dom": "^19.2.0",
     "concurrently": "^10.0.5",
     "firebase": "^12.18.0",
-    "firebaseui": "^6.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "sync-glob": "^1.4.0",

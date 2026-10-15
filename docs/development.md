@@ -103,6 +103,16 @@ The webapp has Playwright Chromium checks for the map, client-side routing,
 MUI dialogs, mobile posting controls, and form payloads. The form fixture uses
 local callbacks and does not write to Firebase.
 
+Sign-in uses FirebaseUI v7 (`@firebase-oss/ui-react`) with Firebase 11/12 and React
+19. Both the SDK and site use the SDK's `Login`; the site supplies its legal links.
+The login fixture covers StrictMode, reopening, policy links, simulated popup
+cancellation, and shared auth sessions using local Auth HTTP responses, without
+writing to Firestore. A manual Google sign-in is still needed to verify a real
+account and the deployed OAuth configuration.
+
+See [the FirebaseUI v7 migration](firebaseui-v7-migration.md) for the implementation
+contract and verification checklist.
+
 Verify with types, builds, and browser checks:
 
 ```bash

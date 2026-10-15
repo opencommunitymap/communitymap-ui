@@ -1,3 +1,15 @@
+## 0.1.0-rc11
+
+- Replace the legacy `firebaseui` peer with FirebaseUI v7 React components and
+  styles installed by the SDK. Remove `firebaseui` from consuming applications.
+- Require Firebase 11 or 12 and React / React DOM 19, matching FirebaseUI v7's
+  peer requirements. Firebase 9/10 and React 18 are no longer supported.
+- Share the SDK `Login` with the webapp, with optional `policies` for terms and
+  privacy URLs. Keep Google popup sign-in, return to the current URL on success,
+  and show retryable sign-in failures in the dialog.
+- Use the modular view of the existing named Firebase app for FirebaseUI while
+  preserving the compat Firebase app, user types, and Firestore APIs.
+
 ## 0.1.0-rc10
 
 - Support React and React DOM 19. The peer range is now `^18.0.0 || ^19.0.0`

@@ -35,8 +35,8 @@ Documentation that agents can actually use must be:
 ## Phase 1: Core concepts & API reference — done
 
 - [x] **1.1 Installation & setup** — [react-sdk.md § Installation](react-sdk.md#installation),
-      including the peer dependencies (`firebase`, `firebaseui`, `react`) that npm
-      will not install, and the default MapLibre/OpenFreeMap basemap.
+      including the Firebase and React peer requirements, the bundled FirebaseUI
+      v7 dependencies, and the default MapLibre/OpenFreeMap basemap.
 - [x] **1.2 Component catalog** — every exported component with its props:
       `CommunityMap`, `Maps`/`MapItem`, the three object components, the three
       add-forms and the chrome widgets. The four components that are deliberately
