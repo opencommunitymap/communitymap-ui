@@ -138,7 +138,7 @@ It's also recommended to create presets for image uploads. Currently Place logo 
 
 Fill them in your _.env_ for development and github secrets if using them for build and deploy.
 
-## Configure with different Firebase project
+## Self-hosted with different Firebase project
 
 For self-hosted installation you need to configure different Firebase project.
 
@@ -167,6 +167,8 @@ Alternatively, a host application can pass its config directly to
 `initFirebase({ ... })`. `webapp/src/firebaseConfig.ts` is legacy and is not used.
 See the [development guide](docs/development.md#self-hosting-with-a-different-firebase-project)
 for details.
+
+And here's the description of [the DB structure](docs/DB.md)
 
 ---
 

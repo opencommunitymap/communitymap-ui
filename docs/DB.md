@@ -1,6 +1,7 @@
 # Database
 
-The database is **Firebase Firestore**, written to directly from the browser.
+The database is [Firebase Firestore](https://firebase.google.com/docs/firestore),
+written to directly from the browser.
 There is no server-side validation layer in this repo other than
 [firestore.rules](../firestore.rules).
 
@@ -149,6 +150,8 @@ deleted through the client — expiry via `valid_until` is the only removal mech
 
 [firestore.indexes.json](../firestore.indexes.json) — keep it in sync with the
 console using `cd webapp && yarn index_sync`.
+
+All indexes use the `COLLECTION` query scope.
 
 | Collection | Fields |
 | --- | --- |
