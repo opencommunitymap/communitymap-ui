@@ -29,7 +29,7 @@ Documentation that agents can actually use must be:
 - **Comprehensive** — installation through advanced integration, including the parts that are broken.
 - **Executable** — snippets that can be run and verified rather than described.
 - **Honest** — the traps matter more than the happy path. An agent that does not know
-  `yarn build` starts with `rm -rf dist` will "discover" a broken workspace and start
+  `pnpm build` starts with `rm -rf dist` will "discover" a broken workspace and start
   fixing the wrong thing.
 
 ## Phase 1: Core concepts & API reference — done

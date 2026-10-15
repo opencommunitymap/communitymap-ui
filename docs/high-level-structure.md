@@ -32,7 +32,7 @@ and is exposed through the hosting rewrites in [firebase.json](../firebase.json)
 
 ## Workspaces
 
-Yarn v1 workspaces, declared in the root [package.json](../package.json):
+pnpm workspaces, declared in [pnpm-workspace.yaml](../pnpm-workspace.yaml):
 
 - **`react-sdk/`** — `@opencommunitymap/react-sdk`, the library that holds
   essentially all of the product logic. Published to npm; also consumed locally by

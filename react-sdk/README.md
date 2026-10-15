@@ -15,7 +15,7 @@ npm i @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 or
 
 ```
-yarn add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
+pnpm add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
 
 The SDK requires Firebase 11 or 12 and React / React DOM 19. FirebaseUI v7 and its

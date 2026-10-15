@@ -17,8 +17,8 @@ repo.
 
 ## Repository layout
 
-Yarn v1 **workspaces monorepo** (`react-sdk` + `webapp`, declared in the root
-[package.json](package.json)):
+pnpm **workspaces monorepo** (`react-sdk` + `webapp`, declared in
+[pnpm-workspace.yaml](pnpm-workspace.yaml)):
 
 | Path | What it is |
 | --- | --- |
@@ -35,16 +35,16 @@ This is the single most important fact about the build — see below.
 ## Setup and commands
 
 ```bash
-yarn install                 # root only — workspaces hoist to root node_modules
+pnpm install                 # root only — installs and links both workspaces
 
-cd react-sdk && yarn build   # MUST run before/after touching SDK source
-cd react-sdk && yarn watch   # tsc -w + CSS sync, for iterative work
+cd react-sdk && pnpm build   # MUST run before/after touching SDK source
+cd react-sdk && pnpm watch   # tsc -w + CSS sync, for iterative work
 
-cd webapp && yarn start      # dev server on :3000
-cd webapp && yarn build      # production bundle into webapp/build/
+cd webapp && pnpm start      # dev server on :3000
+cd webapp && pnpm build      # production bundle into webapp/build/
 
-yarn build                   # from root: builds both workspaces in order
-yarn test:e2e                # Playwright Chromium smoke test; build first
+pnpm build                   # from root: builds both workspaces in order
+pnpm test:e2e                # Playwright Chromium smoke test; build first
 ```
 
 Full setup, environment variables and troubleshooting: [docs/development.md](docs/development.md).
@@ -57,10 +57,10 @@ small Playwright Chromium smoke test.
 Verify with the type checker and the build instead:
 
 ```bash
-cd react-sdk && yarn build                    # tsc, strict + noUnusedLocals
-cd webapp   && npx tsc --noEmit -p tsconfig.json   # fast typecheck, no bundling
-cd webapp   && yarn build                     # typecheck + full Vite build (what CI runs)
-yarn test:e2e                                # requires the production build
+cd react-sdk && pnpm build                    # tsc, strict + noUnusedLocals
+cd webapp   && pnpm exec tsc --noEmit -p tsconfig.json   # fast typecheck, no bundling
+cd webapp   && pnpm build                     # typecheck + full Vite build (what CI runs)
+pnpm test:e2e                                # requires the production build
 ```
 
 CI ([.github/workflows/verify.yml](.github/workflows/verify.yml)) runs the frozen
@@ -73,7 +73,7 @@ install, root build, and Playwright smoke test.
    `@opencommunitymap/react-sdk` at all. If the webapp suddenly cannot find the
    package, rebuild the SDK — the source is fine.
 2. **Editing SDK source has no effect on the webapp until the SDK is rebuilt.**
-   Run `yarn watch` in `react-sdk` while working across both workspaces.
+   Run `pnpm watch` in `react-sdk` while working across both workspaces.
 3. **The real Firebase configs are hidden dotfiles**:
    [react-sdk/src/utils/.fb-conf-dev.js](react-sdk/src/utils/.fb-conf-dev.js) and
    `.fb-conf-prod.js`. They are committed, and `ls`/most glob patterns skip them.
@@ -85,8 +85,8 @@ install, root build, and Playwright smoke test.
    initialised it first, so a missing `initFirebase(env)` silently talks to prod.
 5. **`node_modules` in a long-lived checkout may be stale.** Two symptoms seen here:
    broken `.bin` shims (`Cannot find module '../lib/tsc.js'`) and a missing
-   `node_modules/@opencommunitymap/react-sdk` workspace symlink, which makes *every*
-   webapp file fail to resolve the SDK. Run `yarn install` at the root before
+   `webapp/node_modules/@opencommunitymap/react-sdk` workspace symlink, which makes *every*
+   webapp file fail to resolve the SDK. Run `pnpm install` at the root before
    concluding that something is wrong with the code.
 6. **The Vite compatibility settings are deliberate.**
    [webapp/vite.config.mjs](webapp/vite.config.mjs) preserves the legacy

@@ -3,8 +3,6 @@
 
 # dependencies
 node_modules
-/.pnp
-.pnp.js
 
 # testing
 /coverage
@@ -24,5 +22,5 @@ build
 .env
 
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*

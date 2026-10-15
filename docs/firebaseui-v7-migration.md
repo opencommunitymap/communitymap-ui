@@ -51,7 +51,7 @@ and React 19. This migration keeps Firebase 12 and the Google popup sign-in flow
    Auth emulator; confirm the compat `AuthProvider` observes the modular sign-in
    and compat sign-out without creating a default app. Assert that successful
    Google sign-in returns to the current URL, including path, query, and fragment.
-4. Run `yarn build` and `yarn test:e2e`; confirm a frozen lockfile install and
+4. Run `pnpm build` and `pnpm test:e2e`; confirm a frozen lockfile install and
    `npm ls firebase @firebase-oss/ui-react @firebase-oss/ui-core --all` have no
    FirebaseUI peer conflict. Check the package CSS export in the Vite build.
 5. Request a read-only implementation review and resolve concrete findings.
@@ -59,6 +59,8 @@ and React 19. This migration keeps Firebase 12 and the Google popup sign-in flow
 A real Google account login and deployed OAuth configuration remain manual checks.
 
 ## Verification results
+
+These results record the Yarn commands used before the pnpm migration.
 
 - The new SDK policy-link test failed against the v6 widget, then passed with v7.
 - `yarn build` passed for both workspaces, including the new CSS imports.

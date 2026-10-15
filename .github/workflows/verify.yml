@@ -13,23 +13,26 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: yarn
+          cache: pnpm
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Use Development Firebase
         run: echo "REACT_APP_OCM_ENV=development" >> "$GITHUB_ENV"
 
       - name: Verify App
-        run: yarn build
+        run: pnpm build
 
       - name: Install Chromium
-        run: yarn workspace community-map playwright install --with-deps chromium
+        run: pnpm --filter community-map exec playwright install --with-deps chromium
 
       - name: Smoke Test
-        run: yarn test:e2e
+        run: pnpm test:e2e
