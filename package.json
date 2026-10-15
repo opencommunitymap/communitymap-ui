@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "firebase-ci": "^0.15.1",
-    "firebase-tools": "^15.29.0"
+    "firebase-tools": "^15.33.0"
   },
   "engines": {
     "node": ">=24",
