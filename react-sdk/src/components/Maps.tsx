@@ -30,7 +30,7 @@ export interface MapsProps {
   defaultCenter?: Loc;
   defaultZoom?: number;
   mapStyle?: MapStyle;
-  centerPin?: JSX.Element | null;
+  centerPin?: React.JSX.Element | null;
   showZoomControls?: boolean;
   onChange?: (center: Loc, bounds: MapBounds, zoom: number) => void;
 }

@@ -51,8 +51,8 @@ Full setup, environment variables and troubleshooting: [docs/development.md](doc
 
 ### How to verify a change
 
-There is no unit-test suite. `react-sdk`'s `yarn test` runs `jest` with no test
-files and no jest config. The webapp has a small Playwright Chromium smoke test.
+There is no unit-test suite and `react-sdk` has no test script. The webapp has a
+small Playwright Chromium smoke test.
 
 Verify with the type checker and the build instead:
 
@@ -113,6 +113,10 @@ install, root build, and Playwright smoke test.
   `commonStyles.css` holds shared bits. `sync-glob` copies CSS into `dist/` at build —
   a new CSS file needs no config change, but it *does* need a rebuild.
 - **UI kit is MUI 9 (`@mui/material`) with Emotion**; dates via `dayjs`; class names via `classnames` (`cx`).
+- **Sign-in is FirebaseUI v7 (`@firebase-oss/ui-react`)**, owned by the SDK's
+  `Login`. The webapp wraps it to supply legal links. Firebase 11/12 and React 19
+  are required; do not restore the legacy `firebaseui` dependency. Resolve the
+  modular app with `getApp(getFirebaseApp().name)` to share the compat auth session.
 - **Timestamps are ISO strings** (`new Date().toISOString()`), never Firestore
   `Timestamp`. Locations are Firestore `GeoPoint` on write, `{latitude, longitude}`
   (`Loc`) in app code.
@@ -139,7 +143,7 @@ install, root build, and Playwright smoke test.
 
 Changing the SDK's public API also means: bump `version` in
 [react-sdk/package.json](react-sdk/package.json) and add an entry to
-[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc9`).
+[react-sdk/CHANGELOG.md](react-sdk/CHANGELOG.md) (current: `0.1.0-rc11`).
 
 ## Known limitations (already in the code — don't "fix" by accident)
 

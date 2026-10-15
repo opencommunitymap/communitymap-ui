@@ -1,4 +1,4 @@
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import prodConf from './.fb-conf-prod';
 import devConf from './.fb-conf-dev';
 

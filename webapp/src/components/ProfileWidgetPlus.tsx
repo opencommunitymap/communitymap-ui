@@ -8,7 +8,7 @@ import {
   getFirebaseApp,
   CommunityDialog,
 } from '@opencommunitymap/react-sdk';
-import firebase from 'firebase';
+import firebase from 'firebase/compat/app';
 import {
   Menu,
   MenuItem,

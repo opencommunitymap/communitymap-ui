@@ -22,14 +22,18 @@ for the stored shapes behind these types see [DB.md](DB.md).
 ## Installation
 
 ```bash
-yarn add @opencommunitymap/react-sdk firebase firebaseui
-# or: npm i @opencommunitymap/react-sdk firebase firebaseui
+yarn add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
+# or: npm i @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
 
-`firebase@^7`, `firebaseui@^4`, and React / React DOM 18 are **peer**
-dependencies — the SDK will not install them for you. MUI 9, Emotion,
-`maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` are regular dependencies.
-MapLibre CSS is imported by the SDK; Semantic UI is no longer needed.
+From `0.1.0-rc11`, the peer dependencies are `firebase@^11 || ^12` and React /
+React DOM 19. The SDK installs FirebaseUI v7 (`@firebase-oss/ui-react`,
+`@firebase-oss/ui-core`, and `@firebase-oss/ui-styles`) as regular dependencies;
+remove the legacy `firebaseui` package from consuming applications. Firebase
+services and public user types still use `firebase/compat/*`.
+
+MUI 9, Emotion, `maplibre-gl`, `react-map-gl`, `dayjs` and `classnames` are also
+regular dependencies. MapLibre and FirebaseUI CSS are imported by the SDK.
 
 `CommunityMap` applies the shared MUI theme to its own UI. Wrap standalone SDK
 widgets and your app in `<CommunityMapTheme>` to use the same styling. The
@@ -40,8 +44,7 @@ and `disableEnforceFocus?` (for external modals such as image uploaders).
 Global CSS resets are left to the host application (for example, MUI's
 `CssBaseline`).
 
-For React 18, set Yarn's `resolutions` (or npm's `overrides`) for `react-is` to
-match your React version, as required by MUI. This workspace uses `18.3.1`.
+React 18 is no longer supported because FirebaseUI v7 requires React 19.
 `type2icon(type)` now returns an SVG icon component: render it as
 `const Icon = type2icon(type); <Icon />`.
 
@@ -172,7 +175,7 @@ at build time.
 | --- | --- | --- |
 | `ProfileWidget` | — | Sign-in button, or a dropdown with the email and Log out. |
 | `NavigationWidget` | `{ onChangePosition: (loc: Loc) => void }` | The "locate me" button. |
-| `Login` | `{ title?: string; onClose?: () => void }` | firebaseui modal; Google sign-in only, popup flow. |
+| `Login` | `{ title?: string; onClose?: () => void; policies?: { termsOfServiceUrl: string; privacyPolicyUrl: string } }` | FirebaseUI v7 modal; Google sign-in only, popup flow. |
 | `AuthorWidget` | `{ userId: string; watchForChanges?: boolean }` | Resolves a uid to a display name, honouring `renderAuthor`. |
 | `Pin` | `{ color?: string }` | The map pin SVG. |
 | `PointingSegment` | — | Speech-bubble wrapper used for collapsed map items. |
@@ -183,6 +186,22 @@ and `Ask Help`). Render the icon with `const Icon = type2icon(type); <Icon />`.
 
 **Not exported** (internal to the SDK): `CommentsList`, `PostCommentWidget`,
 `LikeWidget`, `CloudinaryImageUpload`.
+
+`Login` owns its FirebaseUI provider, styles, and connection to the SDK's named
+Firebase app; a host does not need to configure another provider or app. Successful
+sign-in returns to the current URL, as in the previous widget. Errors appear in
+the dialog and allow retrying. The webapp reuses this component and supplies its
+`/terms` and `/privacy` policy URLs. Standalone SDK consumers may supply their own:
+
+```tsx
+<Login
+  onClose={() => setLogin(false)}
+  policies={{
+    termsOfServiceUrl: 'https://example.com/terms',
+    privacyPolicyUrl: 'https://example.com/privacy',
+  }}
+/>
+```
 
 ## Hooks
 

@@ -10,10 +10,10 @@ import {
   MapBounds,
   Loc,
 } from '../';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { getFirebaseApp } from '../utils/firebase';
-import 'firebase/auth';
-import 'firebase/firestore';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 import dayjs from 'dayjs';
 import { useAuth } from './Auth';
 

@@ -9,14 +9,19 @@ This is the early beta version that may be subject to many changes, including th
 Install _react-sdk_ and firebase packages:
 
 ```
-npm i @opencommunitymap/react-sdk firebase firebaseui
+npm i @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
 
 or
 
 ```
-yarn add @opencommunitymap/react-sdk firebase firebaseui
+yarn add @opencommunitymap/react-sdk firebase@^12 react@^19 react-dom@^19
 ```
+
+The SDK requires Firebase 11 or 12 and React / React DOM 19. FirebaseUI v7 and its
+styles are installed by the SDK. Remove the old `firebaseui` package when upgrading
+from `0.1.0-rc10` or earlier. See the [SDK reference](../docs/react-sdk.md) for
+authentication setup and optional sign-in policy links.
 
 ### Basemap
 
